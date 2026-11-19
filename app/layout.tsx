@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
+import { Review } from "@/components/Review";
 import "./globals.css";
 
 const plexMono = IBM_Plex_Mono({
@@ -24,7 +25,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={plexMono.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {process.env.NODE_ENV === "development" && <Review />}
+      </body>
     </html>
   );
 }
