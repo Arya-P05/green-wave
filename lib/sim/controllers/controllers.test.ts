@@ -3,6 +3,7 @@ import test from "node:test";
 import { CLEARANCE_S } from "../model.ts";
 import { corridor, MAIN, SIDE } from "../network.ts";
 import type { CorridorSpec } from "../network.ts";
+import { controllerFor } from "../scenario.ts";
 import { Sim } from "../sim.ts";
 import { webster } from "../webster.ts";
 import { actuated, MIN_GREEN_S } from "./actuated.ts";
@@ -46,6 +47,25 @@ const wave = (northbound: number): CorridorSpec => ({
   cross: Array.from({ length: 5 }, () => ({ eastbound: 0.12, westbound: 0.12 })),
 });
 
+test("a green wave carries a light platoon through every light; no offsets do not", () => {
+  const band = (kind: "fixed" | "green-wave") => {
+    let clean = 0;
+    let trips = 0;
+    for (let seed = 1; seed <= 10; seed++) {
+      const spec = wave(0.08);
+      const { network, index } = corridor(spec);
+      const sim = new Sim(network, controllerFor(kind, spec, network), { seed }).run(3000);
+      const through = sim.trips.filter((t) => t.born > 600 && t.origin === index.northbound[0]);
+      trips += through.length;
+      clean += through.filter((t) => t.stops <= 1).length;
+    }
+    return clean / trips;
+  };
+  const withWave = band("green-wave");
+  const without = band("fixed");
+  assert.ok(withWave > without + 0.2, `wave ${withWave} vs none ${without}`);
+});
+
 test("actuated rests in green when nobody waits on the other phase", () => {
   const spec = { ...wave(0.3), cross: wave(0).cross.map(() => ({ eastbound: 0, westbound: 0 })) };
   const { network } = corridor(spec);
@@ -70,4 +90,3 @@ test("max-pressure serves a side queue once it outweighs the main street, never 
   for (const g of greens.slice(0, -1)) assert.ok(g >= MIN_GREEN_S, `green of ${g}s`);
   assert.ok(sim.trips.some((t) => t.origin === network.nodes[0].phases[SIDE][0]));
 });
-
