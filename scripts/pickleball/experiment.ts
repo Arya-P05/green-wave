@@ -23,6 +23,10 @@ const familyOf = (s: State): Family | null =>
   s.shot === 1 ? null : s.shot === 2 ? "return" : s.shot === 3 ? "third" : zone(s.players[s.hitter].d) === "kitchen" ? "kitchen" : "transition";
 const SAMPLE = 2000;
 const REPLAYS = 240;
+/** Games of side-out scoring per habit; replays per spot on the depth chart; replays per moment for the demo's meter. */
+const GAMES = 100000;
+const DEPTH_REPLAYS = 8000;
+const METER_REPLAYS = 800;
 const acc: Record<Family, { n: number; total: number; shot: number; move: number; stake: number; best: Record<string, number> }> = {
   return: { n: 0, total: 0, shot: 0, move: 0, stake: 0, best: {} },
   third: { n: 0, total: 0, shot: 0, move: 0, stake: 0, best: {} },
@@ -127,7 +131,7 @@ const POLICIES: { key: string; label: string; policy: Policy }[] = [
 const POLICY_RALLIES = 200000;
 const policies = POLICIES.map(({ key, label: name, policy }) => {
   const { serve, receive } = teamRates(POLICY_RALLIES, 3, policy);
-  return { key, label: name, serve, receive, rally: (serve + receive) / 2, game: gameWin([serve, 1 - receive], 100000, 4) };
+  return { key, label: name, serve, receive, rally: (serve + receive) / 2, game: gameWin([serve, 1 - receive], GAMES, 4) };
 });
 log("policies");
 
@@ -150,8 +154,8 @@ const at = (d: number, ball: "soft" | "hard"): State => {
 };
 const depth = {
   ds: DEPTHS,
-  soft: DEPTHS.map((d, i) => share(replays(at(d, "soft"), 8000, 50 + i), 0)),
-  hard: DEPTHS.map((d, i) => share(replays(at(d, "hard"), 8000, 90 + i), 0)),
+  soft: DEPTHS.map((d, i) => share(replays(at(d, "soft"), DEPTH_REPLAYS, 50 + i), 0)),
+  hard: DEPTHS.map((d, i) => share(replays(at(d, "hard"), DEPTH_REPLAYS, 90 + i), 0)),
 };
 log("depth");
 
@@ -172,7 +176,7 @@ function examine(seed: number, server: 0 | 1): Picked | null {
   if (decisions.length < 2) return null;
   const sorted = [...decisions].sort((a, b) => b.cost - a.cost);
   if (sorted[0].cost < 0.08 || sorted[0].cost < 1.8 * sorted[1].cost) return null;
-  const meter = rally.states.map((s, k) => share(replays(s, 800, seed * 1000 + k), 0));
+  const meter = rally.states.map((s, k) => share(replays(s, METER_REPLAYS, seed * 1000 + k), 0));
   return { seed, server, meter: [...meter, 0], decisions };
 }
 const rallies: Picked[] = [];
@@ -192,6 +196,7 @@ for (let seed = 1; rallies.length < 6; seed++) {
 }
 log("rallies");
 
-const results = { calibration, decisions, sample: { rallies: SAMPLE, replays: REPLAYS }, policies, policyRallies: POLICY_RALLIES, depth, rallies };
+const results = { calibration, decisions, sample: { rallies: SAMPLE, replays: REPLAYS }, policies, policyRallies: POLICY_RALLIES, games: GAMES, depth, rallies,
+  replays: { depth: DEPTH_REPLAYS, meter: METER_REPLAYS, decision: DECISION_REPLAYS } };
 writeFileSync(new URL("../../data/pickleball/results.json", import.meta.url), JSON.stringify(results, (_, v) => (typeof v === "number" ? Math.round(v * 10000) / 10000 : v)) + "\n");
 log("wrote data/pickleball/results.json");
