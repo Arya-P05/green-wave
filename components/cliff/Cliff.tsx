@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import data from "@/data/cliff.json";
-import { CLIFF_KINDS } from "@/lib/cliff";
+import { CLIFF_KINDS, MAIN_SHARE } from "@/lib/cliff";
 import type { CliffData } from "@/lib/cliff";
 import { LABELS } from "@/lib/sim/scenario";
+import { webster } from "@/lib/sim/webster";
 import Choice from "../Choice";
 import DelayCurve from "./DelayCurve";
 import Intersection from "./Intersection";
@@ -18,6 +19,7 @@ export default function Cliff() {
   const [kind, setKind] = useState<CliffKind>("fixed");
   const demand = cliff.demands[step];
   const delay = cliff.delay[kind][step];
+  const plan = webster([MAIN_SHARE * demand, (1 - MAIN_SHARE) * demand]);
 
   return (
     <figure className="my-2 grid gap-y-1">
@@ -42,6 +44,11 @@ export default function Cliff() {
         </label>
         <Choice label="controller" options={CLIFF_KINDS} value={kind} onChange={setKind} names={LABELS} />
       </div>
+      <p className="tabular-nums">
+        Fixed-time runs Webster        Webster would run this light on a <span className="text-ink">{plan.cycle}s</span> cycle:{" "}apos;s plan for this demand: a <span className="text-ink">{plan.cycle}s</span> cycle,{" "}
+        {plan.greens[0]}s green for the main street, {plan.greens[1]}s for the side street, and{" "}
+        {plan.cycle - plan.greens[0] - plan.greens[1]}s of amber and all-red.
+      </p>
       <figcaption className="text-muted">
         {LABELS[kind]}: <span className="text-ink tabular-nums">{delay.toFixed(1)}s</span> of delay per car
         at demand {demand.toFixed(2)}. Mean of {cliff.seeds} seeded hour-long runs; dashed line is
