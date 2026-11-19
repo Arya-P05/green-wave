@@ -9,6 +9,7 @@ One Next.js site, one post per route.
 | `/` | the index | |
 | `/green-wave` | green wave | Can traffic lights find the green wave on their own? |
 | `/sliding-doors` | sliding doors | How do pickleball rallies really get won? |
+| `/iphone-photos` | almost good | How do you take really good iPhone photos? |
 
 ```
 npm install
@@ -100,3 +101,19 @@ npm run pickleball:experiment   # rerun into data/pickleball/results.json (~1 mi
 
 The real-world stats and their sources are cited in the post's notes. Every
 simulated number in the post is read from `data/pickleball/results.json`.
+
+## almost good
+
+How do you take really good iPhone photos? The usual tips checked against
+published research and Apple's own guides, taught with five small drawings:
+a framing grid (Palmer et al.'s centre and inward biases), a ray-marched
+plaster head under a movable light, a tap-to-expose meter, background blur
+from the thin-lens formula, and a face drawn from different distances (Ward
+et al.'s selfie geometry). The math is in `lib/iphone-photos/` (`npm test`
+covers it); every source and the claim it supports is in
+`docs/iphone-photos/SOURCES.md`.
+
+Arya's own photos go in `public/iphone-photos/story/` (gitignored for now).
+Each `PhotoSlot` shows the photo when its file is there and a same-shape
+placeholder when it isn't. Strip location data from the photos before they go
+anywhere public.
