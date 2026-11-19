@@ -1,6 +1,7 @@
 import BeTheLight from "@/components/cliff/BeTheLight";
 import Cliff from "@/components/cliff/Cliff";
 import Demand from "@/components/Demand";
+import PhantomJam from "@/components/PhantomJam";
 import { DayResults, MinGreenTable, SideResults } from "@/components/results/Results";
 import Toc from "@/components/Toc";
 import type { Entry } from "@/components/Toc";
@@ -85,6 +86,7 @@ export default function Home() {
 
         <Section id="model" title="the model">
           <Todo>the road as 7.5 m cells, 1 s ticks, four rules per car per tick (nagel-schreckenberg 1992). why this is enough to get queues, platoons and shockwaves.</Todo>
+          <PhantomJam />
           <Todo>what the model leaves out: turns, lanes, pedestrians, the streetcar, right turns on red.</Todo>
         </Section>
 

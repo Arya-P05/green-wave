@@ -106,3 +106,14 @@ test("a standing queue drains at the saturation flow", () => {
   const mean = rates.reduce((a, b) => a + b) / rates.length;
   assert.ok(Math.abs(mean - SATURATION_FLOW) < 0.02, `measured ${mean}`);
 });
+
+test("ring road: no car leaves, and a fuller road is slower with no lights at all", async () => {
+  const { meanSpeed, ring } = await import("../ring.ts");
+  const speed = (cars: number) => {
+    const s = ring(cars).run(600);
+    assert.equal(s.onRoad().length, cars);
+    return meanSpeed(s);
+  };
+  assert.ok(speed(12) > 1.8, "a nearly empty ring flows at free speed");
+  assert.ok(speed(60) < 1, "half full, jams form from nothing");
+});
