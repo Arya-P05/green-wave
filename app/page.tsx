@@ -42,7 +42,7 @@ const META: [string, React.ReactNode][] = [
   ["code", <a key="code" href={CODE}>github.com/Arya-P05/green-wave</a>],
 ];
 
-/** The headline: stops on a drive up Spadina, day average, fewest last. */
+/** The scoreboard in "the numbers": stops on a drive up Spadina, day average, fewest last. */
 const LEDGER: [Kind, string][] = [
   ["max-pressure", "max-pressure, the research algorithm"],
   ["fixed", "a plain timer"],
@@ -88,41 +88,18 @@ export default function Home() {
             </p>
           </div>
           <p className="arrive" style={order(3)}>
-            I built a toy version of Spadina Avenue in Toronto: eight real traffic lights, a few thousand
-            pretend cars, and the City’s actual traffic counts. Then I gave the lights different brains (a
-            plain timer, a sensor, and a famous algorithm from research papers that comes with a mathematical
-            proof) and counted one thing: how many times you have to stop on a drive up the street.
+            Lately I’ve been going down a rabbit hole on how traffic lights decide when to change (it’s way
+            more interesting than it sounds). Somewhere along the way I ended up building a simulated version
+            of Spadina Avenue in Toronto: eight real traffic lights, a few thousand simulated cars, and the
+            City’s actual traffic counts. Then I gave the lights different brains (a plain timer, a sensor, and
+            a famous algorithm from research papers that comes with a mathematical proof) and counted one
+            thing: how many times you have to stop on a drive up the street.
           </p>
           <p className="arrive" style={order(4)}>
-            I expected the fancy algorithm to win. It came dead last.
+            I went in assuming the algorithm from the papers would win. It didn’t, and working out why is most
+            of this post. Along the way you can drive the street, time the lights, and try being a light
+            yourself.
           </p>
-          <table className="arrive w-full max-w-[56ch] tabular-nums" style={order(5)}>
-            <caption className="text-left text-muted">
-              Stops on one drive up Spadina, past 8 lights, averaged over the whole day:
-            </caption>
-            <tbody>
-              {LEDGER.map(([k, label]) => (
-                <tr key={k} className={k === "max-pressure" ? "text-ink" : undefined}>
-                  <td>{label}</td>
-                  <td className="text-right">{f1(stops(k))}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="arrive" style={order(6)}>
-            <span className="text-muted">The short version:</span> the clever algorithm only notices cars once
-            they’ve stopped, so it turns green just after you brake. Every time. Teaching it to notice the
-            cars that are still coming cut a third of those stops. Scroll down and you can drive the street,
-            time the lights, and be a light yourself.
-          </p>
-          <dl className="arrive grid grid-cols-[8ch_minmax(0,1fr)]" style={order(7)}>
-            {META.map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-muted">{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
         </header>
 
         <nav aria-label="contents" className="mt-2 md:hidden">
@@ -475,8 +452,22 @@ export default function Home() {
         </Section>
 
         <Section id="numbers" title="the numbers">
+          <p>Here’s where every brain ended up, in one table:</p>
+          <table className="w-full max-w-[56ch] tabular-nums">
+            <caption className="text-left text-muted">
+              Stops on one drive up Spadina, past 8 lights, averaged over the whole day:
+            </caption>
+            <tbody>
+              {LEDGER.map(([k, label]) => (
+                <tr key={k} className={k === "max-pressure" ? "text-ink" : undefined}>
+                  <td>{label}</td>
+                  <td className="text-right">{f1(stops(k))}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           <p>
-            For the curious, everything at once. Every point is the average of 8 runs with different random
+            And for the curious, everything else at once. Every point is the average of 8 runs with different random
             traffic, each an hour long after a 15-minute warm-up.
           </p>
           <p>Across the day:</p>
@@ -571,7 +562,16 @@ export default function Home() {
           </ol>
         </Section>
 
-        <footer className="mt-4 flex items-end gap-[2ch]">
+        <dl className="mt-4 grid grid-cols-[8ch_minmax(0,1fr)] text-muted">
+          {META.map(([k, v]) => (
+            <div key={k} className="contents">
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <footer className="mt-2 flex items-end gap-[2ch]">
           <Signature />
           <p className="text-muted italic">remember life</p>
         </footer>
