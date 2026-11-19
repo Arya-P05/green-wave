@@ -13,8 +13,8 @@ const minutes = (s: number) => `${Math.floor(s / 60)} min ${String(Math.round(s 
 const times = (n: number) => (n === 0 ? "never stopped" : n === 1 ? "stopped once" : `stopped ${n} times`);
 
 /** Spadina under any controller at any hour, and one car you can follow. */
-export default function TimeSpace() {
-  const [kind, setKind] = useState<Kind>("green-wave");
+export default function TimeSpace({ initial = "max-pressure" }: { initial?: Kind }) {
+  const [kind, setKind] = useState<Kind>(initial);
   const [hour, setHour] = useState(PEAK);
   const [picked, setPicked] = useState<{ key: string; car: Car } | null>(null);
   const key = `${kind} ${hour}`;
