@@ -5,3 +5,6 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 .env*
+
+# Dev-only review comments (app/api/review); never committed.
+/review
