@@ -52,7 +52,8 @@ export type SimOptions = {
 
 export class Sim {
   readonly net: Network;
-  readonly controller: Controller;
+  /** Swappable mid-run, so a figure can change controller without losing its queues. */
+  controller: Controller;
   t = 0;
   cells: (Vehicle | null)[][];
   /** Cars waiting to get onto each entry link (outside the network). */
