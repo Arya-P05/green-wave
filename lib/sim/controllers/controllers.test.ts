@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { CLEARANCE_S } from "../model.ts";
-import { corridor } from "../network.ts";
+import { corridor, MAIN } from "../network.ts";
+import type { CorridorSpec } from "../network.ts";
 import { Sim } from "../sim.ts";
 import { webster } from "../webster.ts";
+import { actuated } from "./actuated.ts";
 import { fixedTime } from "./fixed.ts";
 
 test("Webster: C = (1.5L + 5) / (1 - Y), greens split by y", () => {
@@ -32,5 +34,21 @@ test("fixed-time shows exactly the planned green every cycle", () => {
     assert.equal(cycle[0], "green");
   }
   assert.equal(24 + 18 + 2 * CLEARANCE_S, 50);
+});
+
+const wave = (northbound: number): CorridorSpec => ({
+  spacing: [60, 75, 50, 70],
+  approach: 30,
+  arm: 20,
+  northbound,
+  southbound: 0,
+  cross: Array.from({ length: 5 }, () => ({ eastbound: 0.12, westbound: 0.12 })),
+});
+
+test("actuated rests in green when nobody waits on the other phase", () => {
+  const spec = { ...wave(0.3), cross: wave(0).cross.map(() => ({ eastbound: 0, westbound: 0 })) };
+  const { network } = corridor(spec);
+  const sim = new Sim(network, actuated, { seed: 2 }).run(1000);
+  assert.ok(sim.nodes.every((n) => n.phase === MAIN && n.since === 0));
 });
 
