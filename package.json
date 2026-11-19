@@ -12,7 +12,8 @@
     "test": "node --test \"lib/**/*.test.ts\"",
     "data:cliff": "node scripts/green-wave/cliff.ts",
     "data:toronto": "node scripts/green-wave/toronto.ts",
-    "experiment": "node scripts/green-wave/experiment.ts"
+    "experiment": "node scripts/green-wave/experiment.ts",
+    "pickleball:calibrate": "node scripts/pickleball/calibrate.ts"
   },
   "dependencies": {
     "next": "^16.4.6",
