@@ -5,6 +5,7 @@ import Toc from "@/components/Toc";
 import type { Entry } from "@/components/Toc";
 import Todo from "@/components/Todo";
 import TimeSpace from "@/components/wave/TimeSpace";
+import Tuner from "@/components/wave/Tuner";
 
 const SECTIONS: Entry[] = [
   { id: "question", title: "the question" },
@@ -94,6 +95,7 @@ export default function Home() {
           <Todo>how to read a time-space diagram: time runs right, the street runs up, every car is a line. a green wave is a band of parallel lines slipping through the greens.</Todo>
           <TimeSpace />
           <Todo>what each controller draws.</Todo>
+          <Tuner />
         </Section>
 
         <Section id="results" title="results">
