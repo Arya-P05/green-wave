@@ -60,6 +60,7 @@ export default function PhantomJam() {
     const amber = rgb(token("amber"));
     const red = rgb(token("red"));
     const faint = token("faint");
+    const background = token("canvas");
     // 0 at full speed, 1 standing still: ink, then amber, then red.
     const color = (h: number) => (h < 0.5 ? mix(ink, amber, h * 2) : mix(amber, red, h * 2 - 1));
     const heat = new Map<number, number>();
@@ -70,16 +71,23 @@ export default function PhantomJam() {
     const lctx = sizeCanvas(loop.current, size, size);
     const c = size / 2;
     const radius = [outer, inner];
+    const mid = (outer + inner) / 2;
     const len = ((2 * Math.PI * inner) / RING_CELLS) * 0.75;
     const drawLoop = (a: number) => {
       lctx.clearRect(0, 0, size, size);
+      // One road, both lanes, with a dashed line between them.
       lctx.strokeStyle = faint;
-      lctx.lineWidth = 9;
-      for (const r of radius) {
-        lctx.beginPath();
-        lctx.arc(c, c, r, 0, Math.PI * 2);
-        lctx.stroke();
-      }
+      lctx.lineWidth = outer - inner + 9;
+      lctx.beginPath();
+      lctx.arc(c, c, mid, 0, Math.PI * 2);
+      lctx.stroke();
+      lctx.strokeStyle = background;
+      lctx.lineWidth = 1;
+      lctx.setLineDash([4, 5]);
+      lctx.beginPath();
+      lctx.arc(c, c, mid, 0, Math.PI * 2);
+      lctx.stroke();
+      lctx.setLineDash([]);
       s.cells.forEach((lane, l) =>
         lane.forEach((car, pos) => {
           if (!car) return;
