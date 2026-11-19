@@ -4,7 +4,7 @@ import { maxPressure } from "./controllers/max-pressure.ts";
 import { FREE_SPEED, SATURATION_FLOW } from "./model.ts";
 import type { Network } from "./model.ts";
 import type { CorridorIndex, CorridorSpec } from "./network.ts";
-import type { Controller, Sim } from "./sim.ts";
+import type { Controller, Sim, Trip } from "./sim.ts";
 import { webster } from "./webster.ts";
 
 export const KINDS = ["fixed", "green-wave", "actuated", "max-pressure"] as const;
@@ -55,6 +55,8 @@ export type Metrics = {
   delay: number;
   /** Cars that drove the whole main street, per direction. */
   through: { northbound: Through; southbound: Through };
+  /** Cars that crossed on a side street: mean seconds lost against free speed. */
+  side: { trips: number; delay: number };
 };
 
 export type Through = {
@@ -78,8 +80,15 @@ export function metrics(sim: Sim, index: CorridorIndex, warmup: number): Metrics
       band: mean((t) => (t.stops === 0 ? 1 : 0)),
     };
   };
+  const arms = new Set(index.cross.flatMap((c) => [c.eastbound[0], c.westbound[0]]));
+  const side = sim.trips.filter((t) => t.born >= warmup && arms.has(t.origin));
+  const free = (t: Trip) => (sim.net.links[t.origin].length + sim.net.links[t.exit].length) / FREE_SPEED;
   return {
     delay: sim.arrivals ? sim.delay / sim.arrivals : 0,
     through: { northbound: through(index.northbound), southbound: through(index.southbound) },
+    side: {
+      trips: side.length,
+      delay: side.length ? side.reduce((a, t) => a + t.done - t.born - free(t), 0) / side.length : NaN,
+    },
   };
 }
