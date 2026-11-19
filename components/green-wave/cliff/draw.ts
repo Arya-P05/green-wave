@@ -1,8 +1,8 @@
-import { CLIFF_APPROACH } from "@/lib/cliff";
-import type { CorridorIndex } from "@/lib/sim/network";
-import type { Aspect } from "@/lib/sim/model";
-import type { Sim } from "@/lib/sim/sim";
-import { sizeCanvas, token } from "../hooks";
+import { CLIFF_APPROACH } from "@/lib/green-wave/cliff";
+import type { CorridorIndex } from "@/lib/green-wave/sim/network";
+import type { Aspect } from "@/lib/green-wave/sim/model";
+import type { Sim } from "@/lib/green-wave/sim/sim";
+import { sizeCanvas, token } from "@/components/shared/hooks";
 
 /** Cells of each approach that are in view. */
 const VIEW = 26;

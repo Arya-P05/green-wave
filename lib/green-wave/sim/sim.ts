@@ -1,6 +1,6 @@
 import { ALL_RED_S, AMBER_S, FREE_SPEED, P_SLOW, VMAX } from "./model.ts";
 import type { Aspect, Network } from "./model.ts";
-import { rng } from "./random.ts";
+import { rng } from "../../shared/random.ts";
 
 export type Vehicle = {
   id: number;

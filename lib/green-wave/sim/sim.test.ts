@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CLEARANCE_S, FREE_SPEED, SATURATION_FLOW } from "./model.ts";
 import { corridor, MAIN, SIDE } from "./network.ts";
-import { rng } from "./random.ts";
+import { rng } from "../../shared/random.ts";
 import { Sim } from "./sim.ts";
 import type { Controller } from "./sim.ts";
 

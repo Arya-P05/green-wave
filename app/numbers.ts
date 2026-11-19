@@ -1,8 +1,8 @@
-import cliffData from "@/data/cliff.json";
-import experimentData from "@/data/experiment.json";
-import type { CliffData } from "@/lib/cliff";
-import type { Experiment, Point } from "@/lib/experiment";
-import type { Kind } from "@/lib/sim/scenario";
+import cliffData from "@/data/green-wave/cliff.json";
+import experimentData from "@/data/green-wave/experiment.json";
+import type { CliffData } from "@/lib/green-wave/cliff";
+import type { Experiment, Point } from "@/lib/green-wave/experiment";
+import type { Kind } from "@/lib/green-wave/sim/scenario";
 
 /**
  * Every number the prose quotes, read from the experiment's output so the

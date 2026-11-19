@@ -12,7 +12,7 @@ Wednesday 23 April 2025. The CSV is an unchanged subset of the source file.
 Contains information licensed under the
 [Open Government Licence – Toronto](https://open.toronto.ca/open-data-licence/).
 
-`spadina.json` is derived by `scripts/toronto.ts`:
+`spadina.json` is derived by `scripts/green-wave/toronto.ts`:
 
 - Every vehicle (cars, trucks, buses) approaching from one side, whatever its
   turn, becomes demand on that approach. The model has no turns.
@@ -26,4 +26,4 @@ Contains information licensed under the
 
 ## `cliff.json`
 
-Written by `scripts/cliff.ts` from the sim itself; no outside data.
+Written by `scripts/green-wave/cliff.ts` from the sim itself; no outside data.

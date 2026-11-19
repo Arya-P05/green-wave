@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
-import { Review } from "@/components/Review";
+import { Review } from "@/components/shared/Review";
 import "./globals.css";
 
 const plexMono = IBM_Plex_Mono({

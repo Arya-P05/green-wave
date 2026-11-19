@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { CLIFF_KINDS } from "@/lib/cliff";
-import type { CliffData } from "@/lib/cliff";
-import { LABELS } from "@/lib/sim/scenario";
-import { useWidth } from "../hooks";
+import { CLIFF_KINDS } from "@/lib/green-wave/cliff";
+import type { CliffData } from "@/lib/green-wave/cliff";
+import { LABELS } from "@/lib/green-wave/sim/scenario";
+import { useWidth } from "@/components/shared/hooks";
 
 type CliffKind = (typeof CLIFF_KINDS)[number];
 

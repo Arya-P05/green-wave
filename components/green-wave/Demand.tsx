@@ -1,10 +1,10 @@
 "use client";
 
-import data from "@/data/spadina.json";
-import { hours } from "@/lib/spadina";
-import type { SpadinaData } from "@/lib/spadina";
-import LineChart from "./LineChart";
-import Try from "./Try";
+import data from "@/data/green-wave/spadina.json";
+import { hours } from "@/lib/green-wave/spadina";
+import type { SpadinaData } from "@/lib/green-wave/spadina";
+import LineChart from "@/components/shared/LineChart";
+import Try from "@/components/shared/Try";
 
 const spadina = data as SpadinaData;
 const day = hours(spadina);

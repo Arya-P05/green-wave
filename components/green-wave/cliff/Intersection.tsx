@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { cliff, cliffSpec } from "@/lib/cliff";
-import { controllerFor } from "@/lib/sim/scenario";
-import type { Kind } from "@/lib/sim/scenario";
-import { Sim } from "@/lib/sim/sim";
-import { useReducedMotion, useVisible, useWidth } from "../hooks";
+import { cliff, cliffSpec } from "@/lib/green-wave/cliff";
+import { controllerFor } from "@/lib/green-wave/sim/scenario";
+import type { Kind } from "@/lib/green-wave/sim/scenario";
+import { Sim } from "@/lib/green-wave/sim/sim";
+import { useReducedMotion, useVisible, useWidth } from "@/components/shared/hooks";
 import { intersection } from "./draw";
 
 /** Simulated seconds per real second. Fast enough to see queues form, slow enough to follow one car. */

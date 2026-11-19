@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { byHand, GAME_DEMAND, rivalScore, RIVALS, ROUND_S, ROUNDS, roundStart } from "@/lib/game";
-import { LABELS } from "@/lib/sim/scenario";
-import { useWidth } from "../hooks";
-import Try from "../Try";
+import { byHand, GAME_DEMAND, rivalScore, RIVALS, ROUND_S, ROUNDS, roundStart } from "@/lib/green-wave/game";
+import { LABELS } from "@/lib/green-wave/sim/scenario";
+import { useWidth } from "@/components/shared/hooks";
+import Try from "@/components/shared/Try";
 import { intersection } from "./draw";
 
 const SPEED = 6; // simulated seconds per real second

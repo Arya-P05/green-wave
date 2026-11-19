@@ -1,17 +1,17 @@
 import type { CSSProperties } from "react";
-import BeTheLight from "@/components/cliff/BeTheLight";
-import Cliff from "@/components/cliff/Cliff";
-import Demand from "@/components/Demand";
-import Nerds from "@/components/Nerds";
-import PhantomJam from "@/components/PhantomJam";
-import { DayResults, MinGreenTable, SideResults } from "@/components/results/Results";
-import Signature from "@/components/Signature";
-import Toc from "@/components/Toc";
-import type { Entry } from "@/components/Toc";
-import TimeSpace from "@/components/wave/TimeSpace";
-import Tuner from "@/components/wave/Tuner";
-import { LABELS } from "@/lib/sim/scenario";
-import type { Kind } from "@/lib/sim/scenario";
+import BeTheLight from "@/components/green-wave/cliff/BeTheLight";
+import Cliff from "@/components/green-wave/cliff/Cliff";
+import Demand from "@/components/green-wave/Demand";
+import Nerds from "@/components/shared/Nerds";
+import PhantomJam from "@/components/green-wave/PhantomJam";
+import { DayResults, MinGreenTable, SideResults } from "@/components/green-wave/results/Results";
+import Signature from "@/components/shared/Signature";
+import Toc from "@/components/shared/Toc";
+import type { Entry } from "@/components/shared/Toc";
+import TimeSpace from "@/components/green-wave/wave/TimeSpace";
+import Tuner from "@/components/green-wave/wave/Tuner";
+import { LABELS } from "@/lib/green-wave/sim/scenario";
+import type { Kind } from "@/lib/green-wave/sim/scenario";
 import { cliffDelay, delay, f1, hourCount, hoursBetter, platoon, platoonRange, s0, side, stops } from "./numbers";
 
 /** Where "Arya Patel" in the header points. TODO(arya): her site's URL once this lives there. */

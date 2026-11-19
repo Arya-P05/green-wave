@@ -8,17 +8,17 @@
  *   node scripts/experiment.ts
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import type { Direction, Experiment, Point } from "../lib/experiment.ts";
-import { platoonRatio, projectedArrivals } from "../lib/sim/analysis.ts";
-import { maxPressureWith } from "../lib/sim/controllers/max-pressure.ts";
-import { corridor } from "../lib/sim/network.ts";
-import type { CorridorSpec } from "../lib/sim/network.ts";
-import { controllerFor, KINDS, metrics } from "../lib/sim/scenario.ts";
-import type { Kind, Through } from "../lib/sim/scenario.ts";
-import { Sim } from "../lib/sim/sim.ts";
-import type { Controller } from "../lib/sim/sim.ts";
-import { hours, peakHour, spadinaSpec } from "../lib/spadina.ts";
-import type { SpadinaData } from "../lib/spadina.ts";
+import type { Direction, Experiment, Point } from "../../lib/green-wave/experiment.ts";
+import { platoonRatio, projectedArrivals } from "../../lib/green-wave/sim/analysis.ts";
+import { maxPressureWith } from "../../lib/green-wave/sim/controllers/max-pressure.ts";
+import { corridor } from "../../lib/green-wave/sim/network.ts";
+import type { CorridorSpec } from "../../lib/green-wave/sim/network.ts";
+import { controllerFor, KINDS, metrics } from "../../lib/green-wave/sim/scenario.ts";
+import type { Kind, Through } from "../../lib/green-wave/sim/scenario.ts";
+import { Sim } from "../../lib/green-wave/sim/sim.ts";
+import type { Controller } from "../../lib/green-wave/sim/sim.ts";
+import { hours, peakHour, spadinaSpec } from "../../lib/green-wave/spadina.ts";
+import type { SpadinaData } from "../../lib/green-wave/spadina.ts";
 
 const SEEDS = 8;
 const WARMUP = 900;
@@ -26,7 +26,7 @@ const MEASURE = 3600;
 const SIDE_SCALES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const MIN_GREENS = [6, 10, 15, 20, 30];
 
-const data = JSON.parse(readFileSync(new URL("../data/spadina.json", import.meta.url), "utf8")) as SpadinaData;
+const data = JSON.parse(readFileSync(new URL("../../data/green-wave/spadina.json", import.meta.url), "utf8")) as SpadinaData;
 
 
 function once(spec: CorridorSpec, control: (spec: CorridorSpec, net: Sim["net"]) => Controller, seed: number): Point {
@@ -125,5 +125,5 @@ const results: Experiment = {
   },
 };
 
-writeFileSync(new URL("../data/experiment.json", import.meta.url), JSON.stringify(results) + "\n");
+writeFileSync(new URL("../../data/green-wave/experiment.json", import.meta.url), JSON.stringify(results) + "\n");
 log("done");

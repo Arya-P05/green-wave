@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { fixedTime, greenWaveOffsets } from "@/lib/sim/controllers/fixed";
-import { CELL_M, FREE_SPEED } from "@/lib/sim/model";
-import { corridorTiming } from "@/lib/sim/scenario";
-import { spadinaSpec } from "@/lib/spadina";
-import Try from "../Try";
+import { fixedTime, greenWaveOffsets } from "@/lib/green-wave/sim/controllers/fixed";
+import { CELL_M, FREE_SPEED } from "@/lib/green-wave/sim/model";
+import { corridorTiming } from "@/lib/green-wave/sim/scenario";
+import { spadinaSpec } from "@/lib/green-wave/spadina";
+import Try from "@/components/shared/Try";
 import Diagram from "./Diagram";
 import { HOURS, PEAK, runFor, spadina } from "./run";
 

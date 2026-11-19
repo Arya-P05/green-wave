@@ -1,13 +1,13 @@
-import data from "@/data/spadina.json";
-import { corridor } from "@/lib/sim/network";
-import type { CorridorSpec } from "@/lib/sim/network";
-import { metrics } from "@/lib/sim/scenario";
-import type { Metrics } from "@/lib/sim/scenario";
-import { Sim } from "@/lib/sim/sim";
-import type { Controller } from "@/lib/sim/sim";
-import type { Aspect, Network } from "@/lib/sim/model";
-import { APPROACH, hours, peakHour } from "@/lib/spadina";
-import type { SpadinaData } from "@/lib/spadina";
+import data from "@/data/green-wave/spadina.json";
+import { corridor } from "@/lib/green-wave/sim/network";
+import type { CorridorSpec } from "@/lib/green-wave/sim/network";
+import { metrics } from "@/lib/green-wave/sim/scenario";
+import type { Metrics } from "@/lib/green-wave/sim/scenario";
+import { Sim } from "@/lib/green-wave/sim/sim";
+import type { Controller } from "@/lib/green-wave/sim/sim";
+import type { Aspect, Network } from "@/lib/green-wave/sim/model";
+import { APPROACH, hours, peakHour } from "@/lib/green-wave/spadina";
+import type { SpadinaData } from "@/lib/green-wave/spadina";
 
 export const spadina = data as SpadinaData;
 export const HOURS = hours(spadina);

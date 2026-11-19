@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { meanSpeed, ring, RING_CELLS, ringKmh } from "@/lib/ring";
-import { CELL_M, VMAX } from "@/lib/sim/model";
-import type { Sim } from "@/lib/sim/sim";
-import { sizeCanvas, token, useReducedMotion, useVisible, useWidth } from "./hooks";
-import Try from "./Try";
+import { meanSpeed, ring, RING_CELLS, ringKmh } from "@/lib/green-wave/ring";
+import { CELL_M, VMAX } from "@/lib/green-wave/sim/model";
+import type { Sim } from "@/lib/green-wave/sim/sim";
+import { sizeCanvas, token, useReducedMotion, useVisible, useWidth } from "@/components/shared/hooks";
+import Try from "@/components/shared/Try";
 
 const LANES = 2;
 const PACE = { slow: 2, normal: 4 }; // sim seconds per real second

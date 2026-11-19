@@ -14,12 +14,12 @@
  * data/spadina.json (cars per second per lane, per 15 minutes).
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { CELL_M } from "../lib/sim/model.ts";
-import type { Bin, SpadinaData } from "../lib/spadina.ts";
+import { CELL_M } from "../../lib/green-wave/sim/model.ts";
+import type { Bin, SpadinaData } from "../../lib/green-wave/spadina.ts";
 
 const DATE = "2025-04-23";
-const SUBSET = new URL(`../data/toronto/spadina-${DATE}.csv`, import.meta.url);
-const OUT = new URL("../data/spadina.json", import.meta.url);
+const SUBSET = new URL(`../../data/green-wave/toronto/spadina-${DATE}.csv`, import.meta.url);
+const OUT = new URL("../../data/green-wave/spadina.json", import.meta.url);
 
 /**
  * On 23 April 2025 the City counted eight consecutive signalized Spadina

@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { controllerFor, KINDS, LABELS } from "@/lib/sim/scenario";
-import type { Kind } from "@/lib/sim/scenario";
-import { spadinaSpec } from "@/lib/spadina";
-import Choice from "../Choice";
-import Try from "../Try";
+import { controllerFor, KINDS, LABELS } from "@/lib/green-wave/sim/scenario";
+import type { Kind } from "@/lib/green-wave/sim/scenario";
+import { spadinaSpec } from "@/lib/green-wave/spadina";
+import Choice from "@/components/shared/Choice";
+import Try from "@/components/shared/Try";
 import Diagram from "./Diagram";
 import { HOURS, MEASURE, PEAK, runFor, spadina, until, WARMUP } from "./run";
 import type { Car } from "./run";

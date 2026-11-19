@@ -1,7 +1,7 @@
 # Findings
 
-Real numbers from `data/experiment.json` (`npm run experiment`) and
-`data/cliff.json` (`npm run data:cliff`). Notes for the write-up, not the
+Real numbers from `data/green-wave/experiment.json` (`npm run experiment`) and
+`data/green-wave/cliff.json` (`npm run data:cliff`). Notes for the write-up, not the
 write-up itself.
 
 ## Setup in one paragraph
@@ -9,7 +9,7 @@ write-up itself.
 Spadina Avenue, eight signals from Fort York Blvd to College St (2.0 km),
 demand from the City of Toronto's counts on Wed 23 Apr 2025, per lane, with
 every approach's lane count read from OpenStreetMap (way ids in
-`scripts/toronto.ts`). Single lane each way, no turns. Nagel-Schreckenberg
+`scripts/green-wave/toronto.ts`). Single lane each way, no turns. Nagel-Schreckenberg
 cells (7.5 m, 1 s, vmax 54 km/h, p = 0.1), 3 s amber + 1 s all-red at every
 change. Free-flow corridor trip: about 205 s. Each point: 8 seeds, 15 min
 warm-up, 60 min measured, demand held at that hour's average.

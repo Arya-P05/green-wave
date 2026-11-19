@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import data from "@/data/cliff.json";
-import { CLIFF_KINDS, MAIN_SHARE } from "@/lib/cliff";
-import type { CliffData } from "@/lib/cliff";
-import { LABELS } from "@/lib/sim/scenario";
-import { webster } from "@/lib/sim/webster";
-import Choice from "../Choice";
-import Try from "../Try";
+import data from "@/data/green-wave/cliff.json";
+import { CLIFF_KINDS, MAIN_SHARE } from "@/lib/green-wave/cliff";
+import type { CliffData } from "@/lib/green-wave/cliff";
+import { LABELS } from "@/lib/green-wave/sim/scenario";
+import { webster } from "@/lib/green-wave/sim/webster";
+import Choice from "@/components/shared/Choice";
+import Try from "@/components/shared/Try";
 import DelayCurve from "./DelayCurve";
 import Intersection from "./Intersection";
 

@@ -5,12 +5,12 @@
  *   node scripts/cliff.ts
  */
 import { writeFileSync } from "node:fs";
-import { CLIFF_KINDS, DEMANDS, cliff, cliffSpec } from "../lib/cliff.ts";
-import type { CliffData } from "../lib/cliff.ts";
-import { SATURATION_FLOW } from "../lib/sim/model.ts";
-import { controllerFor, corridorTiming, metrics } from "../lib/sim/scenario.ts";
-import { Sim } from "../lib/sim/sim.ts";
-import { websterDelay } from "../lib/sim/webster.ts";
+import { CLIFF_KINDS, DEMANDS, cliff, cliffSpec } from "../../lib/green-wave/cliff.ts";
+import type { CliffData } from "../../lib/green-wave/cliff.ts";
+import { SATURATION_FLOW } from "../../lib/green-wave/sim/model.ts";
+import { controllerFor, corridorTiming, metrics } from "../../lib/green-wave/sim/scenario.ts";
+import { Sim } from "../../lib/green-wave/sim/sim.ts";
+import { websterDelay } from "../../lib/green-wave/sim/webster.ts";
 
 const SEEDS = 8;
 const WARMUP = 600;
@@ -44,5 +44,5 @@ const webster = DEMANDS.map((d) => {
 });
 
 const data: CliffData = { demands: DEMANDS, seeds: SEEDS, warmup: WARMUP, measure: MEASURE, delay, webster };
-writeFileSync(new URL("../data/cliff.json", import.meta.url), JSON.stringify(data, null, 2) + "\n");
+writeFileSync(new URL("../../data/green-wave/cliff.json", import.meta.url), JSON.stringify(data, null, 2) + "\n");
 console.table(DEMANDS.map((d, i) => ({ d, ...Object.fromEntries(CLIFF_KINDS.map((k) => [k, delay[k][i]])), webster: webster[i] })));

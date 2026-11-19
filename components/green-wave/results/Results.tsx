@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import data from "@/data/experiment.json";
-import { MEASURES } from "@/lib/experiment";
-import type { Experiment, Measure, Point } from "@/lib/experiment";
-import { KINDS, LABELS } from "@/lib/sim/scenario";
-import type { Kind } from "@/lib/sim/scenario";
-import Choice from "../Choice";
-import LineChart from "../LineChart";
-import Try from "../Try";
+import data from "@/data/green-wave/experiment.json";
+import { MEASURES } from "@/lib/green-wave/experiment";
+import type { Experiment, Measure, Point } from "@/lib/green-wave/experiment";
+import { KINDS, LABELS } from "@/lib/green-wave/sim/scenario";
+import type { Kind } from "@/lib/green-wave/sim/scenario";
+import Choice from "@/components/shared/Choice";
+import LineChart from "@/components/shared/LineChart";
+import Try from "@/components/shared/Try";
 
 const experiment = data as Experiment;
 const MEASURE_KEYS = Object.keys(MEASURES) as Measure[];

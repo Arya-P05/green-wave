@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sizeCanvas, token, useReducedMotion, useWidth } from "../hooks";
+import { sizeCanvas, token, useReducedMotion, useWidth } from "@/components/shared/hooks";
 import { lights, spadina } from "./run";
 import type { Car, Run } from "./run";
 
