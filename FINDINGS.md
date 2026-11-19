@@ -56,10 +56,9 @@ Max-pressure+ changes two things. Upstream it counts every car on the link
 (Varaiya's own model counts vehicles on a link, not stopped vehicles; cf.
 position-weighted backpressure, Li & Jabari 2019). It holds every green at
 least 10 s, because the proof assumes switching is free and here each switch
-costs 4 s (cf. capacity-aware backpressure, Gregoire et al. 2015). Downstream
-it still counts only stopped cars; counting moving cars there too made peak
-delay double in exploratory runs (16.1 → 31.5 s) because a busy road ahead
-looks backed up.
+costs 4 s. Downstream it still counts only stopped cars; counting moving cars
+there too made peak delay double in exploratory runs before the lane fix
+(16.1 → 31.5 s) because a busy road ahead looks backed up.
 
 Day averages, textbook → plus:
 - stops per drive 7.30 → 4.95 northbound, 6.85 → 4.39 southbound (-1/3);
@@ -84,7 +83,8 @@ The minimum green alone doesn't do it (peak hour, textbook rule):
 
 The change that matters is what it counts.
 
-Variants tried and dropped (4 seeds, peak hour, not in experiment.json):
+Variants tried and dropped (4 seeds, peak hour, before the OSM lane fix, not
+in experiment.json):
 dropping the downstream term (stops 5.11, but then it isn't max-pressure);
 cyclic max-pressure, Le et al. 2015 (delay 21.5 s).
 
