@@ -8,6 +8,7 @@ export type Vehicle = {
   born: number; // tick it arrived at the network edge
   origin: number; // entry link
   stops: number;
+  /** Has the car been at full speed since its last stop? Creeping forward in a queue is not a new stop. */
   moving: boolean;
   /** Corridor positions per tick, when recording: [t, x, t, x, ...]. */
   path: number[] | null;
@@ -169,7 +170,8 @@ export class Sim {
         if (!car) return;
         const v = speeds[l][p];
         if (v === 0 && car.moving) car.stops++;
-        car.moving = v > 0;
+        if (v === 0) car.moving = false;
+        if (v === VMAX) car.moving = true;
         car.v = v;
         if (measuring) this.delay += 1 - v / FREE_SPEED;
 
