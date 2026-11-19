@@ -106,3 +106,13 @@ test("max-pressure+ survives a busy intersection that breaks the textbook rule",
   const plus = delay(maxPressurePlus);
   assert.ok(plus < textbook / 2, `plus ${plus} vs textbook ${textbook}`);
 });
+
+test("be the light: a light that never switches loses to every controller", async () => {
+  const { byHand, gameStart, rivalScore, RIVALS } = await import("../../game.ts");
+  const you = byHand();
+  const { sim, end } = gameStart(you);
+  you.want = sim.nodes[0].phase;
+  sim.run(end);
+  for (const k of RIVALS) assert.ok(sim.delay > rivalScore(k), k);
+  assert.equal(rivalScore("actuated"), rivalScore("actuated"), "the rivals' runs are deterministic");
+});

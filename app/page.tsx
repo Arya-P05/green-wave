@@ -1,3 +1,4 @@
+import BeTheLight from "@/components/cliff/BeTheLight";
 import Cliff from "@/components/cliff/Cliff";
 import Demand from "@/components/Demand";
 import { DayResults, MinGreenTable, SideResults } from "@/components/results/Results";
@@ -78,6 +79,7 @@ export default function Home() {
         <Section id="cliff" title="the cliff">
           <Todo>one intersection first. drag demand up and watch delay stay flat, then leave the page.</Todo>
           <Cliff />
+          <BeTheLight />
           <Todo>what the curves say: where each controller hits the wall, and why max-pressure hits it first with a short minimum green.</Todo>
         </Section>
 
