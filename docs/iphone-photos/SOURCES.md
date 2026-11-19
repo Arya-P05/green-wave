@@ -47,6 +47,7 @@ Where no evidence was found, the post says so instead of citing anything.
 
 - iPhone User Guide, *Use iPhone camera tools to set up your shot*:
   <https://support.apple.com/guide/iphone/use-camera-tools-iph3dc593597/ios>
+  - Settings > Camera > Grid shows a grid on the camera screen.
   - Camera sets focus and exposure automatically; "face detection balances
     the exposure across many faces"; tap to move the focus area, drag up or
     down beside it to change exposure; touch and hold for AE/AF Lock.
