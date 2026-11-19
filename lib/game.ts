@@ -28,7 +28,8 @@ export function roundStart(controller: Controller, seed: number) {
 /** Car-seconds lost against free speed in one round, under one controller, with no one playing. */
 export function rivalScore(kind: Kind, seed: number): number {
   const { sim, end } = roundStart(controllerFor(kind, cliffSpec(GAME_DEMAND), cliff(GAME_DEMAND).network), seed);
-  return sim.run(end).delay;
+  // run() takes a number of ticks, not an end time.
+  return sim.run(end - sim.t).delay;
 }
 
 /** A light you drive by hand: it shows whatever phase you last asked for. */

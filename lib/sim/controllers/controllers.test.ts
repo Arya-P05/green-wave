@@ -9,7 +9,7 @@ import { webster } from "../webster.ts";
 import { actuated, MIN_GREEN_S } from "./actuated.ts";
 import { fixedTime } from "./fixed.ts";
 import { maxPressure, maxPressurePlus } from "./max-pressure.ts";
-import { cliff } from "../../cliff.ts";
+import { cliff, cliffSpec } from "../../cliff.ts";
 
 test("Webster: C = (1.5L + 5) / (1 - Y), greens split by y", () => {
   // Two phases, L = 8 s: C = (12 + 5) / (1 - 0.5) = 34 s, usable green 26 s.
@@ -117,4 +117,17 @@ test("be the light: a light that never switches loses to every controller", asyn
     for (const k of RIVALS) assert.ok(sim.delay > rivalScore(k, seed), `${k}, seed ${seed}`);
   }
   assert.equal(rivalScore("actuated", 3), rivalScore("actuated", 3), "a round's traffic is fixed by its seed");
+});
+
+test("be the light: the controllers are scored over exactly the round you play", async () => {
+  const { byHand, roundStart, rivalScore } = await import("../../game.ts");
+  // A hand that always asks for the phase the timer would show plays the timer's round.
+  const fixed = controllerFor("fixed", cliffSpec(0.8), cliff(0.8).network);
+  const you = byHand();
+  const { sim, end } = roundStart(you, 5);
+  while (sim.t < end) {
+    you.want = fixed.choose(sim, 0, sim.t);
+    sim.step();
+  }
+  assert.equal(sim.delay, rivalScore("fixed", 5));
 });
