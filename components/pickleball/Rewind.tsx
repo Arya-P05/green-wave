@@ -451,7 +451,7 @@ export default function Rewind() {
                 stopAt(worst.shot - 1);
                 choose(worst.best, worst.shot - 1);
               }}
-              className="justify-self-start underline decoration-faint hover:decoration-ink"
+              className="justify-self-start text-left underline decoration-faint hover:decoration-ink"
             >
               rewind to shot {worst.shot} and try {did(rally.states[worst.shot - 1], worst.best)}
             </button>
