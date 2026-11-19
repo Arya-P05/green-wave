@@ -14,6 +14,7 @@ const BOTTOM = 36;
 const LEFT = 48;
 const RIGHT = 120; // room for line labels
 const MAX_DELAY = 120;
+const CH = 9; // px per character of the 15px mono face
 
 /**
  * Mean delay per car against demand, one line per controller. Lines that run
@@ -57,6 +58,13 @@ export default function DelayCurve({
     ...CLIFF_KINDS.map((k) => ({ key: k, text: LABELS[k], at: anchor(data.delay[k]), ink: k === kind })),
     { key: "webster", text: "webster 1958", at: anchor(data.webster), ink: false },
   ];
+  // Lines that leave the top are named where they leave, ending there; if that
+  // would run into the name of the line that left before, start there instead.
+  let edge = -Infinity;
+  for (const l of labels.filter((l) => l.at.end).sort((a, b) => a.at.left - b.at.left)) {
+    if (l.at.left - l.text.length * CH < edge) l.at = { ...l.at, left: l.at.left + 4, end: false };
+    edge = l.at.end ? l.at.left : l.at.left + l.text.length * CH;
+  }
 
   const i = data.demands.findIndex((d) => Math.abs(d - demand) < 1e-9);
   const value = data.delay[kind][i];

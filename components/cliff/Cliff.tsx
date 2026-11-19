@@ -45,7 +45,7 @@ export default function Cliff() {
         <Choice label="controller" options={CLIFF_KINDS} value={kind} onChange={setKind} names={LABELS} />
       </div>
       <p className="tabular-nums">
-        Fixed-time runs Webster        Webster would run this light on a <span className="text-ink">{plan.cycle}s</span> cycle:{" "}apos;s plan for this demand: a <span className="text-ink">{plan.cycle}s</span> cycle,{" "}
+        Fixed-time runs Webster&apos;s plan for this demand: a <span className="text-ink">{plan.cycle}s</span> cycle,{" "}
         {plan.greens[0]}s green for the main street, {plan.greens[1]}s for the side street, and{" "}
         {plan.cycle - plan.greens[0] - plan.greens[1]}s of amber and all-red.
       </p>
