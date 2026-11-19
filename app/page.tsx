@@ -1,5 +1,6 @@
 import Cliff from "@/components/cliff/Cliff";
 import Demand from "@/components/Demand";
+import { DayResults, MinGreenTable, SideResults } from "@/components/results/Results";
 import Toc from "@/components/Toc";
 import type { Entry } from "@/components/Toc";
 import Todo from "@/components/Todo";
@@ -97,8 +98,11 @@ export default function Home() {
 
         <Section id="results" title="results">
           <Todo>across the day.</Todo>
+          <DayResults />
           <Todo>as the side streets get busier.</Todo>
+          <SideResults />
           <Todo>max-pressure&apos;s one knob, the minimum green.</Todo>
+          <MinGreenTable />
         </Section>
 
         <Section id="takeaways" title="takeaways">
