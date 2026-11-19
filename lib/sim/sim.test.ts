@@ -117,3 +117,13 @@ test("ring road: no car leaves, and a fuller road is slower with no lights at al
   assert.ok(speed(12) > 1.8, "a nearly empty ring flows at free speed");
   assert.ok(speed(60) < 1, "half full, jams form from nothing");
 });
+
+test("two-lane ring: each lane keeps its own cars", async () => {
+  const { ring } = await import("../ring.ts");
+  const s = ring(30, 1, 2).run(300);
+  s.cells.forEach((lane, l) => {
+    const ids = lane.filter((c) => c).map((c) => c!.id);
+    assert.equal(ids.length, 30);
+    assert.ok(ids.every((id) => Math.floor(id / 30) === l));
+  });
+});

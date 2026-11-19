@@ -6,17 +6,30 @@ export const RING_CELLS = 120; // 900 m around
 
 export const ringKmh = (cellsPerS: number) => cellsPerS * CELL_M * 3.6;
 
-/** The ring with `cars` cars spaced evenly, all standing still. */
-export function ring(cars: number, seed = 1): Sim {
+/**
+ * The ring with `cars` cars a lane spaced evenly, all standing still. Each lane
+ * is its own loop (link `lane` leads back into itself): nobody changes lanes.
+ */
+export function ring(cars: number, seed = 1, lanes = 1): Sim {
   const sim = new Sim(
-    { links: [{ length: RING_CELLS, next: 0, signal: null, demand: 0, corridor: null }], nodes: [] },
+    {
+      links: Array.from({ length: lanes }, (_, lane) => ({
+        length: RING_CELLS,
+        next: lane,
+        signal: null,
+        demand: 0,
+        corridor: null,
+      })),
+      nodes: [],
+    },
     { name: "none", choose: () => 0 },
     { seed },
   );
-  for (let i = 0; i < cars; i++) {
-    const cell = Math.floor((i * RING_CELLS) / cars);
-    sim.cells[0][cell] = { id: i, v: 0, born: 0, origin: 0, stops: 0, moving: false, path: null };
-  }
+  for (let lane = 0; lane < lanes; lane++)
+    for (let i = 0; i < cars; i++) {
+      const cell = Math.floor((i * RING_CELLS) / cars);
+      sim.cells[lane][cell] = { id: lane * cars + i, v: 0, born: 0, origin: lane, stops: 0, moving: false, path: null };
+    }
   return sim;
 }
 
