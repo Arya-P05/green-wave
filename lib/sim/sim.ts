@@ -113,6 +113,11 @@ export class Sim {
     return n;
   }
 
+  /** Every car currently on the road, in no particular order. */
+  onRoad(): Vehicle[] {
+    return this.cells.flatMap((row) => row.filter((c): c is Vehicle => c !== null));
+  }
+
   /** Is any car within the last `cells` cells before the stop line? */
   detects(link: number, cells: number): boolean {
     const row = this.cells[link];

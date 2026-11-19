@@ -1,4 +1,5 @@
 import Cliff from "@/components/cliff/Cliff";
+import TimeSpace from "@/components/wave/TimeSpace";
 
 export default function Home() {
   return (
@@ -8,6 +9,8 @@ export default function Home() {
         <p className="text-muted">a traffic signal experiment. in progress.</p>
         <h2 className="mt-2">the cliff</h2>
         <Cliff />
+        <h2 className="mt-2">the green wave</h2>
+        <TimeSpace />
       </div>
     </main>
   );

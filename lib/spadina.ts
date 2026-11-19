@@ -55,3 +55,15 @@ export function average(bins: Bin[]): Bin {
     })),
   };
 }
+
+/** Hourly demand: each hour is the average of its four bins. */
+export function hours(data: SpadinaData): Bin[] {
+  const out: Bin[] = [];
+  for (let i = 0; i + 4 <= data.bins.length; i += 4) out.push(average(data.bins.slice(i, i + 4)));
+  return out;
+}
+
+/** The hour with the most main-street traffic: the figure's default. */
+export function peakHour(data: SpadinaData): Bin {
+  return hours(data).reduce((a, b) => (b.northbound + b.southbound > a.northbound + a.southbound ? b : a));
+}
