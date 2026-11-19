@@ -44,11 +44,11 @@ const META: [string, React.ReactNode][] = [
 
 /** The headline: stops on a drive up Spadina, day average, fewest last. */
 const LEDGER: [Kind, string][] = [
-  ["max-pressure", "max-pressure, the textbook rule"],
+  ["max-pressure", "max-pressure, the research algorithm"],
   ["fixed", "a plain timer"],
   ["max-pressure-plus", "max-pressure+, my fix"],
-  ["actuated", "a sensor light"],
-  ["green-wave", "a hand-tuned green wave"],
+  ["actuated", "a sensor"],
+  ["green-wave", "a hand-timed green wave"],
 ];
 
 const order = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -87,23 +87,18 @@ export default function Home() {
               Can traffic lights find the green wave on their own?
             </p>
           </div>
-          <dl className="arrive grid grid-cols-[8ch_minmax(0,1fr)]" style={order(3)}>
-            {META.map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-muted">{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
+          <p className="arrive" style={order(3)}>
+            I built a toy version of Spadina Avenue in Toronto: eight real traffic lights, a few thousand
+            pretend cars, and the City’s actual traffic counts. Then I gave the lights different brains (a
+            plain timer, a sensor, and a famous algorithm from research papers that comes with a mathematical
+            proof) and counted one thing: how many times you have to stop on a drive up the street.
+          </p>
           <p className="arrive" style={order(4)}>
-            Max-pressure is the traffic-light rule with a proof: using nothing but the cars at each light, it
-            provably keeps up with any traffic that any timing plan could. I put it on eight real lights on
-            Toronto’s Spadina Avenue, with the City’s own counts, to see if it would find the green wave by
-            itself. It found the opposite.
+            I expected the fancy algorithm to win. It came dead last.
           </p>
           <table className="arrive w-full max-w-[56ch] tabular-nums" style={order(5)}>
             <caption className="text-left text-muted">
-              Stops on a drive up Spadina, 8 lights, Fort York to College, averaged over the day:
+              Stops on one drive up Spadina, past 8 lights, averaged over the whole day:
             </caption>
             <tbody>
               {LEDGER.map(([k, label]) => (
@@ -115,11 +110,19 @@ export default function Home() {
             </tbody>
           </table>
           <p className="arrive" style={order(6)}>
-            <span className="text-muted">In normal words:</span> the clever, proven light made you stop at
-            almost every light, more often than a dumb timer. It only sees cars once they’ve stopped, so it
-            turns green just after you brake. Teaching it to count the cars that are still coming cut a third
-            of those stops. And the humble sensor light that cities already use still beat it.
+            <span className="text-muted">The short version:</span> the clever algorithm only notices cars once
+            they’ve stopped, so it turns green just after you brake. Every time. Teaching it to notice the
+            cars that are still coming cut a third of those stops. Scroll down and you can drive the street,
+            time the lights, and be a light yourself.
           </p>
+          <dl className="arrive grid grid-cols-[8ch_minmax(0,1fr)]" style={order(7)}>
+            {META.map(([k, v]) => (
+              <div key={k} className="contents">
+                <dt className="text-muted">{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
         </header>
 
         <nav aria-label="contents" className="mt-2 md:hidden">
@@ -134,51 +137,55 @@ export default function Home() {
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
           <p>
-            The thing I wanted is called a green wave: lights timed so that once you catch one green, you keep
-            catching greens, light after light. Green waves are real, and somebody makes them, usually a
-            traffic engineer with a spreadsheet of <em className="not-italic text-muted">offsets</em>: how
-            many seconds after one light turns green the next one should.
+            What I wanted was the opposite: a <span className="text-ink">green wave</span>. That’s when the
+            lights are timed so that once you catch one green, the next one turns green just as you get there,
+            and the next, all the way up the street. Green waves are real. Somebody sets them up by hand,
+            usually a traffic engineer with a spreadsheet.
           </p>
           <p>
-            Researchers have a light that needs none of that. Max-pressure (Varaiya, 2013) looks only at the
-            queues around each light, and comes with a theorem: if any timing plan could keep up with the
-            traffic, max-pressure keeps up too, without being told what the traffic is. So, my question: if
-            every light on Spadina ran max-pressure, would green waves show up on their own?
+            Then I found out researchers have a light that needs no spreadsheet. It’s called{" "}
+            <span className="text-ink">max-pressure</span> (Varaiya, 2013). Each light just looks at the cars
+            around it and decides who goes next, and there’s a theorem saying it will keep up with any traffic
+            that any timing plan could. So my question was simple: if every light on Spadina ran max-pressure,
+            would green waves appear all by themselves?
           </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
             I’m a software engineer in San Francisco, not a traffic engineer, so this is me learning in
-            public. Everything below runs in your browser, built from scratch, and every number comes from a
-            simulation you can poke.
+            public. Everything below runs in your browser, and every number comes from a simulation you can
+            poke.
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
         </Section>
 
         <Section id="light" title="how a light works">
           <p>
-            A traffic light is a scheduler. A normal four-way intersection has two{" "}
-            <span className="text-muted">phases</span>: north–south gets green, then east–west. Every switch
-            pays a tax: 3 seconds of amber and 1 of all-red, so the last car can clear the box. That’s 4
-            seconds of nobody moving, however many people are waiting.
+            Start with one intersection. A traffic light is really a scheduler: it takes turns. At a normal
+            four-way crossing there are two turns, called <span className="text-muted">phases</span>:
+            north–south goes, then east–west goes, and repeat.
           </p>
-          <p>There are three kinds of brain you can give it:</p>
+          <p>
+            Every time it swaps turns, it pays a tax: 3 seconds of amber, then 1 second where every direction
+            is red so the last car can clear the box. That’s 4 seconds where nobody moves, however many people
+            are waiting. Keep that tax in mind; it comes back to bite.
+          </p>
+          <p>The only question a light ever answers is “whose turn is it?” There are three kinds of brain:</p>
           <ul className="grid gap-y-1">
             <li>
-              <span className="text-ink">A timer</span> <span className="text-muted">(fixed-time)</span>. The
-              same schedule forever: 30 seconds this way, 20 that way, repeat.
+              <span className="text-ink">A timer.</span> The same schedule forever: 30 seconds this way, 20
+              that way, repeat. It never looks at the road. Most downtown lights are timers.
             </li>
             <li>
-              <span className="text-ink">A sensor light</span> <span className="text-muted">(actuated)</span>.
-              A detector just before the stop line, usually a wire loop cut into the road, keeps the green on
-              while cars keep coming and ends it when there’s a gap.
+              <span className="text-ink">A sensor.</span> A detector just before the stop line, usually a loop
+              of wire cut into the road, notices cars. It keeps the green on while cars keep arriving and ends
+              it when there’s a gap. (Ever rolled up to a red, and it changed for you? That.)
             </li>
             <li>
-              <span className="text-ink">Max-pressure</span>. Count the cars waiting on each approach, subtract
-              the cars already backed up where they’d go, and give green to the direction with the biggest
-              difference.
+              <span className="text-ink">Max-pressure.</span> Count the cars waiting on each side, subtract the
+              cars already backed up where they’re headed, and give the green to whoever has the biggest pile.
             </li>
           </ul>
-          <Nerds title="max-pressure">
+          <Nerds title="max-pressure, precisely">
             <p>
               Each phase k serves some links. Its pressure is P_k = Σ (q_l − q_next(l)) over those links, where
               q is the number of stopped cars. Every second, once the current green has lasted its minimum (6 s
@@ -195,11 +202,16 @@ export default function Home() {
 
         <Section id="road" title="the road">
           <p>
-            To test any of this I needed traffic, so I built the simplest model that still gets jams:
-            Nagel–Schreckenberg (1992). The road is a row of 7.5 m boxes. Every second, every car does four
-            things: speed up a notch (to at most 54 km/h), slow down if the car ahead is too close, now and
-            then dawdle for no reason, and move.
+            To test any of this I needed traffic, so I wrote the simplest fake traffic I could find that still
+            behaves like the real thing. It’s called Nagel–Schreckenberg (1992). The road is a row of boxes,
+            each one car long (7.5 m). Every second, every car follows four rules:
           </p>
+          <ol className="grid list-inside list-decimal gap-y-0">
+            <li>speed up a little, up to the limit (54 km/h);</li>
+            <li>slow down if the car ahead is too close;</li>
+            <li>once in a while, slow down for no reason (that’s you, checking your phone);</li>
+            <li>move.</li>
+          </ol>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
             The first time I saw rules this small do something this lifelike was Conway’s Game of Life, in a
@@ -207,11 +219,16 @@ export default function Home() {
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
           <p>
-            Here’s the dawdle rule on a ring road with no lights at all. Add cars. Past about a third full,
-            jams appear out of nothing and roll backwards, against the traffic. Researchers got the same thing
-            with real drivers on a circular track in Japan (Sugiyama et al., 2008).
+            Here’s why rule 3 matters. Below is a loop of road with no lights, no crashes, nothing in the way.
+            Add enough cars and jams appear out of thin air, then slide backwards while every car in them is
+            driving forwards. These are called <span className="text-ink">phantom jams</span>, and researchers
+            got exactly the same thing with real drivers on a circular track in Japan (Sugiyama et al., 2008).
           </p>
           <PhantomJam />
+          <p>
+            <span className="text-muted">Why this matters:</span> four rules are enough to get queues, stop-and-go
+            and jams nobody caused. That’s all a traffic light has to deal with, so it’s enough to test them.
+          </p>
           <Nerds title="the car rules">
             <p>
               Each tick, in parallel: v ← min(v + 1, v_max); v ← min(v, gap); with probability p = 0.1, v ←
@@ -234,13 +251,14 @@ export default function Home() {
 
         <Section id="webster" title="webster’s recipe">
           <p>
-            How long should a timer’s cycle be? In 1958 F. V. Webster, at Britain’s Road Research Laboratory,
-            worked out a formula that’s still in the textbooks.
+            Back to the timer. One full round of turns (north–south, then east–west) is called a{" "}
+            <span className="text-ink">cycle</span>. How long should it be? In 1958 F. V. Webster, at Britain’s
+            Road Research Laboratory, worked out a recipe that’s still in the textbooks.
           </p>
           <p>
-            <span className="text-muted">In normal words:</span> the busier the intersection, the longer the
-            cycle, and the cycle shoots up as the intersection nears full. Short cycles waste more of each
-            minute on amber; long ones make everyone sit longer at red. Then split the green by how busy each
+            The idea: a short cycle swaps turns often, so it pays the 4-second tax a lot. A long cycle pays it
+            less, but makes everyone sit at red longer. The busier the intersection, the longer the best cycle,
+            and as it gets close to full, the best cycle shoots up. Then you split the green by how busy each
             direction is.
           </p>
           <Nerds title="the formula">
@@ -255,45 +273,55 @@ export default function Home() {
 
         <Section id="cliff" title="the cliff">
           <p>
-            Before a whole street, one intersection. Drag the demand (Webster’s Y) up and watch.
+            Time to race the brains on one intersection. The slider is <span className="text-ink">demand</span>:
+            how full the intersection is. At 0.5 it needs half of every minute as green just to keep up; at 1
+            it needs all of it, with no time left for the amber tax.
           </p>
           <Cliff />
           <p>
-            <span className="text-muted">In normal words:</span> delay is flat, flat, flat, then a wall. Every
-            controller has a cliff; what matters is where. The sensor light is best almost all the way up.
-            Textbook max-pressure goes over first: at Y = 0.85 a car waits {s0(cliffDelay("max-pressure", 0.85))}{" "}
-            on average, against {s0(cliffDelay("fixed", 0.85))} at the plain timer. With only a 6-second
-            minimum green it switches constantly, and every switch pays the 4-second tax. Its proof assumes
-            switching is free. (The fourth line, max-pressure+, is my fix. More on it later.)
+            What you should see: waiting stays flat, flat, flat, and then hits a wall. Every brain has a cliff;
+            the question is where. The sensor is best almost all the way up. Textbook max-pressure goes over
+            first: at 0.85 a car waits {s0(cliffDelay("max-pressure", 0.85))} on average, against{" "}
+            {s0(cliffDelay("fixed", 0.85))} at the plain timer. It swaps turns so often that the 4-second tax
+            eats it alive. (Its proof assumes swapping is free.) The line labelled max-pressure+ is my fix;
+            hold that thought.
           </p>
-          <p>Now you try. Same junction, busy but not full. Can you beat the algorithms?</p>
+          <p>
+            Now you try. Same junction, turned up close to the cliff. Can you beat the algorithms?
+          </p>
           <BeTheLight />
+          <p>
+            If you won, notice how: you watched cars coming from far away and switched before they arrived.
+            The algorithms can’t see that far. The sensor sees about 2.5 seconds ahead; max-pressure only
+            counts cars that have already stopped. Remember that. It’s the whole story.
+          </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
-            I lost to the sensor light more often than I’d like to admit. The thing it knows, and I kept
-            forgetting: don’t switch while cars are still coming.
+            I lost to the sensor more often than I’d like to admit. The thing it knows, and I kept forgetting:
+            don’t switch while cars are still coming.
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
         </Section>
 
         <Section id="waves" title="green waves">
           <p>
-            One light can only be quick or slow. A row of lights can be <em className="not-italic">coordinated</em>.
-            Give every light the same cycle, then shift each one’s start, its{" "}
-            <span className="text-muted">offset</span>, so it turns green just as cars from the last light
-            arrive. Drive at the right speed and you surf a wave of greens.
+            One light can only be quick or slow. A whole street of lights can work together. Give every light
+            the same cycle, then start each one a few seconds after the one before it, timed to how long it
+            takes to drive between them. That delay is called an <span className="text-ink">offset</span>.
+            Get the offsets right, drive at the right speed, and you surf a wave of greens.
           </p>
           <p>
-            Here’s Spadina, every light on the same timer. Each line is one car: time runs right, the street
-            runs up from the lake. Ink lines go north, grey ones south; a flat stretch is a car stopped at a
-            red. Slide the speed the wave is timed for.
+            To see it, I’ll use the picture traffic engineers use, a{" "}
+            <span className="text-ink">time-space diagram</span>. Spadina runs up the page, from Fort York at
+            the bottom to College at the top. Time runs to the right. Every line is one car: a line climbing up
+            is a car driving north, a line going down is a car driving south, and a flat bit is a car sitting
+            at a red. The coloured stripes are the lights.
           </p>
           <Tuner />
           <p>
-            <span className="text-muted">In normal words:</span> the wave only works at the speed people
-            actually drive, about 50 km/h here. Time it for 30 or 35 and northbound drivers stop at nearly
-            every light. And a wave runs one way: while it carries cars north, the southbound ones hit the
-            reds.
+            Here’s the catch: the wave only works at the speed people actually drive, about 50 km/h here. Time
+            it for 30 or 35 and the northbound lines turn into staircases; drivers stop at nearly every light.
+            And a wave only runs one way: while it carries cars north, the southbound ones keep hitting reds.
           </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
@@ -306,13 +334,13 @@ export default function Home() {
 
         <Section id="spadina" title="spadina">
           <p>
-            Why Spadina: on Wednesday 23 April 2025, the City of Toronto counted cars at eight lights in a
-            row on Spadina on the same day, Fort York Blvd up to College St, in 15-minute slices from 6 a.m.
-            to 8 p.m. Most counts are one intersection at a time. This is two kilometres, eight lights, and
-            real demand on every street.
+            Why Spadina? On Wednesday 23 April 2025, the City of Toronto counted every car at eight lights in a
+            row on Spadina, Fort York up to College, in 15-minute slices from 6 a.m. to 8 p.m. Counts usually
+            happen one intersection at a time, so getting a whole stretch on the same day is rare. Two
+            kilometres, eight lights, real traffic on every street.
           </p>
           <p>
-            I divide each count over its lanes (lane counts from OpenStreetMap) and run the simulation one
+            I split each count across its lanes (lane counts from OpenStreetMap) and feed the simulation one
             hour at a time.
           </p>
           <Demand />
@@ -329,46 +357,50 @@ export default function Home() {
 
         <Section id="surprise" title="the surprise">
           <p>
-            Five controllers, the same Spadina, the same traffic. Pick one, slide through the day, and tap a
-            line to ride along with that car.
+            So: same street, same traffic, five brains. This is the moment I’d been building toward. Pick a
+            brain, slide through the day, and tap any line to ride along with that car.
           </p>
           <TimeSpace />
           <p>
-            The hand-tuned wave draws long, clean diagonals going north. Max-pressure draws staircases. Over
-            the whole day, a drive north stops {f1(stops("max-pressure"))} times under max-pressure, against{" "}
-            {f1(stops("fixed"))} under a plain timer that doesn’t look at traffic at all.
+            The hand-timed green wave draws long, clean diagonals going north. Max-pressure draws staircases.
+            Over the whole day, a drive north stops {f1(stops("max-pressure"))} times under max-pressure, against{" "}
+            {f1(stops("fixed"))} under a plain timer that never even looks at the road.
           </p>
           <p>
-            It isn’t bad at everything. On its own terms, total delay over every car, side streets included,
-            it beats the timer ({f1(delay("max-pressure"))}s against {f1(delay("fixed"))}s per car), mostly by
-            being kind to the side streets. If you’re crossing Spadina it’s a good light. If you’re driving
+            To be fair, it isn’t bad at everything. Add up the waiting of every car, side streets included,
+            and it beats the timer ({f1(delay("max-pressure"))}s against {f1(delay("fixed"))}s per car), mostly
+            by being kind to the side streets. If you’re crossing Spadina it’s a good light. If you’re driving
             along it, it’s the worst one here.
           </p>
         </Section>
 
         <Section id="why" title="why">
           <p>
-            There’s a number for “do cars arrive on green?”: the{" "}
-            <span className="text-ink">platoon ratio</span>, from the Highway Capacity Manual. Take the share
-            of cars that reach a light on green, and divide by the share of time it’s green. 1 means the lights
-            ignore each other: you arrive on green exactly as often as luck would have it. Above 1 is a wave.
-            Below 1, you arrive on red more often than luck.
+            I wanted a number for “do cars arrive on green?”, and traffic engineers have one, the{" "}
+            <span className="text-ink">platoon ratio</span> from the Highway Capacity Manual. (A platoon is a
+            bunch of cars travelling together, like the group that leaves a light when it turns green.) Take
+            the share of cars that reach a light on green, and divide by the share of the time it’s green.
           </p>
+          <ul className="grid gap-y-1">
+            <li>1 means the lights ignore each other: you hit greens exactly as often as luck would say.</li>
+            <li>Above 1 is a wave: you hit greens more often than luck.</li>
+            <li>Below 1, you hit reds more often than luck.</li>
+          </ul>
           <p>
             Max-pressure is below 1 in both directions in every hour of the day ({pLo.toFixed(2)} to{" "}
-            {pHi.toFixed(2)}). It isn’t ignoring the traffic. It’s anti-coordinated.
+            {pHi.toFixed(2)}). It isn’t ignoring the traffic. It’s working against it.
           </p>
           <p>
-            <span className="text-muted">In normal words:</span> max-pressure only counts cars that are
-            stopped. A bunch of cars rolling toward a green from the last light is invisible to it. It sees
-            them once they’ve braked to a halt, and then their queue is the biggest, and it gives them green.
-            Every time. The light turns green just after you stop, by construction.
+            Here’s the reason, and it’s the same thing you noticed playing the light. Max-pressure only counts
+            cars that are stopped. A platoon rolling toward it from the last light is invisible. It only sees
+            those cars once they’ve braked to a halt; then their pile is the biggest, so they get the green.
+            The light turns green just after you stop, by design.
           </p>
           <p>
-            Spadina adds a second problem. Max-pressure subtracts the queue ahead, and Spadina’s lights back
-            up into each other, so the main road’s pressure partly cancels itself out. Side streets drain off
-            the map and never cancel. When the side streets are quiet, one car stopped on a side street can
-            outweigh Spadina.
+            Spadina makes it worse. Max-pressure subtracts the cars backed up ahead, and Spadina’s lights back
+            up into each other, so the main road’s pile partly cancels itself out. Side streets drain off the
+            edge of the map and never cancel. On a quiet afternoon, one car stopped on a side street can
+            outweigh the whole main road.
           </p>
           <Nerds title="platoon ratio">
             <p>
@@ -387,42 +419,47 @@ export default function Home() {
         </Section>
 
         <Section id="fix" title="the fix">
-          <p>Two changes, both known ideas, neither specific to Spadina:</p>
+          <p>
+            If the problem is that it can’t see you coming, let it see you coming. Two changes, both ideas that
+            already exist, neither tuned for Spadina:
+          </p>
           <ol className="grid list-inside list-decimal gap-y-1">
             <li>
-              <span className="text-ink">Count the cars that are coming.</span> Upstream, count every car on
-              the road toward the light, moving or not. That’s what Varaiya’s own model counts (cars on a
-              road); many implementations, my first one included, count only the queue. Position-weighted
-              backpressure (Li &amp; Jabari, 2019) goes further and weighs where along the road each car is.
+              <span className="text-ink">Count the cars that are coming.</span> Count every car on the road
+              toward the light, moving or not, instead of only the stopped ones. That’s actually what Varaiya’s
+              own model counts; many implementations, my first one included, count only the queue.
+              Position-weighted backpressure (Li &amp; Jabari, 2019) goes further and weighs where along the
+              road each car is.
             </li>
             <li>
-              <span className="text-ink">Pay for the switch.</span> Hold each green at least 10 seconds, so the
-              4-second tax buys real green. The proof treats switching as free; real deployments add a minimum
+              <span className="text-ink">Pay for the swap.</span> Keep each green at least 10 seconds, so the
+              4-second tax buys real green. The proof treats swapping as free; real deployments add a minimum
               green for exactly this reason.
             </li>
           </ol>
           <p>
-            Downstream it still counts only cars that are actually stuck; counting moving cars there too makes
-            a busy road ahead look backed up. I call it max-pressure+. Switch the diagram above to it.
+            It still only counts cars that are truly stuck ahead (counting moving ones there makes a busy road
+            look jammed). I call it max-pressure+. Flip the diagram above to it and the staircases start to
+            straighten out.
           </p>
           <p>
             Over the day, a drive north goes from {f1(stops("max-pressure"))} stops to{" "}
             {f1(stops("max-pressure-plus"))}, and south from {f1(stops("max-pressure", "southbound"))} to{" "}
-            {f1(stops("max-pressure-plus", "southbound"))}. The platoon ratio flips from{" "}
-            {platoon("max-pressure").toFixed(2)} to {platoon("max-pressure-plus").toFixed(2)}: anti-waves
-            become weak waves, in every hour. At one intersection, the cliff moves out from Y ≈ 0.8 to about
-            0.9.
+            {f1(stops("max-pressure-plus", "southbound"))}. The arrive-on-green ratio flips from{" "}
+            {platoon("max-pressure").toFixed(2)} to {platoon("max-pressure-plus").toFixed(2)}: working against
+            the traffic becomes a weak wave, in every hour of the day. At one intersection, the cliff moves out
+            from about 0.8 to about 0.9.
           </p>
           <p>
             Is it just the longer minimum green? No. Longer minimums on the textbook rule make it worse (the
             table at the end of the next section). What matters is what it counts.
           </p>
           <p>
-            It isn’t free. Side streets wait longer ({f1(side("max-pressure"))}s → {f1(side("max-pressure-plus"))}
-            s), so total delay per car ends up a little worse than the textbook rule ({f1(delay("max-pressure"))}
-            s → {f1(delay("max-pressure-plus"))}s); max-pressure+ wins on that in only{" "}
-            {hoursBetter("max-pressure-plus", "max-pressure")} of {hourCount} hours. It moves waiting off
-            Spadina and onto the cross streets.
+            It isn’t free, though. Side streets wait longer ({f1(side("max-pressure"))}s →{" "}
+            {f1(side("max-pressure-plus"))}s), so the total waiting per car ends up a little worse than the
+            textbook rule ({f1(delay("max-pressure"))}s → {f1(delay("max-pressure-plus"))}s); max-pressure+ wins
+            on that in only {hoursBetter("max-pressure-plus", "max-pressure")} of {hourCount} hours. It moves
+            the waiting off Spadina and onto the cross streets. And the sensor still beats both.
           </p>
           <Nerds title="max-pressure+">
             <p>
@@ -439,35 +476,40 @@ export default function Home() {
 
         <Section id="numbers" title="the numbers">
           <p>
-            Every point is the mean of 8 seeded runs, each an hour long after a 15-minute warm-up. Pick a
-            measure; tap a controller to pick out its line.
+            For the curious, everything at once. Every point is the average of 8 runs with different random
+            traffic, each an hour long after a 15-minute warm-up.
           </p>
           <p>Across the day:</p>
           <DayResults />
-          <p>As the side streets get busier (9 a.m., every side street’s count scaled from a quarter to double):</p>
+          <p>
+            What if the side streets got busier? Here’s 9 a.m. with every side street’s traffic scaled from a
+            quarter to double:
+          </p>
           <SideResults />
-          <p>Textbook max-pressure’s one knob, the minimum green, at 9 a.m.:</p>
+          <p>
+            And textbook max-pressure’s one knob, the minimum green, at 9 a.m. Longer greens don’t save it:
+          </p>
           <MinGreenTable />
         </Section>
 
         <Section id="meaning" title="what it means">
           <p>
             <span className="text-ink">A proof is a promise about a model.</span> Max-pressure’s promise,
-            queues that don’t grow forever, held up. What its model leaves out, the cost of switching and
-            cars arriving in bunches, is exactly what makes a drive feel good or bad.
+            queues that don’t grow forever, held up. What its model leaves out, the cost of swapping and cars
+            arriving in bunches, is exactly what makes a drive feel good or bad.
           </p>
           <p>
-            <span className="text-ink">You get what you measure.</span> Max-pressure is good at total delay
+            <span className="text-ink">You get what you measure.</span> Max-pressure is good at total waiting
             and bad at stops, because stops aren’t anywhere in its rule.
           </p>
           <p>
-            <span className="text-ink">Seeing early beats thinking hard.</span> The sensor light wins overall
-            ({f1(delay("actuated"))}s per car, {f1(stops("actuated"))} stops north) because its detector sees a
-            car about 2.5 seconds before the stop line. Max-pressure+ gets most of its gain the same way: by
-            counting cars before they stop.
+            <span className="text-ink">Seeing early beats thinking hard.</span> The sensor wins overall (
+            {f1(delay("actuated"))}s per car, {f1(stops("actuated"))} stops north) just because its detector
+            sees a car about 2.5 seconds before the stop line. Max-pressure+ gets most of its gain the same
+            way. So did you, if you beat the light.
           </p>
           <p>
-            <span className="text-ink">A green wave is a choice.</span> The hand-tuned wave is the best drive
+            <span className="text-ink">A green wave is a choice.</span> The hand-timed wave is the best drive
             north by far ({f1(stops("green-wave"))} stops) and one of the worst south (
             {f1(stops("green-wave", "southbound"))}). Somebody has to pick a direction.
           </p>
@@ -480,9 +522,9 @@ export default function Home() {
 
         <Section id="next" title="next">
           <p>
-            Train one. Give a light nothing but the cars around it and a score, let it learn by trial and
-            error on Spadina, and see if it reinvents max-pressure, the sensor light, or something better. And
-            put back what I left out: turns, the streetcar, people walking.
+            Let a light learn. Give it nothing but the cars around it and a score, let it practise on Spadina
+            by trial and error, and see if it reinvents max-pressure, the sensor, or something better. And put
+            back what I left out: turns, the streetcar, people walking.
           </p>
         </Section>
 
