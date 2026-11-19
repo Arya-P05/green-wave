@@ -106,6 +106,12 @@ export default function DelayCurve({
               {s}s
             </span>
           ))}
+          <span className="absolute left-0 text-muted" style={{ top: TOP - 30 }}>
+            wait per car ↑
+          </span>
+          <span className="absolute text-muted" style={{ left: LEFT + w + 20, top: TOP + h + 6 }}>
+            demand →
+          </span>
           {[0.2, 0.6, 1].map((d) => (
             <span key={d} className="absolute -translate-x-1/2 text-muted" style={{ left: x(d), top: TOP + h + 6 }}>
               {d.toFixed(1)}

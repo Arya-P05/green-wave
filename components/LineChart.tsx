@@ -26,6 +26,7 @@ export default function LineChart({
   yMax,
   reference,
   label,
+  yLabel,
 }: {
   xs: number[];
   series: Series[];
@@ -39,6 +40,8 @@ export default function LineChart({
   /** A horizontal guide, e.g. "1 = no coordination". */
   reference?: { y: number; label: string };
   label: string;
+  /** What the y axis measures, written above it. */
+  yLabel?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const width = useWidth(box);
@@ -100,6 +103,11 @@ export default function LineChart({
               {e.label}
             </span>
           ))}
+          {yLabel && (
+            <span className="absolute top-0 text-muted" style={{ left: LEFT + 6 }}>
+              {yLabel} ↑
+            </span>
+          )}
           {reference && (
             <span className="absolute text-muted" style={{ left: LEFT + 6, top: y(reference.y) - 24 }}>
               {reference.label}

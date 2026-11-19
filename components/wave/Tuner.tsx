@@ -5,6 +5,7 @@ import { fixedTime, greenWaveOffsets } from "@/lib/sim/controllers/fixed";
 import { CELL_M, FREE_SPEED } from "@/lib/sim/model";
 import { corridorTiming } from "@/lib/sim/scenario";
 import { spadinaSpec } from "@/lib/spadina";
+import Try from "../Try";
 import Diagram from "./Diagram";
 import { HOURS, PEAK, runFor, spadina } from "./run";
 
@@ -34,6 +35,9 @@ export default function Tuner() {
 
   return (
     <figure className="my-2 grid gap-y-1">
+      <Try look="every car on Spadina for ten minutes. Each line is one car; flat bits are cars waiting at a red.">
+        slide the speed until the dark (northbound) lines run straight through the greens.
+      </Try>
       <label className="grid max-w-[56ch] grid-cols-[auto_1fr] items-center gap-x-[2ch]">
         <span className="tabular-nums">timed for {String(kmh).padStart(2, " ")} km/h</span>
         <input

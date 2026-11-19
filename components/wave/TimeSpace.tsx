@@ -5,6 +5,7 @@ import { controllerFor, KINDS, LABELS } from "@/lib/sim/scenario";
 import type { Kind } from "@/lib/sim/scenario";
 import { spadinaSpec } from "@/lib/spadina";
 import Choice from "../Choice";
+import Try from "../Try";
 import Diagram from "./Diagram";
 import { HOURS, MEASURE, PEAK, runFor, spadina, until, WARMUP } from "./run";
 import type { Car } from "./run";
@@ -39,6 +40,9 @@ export default function TimeSpace({ initial = "max-pressure" }: { initial?: Kind
 
   return (
     <figure className="my-2 grid gap-y-1">
+      <Try look="the same picture, with your choice of brain running all eight lights.">
+        flip between max-pressure and green wave, then tap any line to ride along with that car.
+      </Try>
       <Choice label="controller" options={KINDS} value={kind} onChange={setKind} names={LABELS} />
       <label className="grid max-w-[56ch] grid-cols-[auto_1fr] items-center gap-x-[2ch]">
         <span className="tabular-nums">

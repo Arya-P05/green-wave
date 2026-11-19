@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { byHand, GAME_DEMAND, rivalScore, RIVALS, ROUND_S, ROUNDS, roundStart } from "@/lib/game";
 import { LABELS } from "@/lib/sim/scenario";
 import { useWidth } from "../hooks";
+import Try from "../Try";
 import { intersection } from "./draw";
 
 const SPEED = 6; // simulated seconds per real second
@@ -97,10 +98,10 @@ export default function BeTheLight() {
 
   return (
     <figure className="my-2 grid gap-y-1">
-      <p className="text-muted">
-        <span className="text-ink">Try this:</span> you’re the light. Tap the junction (or press switch) to
-        give the other street green. Three rounds, new traffic each time; lowest total wins.
-      </p>
+      <Try look="the same junction from above, but now you’re its brain.">
+        tap the junction (or press switch) to give the other street green. Three rounds, new traffic each
+        time; lowest total wins.
+      </Try>
       <div className="grid items-start gap-x-2 gap-y-1 md:grid-cols-[minmax(0,336px)_minmax(0,1fr)]">
         <div ref={box} className="w-full">
           <canvas

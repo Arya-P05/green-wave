@@ -8,6 +8,7 @@ import { KINDS, LABELS } from "@/lib/sim/scenario";
 import type { Kind } from "@/lib/sim/scenario";
 import Choice from "../Choice";
 import LineChart from "../LineChart";
+import Try from "../Try";
 
 const experiment = data as Experiment;
 const MEASURE_KEYS = Object.keys(MEASURES) as Measure[];
@@ -36,6 +37,9 @@ function Sweep({
   const stops = measure === "stopsNorth" || measure === "stopsSouth";
   return (
     <figure className="my-2 grid gap-y-1">
+      <Try look="one line per brain. Lower is better, except for “arrive on green” (the platoon ratio), where above 1 means a wave.">
+        pick a measure, then tap a brain to pick out its line.
+      </Try>
       <Choice label="measure" options={MEASURE_KEYS} value={measure} onChange={setMeasure} names={MEASURE_NAMES} />
       <LineChart
         xs={xs}
@@ -46,6 +50,7 @@ function Sweep({
         yFormat={(v) => (platoon || stops ? v.toFixed(1) : `${Math.round(v)}${m.unit}`)}
         reference={platoon ? { y: 1, label: "1 = lights ignore each other" } : undefined}
         label={`${m.label} ${name}, one line per controller`}
+        yLabel={m.label}
       />
       <Choice label="highlight" options={KINDS} value={focus} onChange={setFocus} names={LABELS} />
       <figcaption className="text-muted">{caption}</figcaption>
@@ -92,7 +97,7 @@ export function MinGreenTable() {
           <th className="text-left font-normal">min green</th>
           <th className="text-right font-normal">delay</th>
           <th className="text-right font-normal">nb trip</th>
-          <th className="text-right font-normal">platoon nb</th>
+          <th className="text-right font-normal">arrive on green</th>
         </tr>
       </thead>
       <tbody>

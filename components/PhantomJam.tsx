@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { meanSpeed, ring, RING_CELLS, ringKmh } from "@/lib/ring";
 import type { Sim } from "@/lib/sim/sim";
 import { sizeCanvas, token, useReducedMotion, useVisible, useWidth } from "./hooks";
+import Try from "./Try";
 
 const SPEED = 8; // ticks per real second
 const ROWS = 120; // ticks of history on the chart
@@ -130,10 +131,10 @@ export default function PhantomJam() {
 
   return (
     <figure className="my-2 grid gap-y-1">
-      <p className="text-muted">
-        <span className="text-ink">Try this:</span> slide the cars up past about 40, then tap the road to make
-        one driver brake. Watch a jam appear with nothing causing it.
-      </p>
+      <Try look="a loop of road with no lights, no crashes, nothing in the way. Just cars.">
+        slide the cars up past about 40, then tap the road to make one driver brake. Watch a jam appear out
+        of nothing.
+      </Try>
       <label className="grid max-w-[56ch] grid-cols-[auto_1fr] items-center gap-x-[2ch]">
         <span className="tabular-nums">{String(cars).padStart(2, " ")} cars</span>
         <input

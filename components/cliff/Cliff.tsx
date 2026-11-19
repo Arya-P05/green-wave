@@ -7,6 +7,7 @@ import type { CliffData } from "@/lib/cliff";
 import { LABELS } from "@/lib/sim/scenario";
 import { webster } from "@/lib/sim/webster";
 import Choice from "../Choice";
+import Try from "../Try";
 import DelayCurve from "./DelayCurve";
 import Intersection from "./Intersection";
 
@@ -23,6 +24,9 @@ export default function Cliff() {
 
   return (
     <figure className="my-2 grid gap-y-1">
+      <Try look="one intersection from above (each dash is a car), and how long a car waits there on average.">
+        drag the demand up slowly past 0.8, then switch brains and see who falls off first.
+      </Try>
       <div className="grid items-center gap-x-2 gap-y-1 md:grid-cols-[minmax(0,336px)_minmax(0,1fr)]">
         <Intersection demand={demand} kind={kind} />
         <DelayCurve data={cliff} demand={demand} kind={kind} />
@@ -45,7 +49,7 @@ export default function Cliff() {
         <Choice label="controller" options={CLIFF_KINDS} value={kind} onChange={setKind} names={LABELS} />
       </div>
       <p className="tabular-nums">
-        Fixed-time runs Webster&apos;s plan for this demand: a <span className="text-ink">{plan.cycle}s</span> cycle,{" "}
+        The timer runs Webster&apos;s plan for this demand: a <span className="text-ink">{plan.cycle}s</span> cycle,{" "}
         {plan.greens[0]}s green for the main street, {plan.greens[1]}s for the side street, and{" "}
         {plan.cycle - plan.greens[0] - plan.greens[1]}s of amber and all-red.
       </p>

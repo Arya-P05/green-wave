@@ -31,7 +31,7 @@ export const MEASURES = {
   northbound: { label: "northbound trip", unit: "s", get: (p: Point) => p.northbound.travelTime },
   southbound: { label: "southbound trip", unit: "s", get: (p: Point) => p.southbound.travelTime },
   side: { label: "side-street delay", unit: "s", get: (p: Point) => p.side },
-  platoon: { label: "platoon ratio, nb", unit: "", get: (p: Point) => p.northbound.platoon },
+  platoon: { label: "arrive on green, north", unit: "", get: (p: Point) => p.northbound.platoon },
 } as const;
 
 export type Measure = keyof typeof MEASURES;

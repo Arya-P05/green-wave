@@ -4,6 +4,7 @@ import data from "@/data/spadina.json";
 import { hours } from "@/lib/spadina";
 import type { SpadinaData } from "@/lib/spadina";
 import LineChart from "./LineChart";
+import Try from "./Try";
 
 const spadina = data as SpadinaData;
 const day = hours(spadina);
@@ -15,6 +16,7 @@ export default function Demand() {
   const side = (h: (typeof day)[number]) => Math.max(...h.cross.map((c) => Math.max(c.eastbound, c.westbound)));
   return (
     <figure className="my-2 grid gap-y-1">
+      <Try look="how many cars the City counted, hour by hour. This is the traffic every demo here uses." />
       <LineChart
         xs={xs}
         xTicks={[6, 9, 12, 15, 19]}
@@ -27,6 +29,7 @@ export default function Demand() {
         ]}
         focus="nb"
         label="Cars per hour per lane on Spadina through the day"
+        yLabel="cars per hour, per lane"
       />
       <figcaption className="text-muted">
         Cars per hour per lane, {spadina.source.date}, from the City of Toronto&apos;s counts at{" "}

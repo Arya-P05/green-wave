@@ -157,27 +157,33 @@ export default function Diagram({
   };
 
   return (
-    <div ref={box} className="relative w-full" style={{ height: HEIGHT }}>
-      {spadina.lights.map((l, i) => (
-        <span key={l.short} className="absolute left-0 text-muted" style={{ top: y(lights[i]) - 12 }}>
-          {l.short}
-        </span>
-      ))}
-      <canvas ref={canvas} className="absolute top-0" style={{ left: LEFT }} role="img" aria-label={label} />
-      <canvas
-        ref={overlay}
-        className={`absolute top-0 ${onPick ? "cursor-crosshair" : "pointer-events-none"}`}
-        style={{ left: LEFT }}
-        onClick={pick}
-        aria-hidden
-      />
-      {plot > 0 &&
-        Array.from({ length: Math.floor(seconds / 120) + 1 }, (_, i) => (
-          <span key={i} className="absolute text-muted" style={{ left: LEFT + i * 120 * (plot / seconds), top: h + 6 }}>
-            {i * 2}
-            {i === 0 ? " min" : ""}
+    <div>
+      <div className="flex justify-between text-muted" style={{ paddingLeft: LEFT }}>
+        <span>↑ north</span>
+        <span>time →</span>
+      </div>
+      <div ref={box} className="relative w-full" style={{ height: HEIGHT }}>
+        {spadina.lights.map((l, i) => (
+          <span key={l.short} className="absolute left-0 text-muted" style={{ top: y(lights[i]) - 12 }}>
+            {l.short}
           </span>
         ))}
+        <canvas ref={canvas} className="absolute top-0" style={{ left: LEFT }} role="img" aria-label={label} />
+        <canvas
+          ref={overlay}
+          className={`absolute top-0 ${onPick ? "cursor-crosshair" : "pointer-events-none"}`}
+          style={{ left: LEFT }}
+          onClick={pick}
+          aria-hidden
+        />
+        {plot > 0 &&
+          Array.from({ length: Math.floor(seconds / 120) + 1 }, (_, i) => (
+            <span key={i} className="absolute text-muted" style={{ left: LEFT + i * 120 * (plot / seconds), top: h + 6 }}>
+              {i * 2}
+              {i === 0 ? " min" : ""}
+            </span>
+          ))}
+      </div>
     </div>
   );
 }
