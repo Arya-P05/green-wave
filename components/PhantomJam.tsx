@@ -60,6 +60,7 @@ export default function PhantomJam() {
     const amber = rgb(token("amber"));
     const red = rgb(token("red"));
     const faint = token("faint");
+    const muted = token("muted");
     // 0 at full speed, 1 standing still: ink, then amber, then red.
     const color = (h: number) => (h < 0.5 ? mix(ink, amber, h * 2) : mix(amber, red, h * 2 - 1));
     const heat = new Map<number, number>();
@@ -80,6 +81,13 @@ export default function PhantomJam() {
         lctx.arc(c, c, r, 0, Math.PI * 2);
         lctx.stroke();
       }
+      // One fixed tick across the road at the top, so the eye has something that doesn't move.
+      lctx.strokeStyle = muted;
+      lctx.lineWidth = 1;
+      lctx.beginPath();
+      lctx.moveTo(c, c - outer - 7);
+      lctx.lineTo(c, c - inner + 7);
+      lctx.stroke();
       s.cells.forEach((lane, l) =>
         lane.forEach((car, pos) => {
           if (!car) return;
