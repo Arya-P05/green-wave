@@ -10,7 +10,8 @@
     "lint": "eslint --max-warnings 0 .",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"lib/**/*.test.ts\"",
-    "data:cliff": "node scripts/cliff.ts"
+    "data:cliff": "node scripts/cliff.ts",
+    "data:toronto": "node scripts/toronto.ts"
   },
   "dependencies": {
     "next": "^16.4.6",
