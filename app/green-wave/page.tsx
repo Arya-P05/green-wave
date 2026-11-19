@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import BeTheLight from "@/components/green-wave/cliff/BeTheLight";
 import Cliff from "@/components/green-wave/cliff/Cliff";
 import Demand from "@/components/green-wave/Demand";
 import Nerds from "@/components/shared/Nerds";
 import PhantomJam from "@/components/green-wave/PhantomJam";
 import { DayResults, MinGreenTable, SideResults } from "@/components/green-wave/results/Results";
-import Signature from "@/components/shared/Signature";
+import { Meta, order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
 import type { Entry } from "@/components/shared/Toc";
 import TimeSpace from "@/components/green-wave/wave/TimeSpace";
@@ -56,19 +55,6 @@ const LEDGER: [Kind, string][] = [
   ["actuated", "a sensor"],
   ["green-wave", "a hand-timed green wave"],
 ];
-
-const order = (i: number) => ({ "--i": i }) as CSSProperties;
-
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-  return (
-    <section id={id} aria-labelledby={`${id}-title`} className="mt-4 grid scroll-mt-4 gap-y-1">
-      <h2 id={`${id}-title`} className="text-muted">
-        {title}
-      </h2>
-      {children}
-    </section>
-  );
-}
 
 export default function Home() {
   const [pLo, pHi] = platoonRange("max-pressure");
@@ -569,19 +555,8 @@ export default function Home() {
           </ol>
         </Section>
 
-        <dl className="mt-4 grid grid-cols-[8ch_minmax(0,1fr)] text-muted">
-          {META.map(([k, v]) => (
-            <div key={k} className="contents">
-              <dt>{k}</dt>
-              <dd>{v}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <footer className="mt-2 flex items-end gap-[2ch]">
-          <Signature />
-          <p className="text-muted italic">remember life</p>
-        </footer>
+        <Meta rows={META} />
+        <SignOff />
       </article>
     </main>
   );
