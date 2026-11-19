@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #faf8f3;
+  --color-ink: #1f1d1a;
+  --color-muted: #6e6a63;
+  --color-faint: #d9d4ca;
+
+  /* The only colours: the three signal aspects. */
+  --color-red: #c8442f;
+  --color-amber: #d9a21b;
+  --color-green: #3f8a5a;
+
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --text-base: 15px;
+  --text-base--line-height: 24px;
+  --spacing: 24px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  max-width: 64ch;
+}
+
+::selection {
+  background: var(--color-faint);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-faint);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease;
+}
+
+a:hover {
+  text-decoration-color: var(--color-green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
