@@ -10,15 +10,37 @@ import { MIN_GREEN_S } from "./actuated.ts";
  */
 export const maxPressure = maxPressureWith(MIN_GREEN_S);
 
-/** The same rule with a different minimum green, for the sensitivity sweep. */
-export function maxPressureWith(minGreen: number): Controller {
+/** Who counts as waiting upstream: only stopped cars, or every car on the link. */
+export type Upstream = "stopped" | "all";
+
+/** Minimum green for max-pressure+: long enough that each switch's 4 s of clearance buys real green. */
+export const PLUS_MIN_GREEN_S = 10;
+
+/**
+ * Max-pressure+, the fix for the two ways the textbook rule fails on a real
+ * street. It counts every car on the road toward the light, moving or not, so
+ * an arriving platoon pulls the green toward itself before it has to stop.
+ * This is the vehicle count of Varaiya's own store-and-forward model, and the
+ * idea behind position-weighted backpressure (Li & Jabari 2019), which values
+ * cars spread along the link, not just the queue. Downstream it still counts
+ * only cars that are actually stuck. And it holds each green for 10 s, because
+ * the proof assumes switching is free and here every switch costs 4 s.
+ */
+export const maxPressurePlus: Controller = {
+  ...maxPressureWith(PLUS_MIN_GREEN_S, "all"),
+  name: "max-pressure+",
+};
+
+/** The rule with its knobs exposed: the minimum green, and who counts upstream. */
+export function maxPressureWith(minGreen: number, upstream: Upstream = "stopped"): Controller {
+  const waiting = (sim: Sim, link: number) => (upstream === "all" ? sim.count(link) : sim.queue(link));
   return {
     name: "max-pressure",
     choose(sim, node) {
       const s = sim.nodes[node];
       if (sim.greenFor(node) < minGreen) return s.phase;
       const pressures = sim.net.nodes[node].phases.map((links) =>
-        links.reduce((p, l) => p + sim.queue(l) - downstream(sim, l), 0),
+        links.reduce((p, l) => p + waiting(sim, l) - downstream(sim, l), 0),
       );
       let best = s.phase;
       pressures.forEach((p, i) => {

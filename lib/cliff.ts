@@ -10,7 +10,7 @@ export const CLIFF_APPROACH = 60; // cells: 450 m of road on each side
 export const MAIN_SHARE = 0.6;
 
 /** One light has no neighbours to coordinate with, so the green wave is just fixed-time. */
-export const CLIFF_KINDS = ["fixed", "actuated", "max-pressure"] as const satisfies readonly Kind[];
+export const CLIFF_KINDS = ["fixed", "actuated", "max-pressure", "max-pressure-plus"] as const satisfies readonly Kind[];
 
 export const DEMANDS = Array.from({ length: 17 }, (_, i) => Math.round((0.2 + i * 0.05) * 100) / 100);
 

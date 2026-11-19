@@ -1,13 +1,13 @@
 import { actuated } from "./controllers/actuated.ts";
 import { fixedTime, greenWaveOffsets } from "./controllers/fixed.ts";
-import { maxPressure } from "./controllers/max-pressure.ts";
+import { maxPressure, maxPressurePlus } from "./controllers/max-pressure.ts";
 import { FREE_SPEED, SATURATION_FLOW } from "./model.ts";
 import type { Network } from "./model.ts";
 import type { CorridorIndex, CorridorSpec } from "./network.ts";
 import type { Controller, Sim, Trip } from "./sim.ts";
 import { webster } from "./webster.ts";
 
-export const KINDS = ["fixed", "green-wave", "actuated", "max-pressure"] as const;
+export const KINDS = ["fixed", "green-wave", "actuated", "max-pressure", "max-pressure-plus"] as const;
 export type Kind = (typeof KINDS)[number];
 
 export const LABELS: Record<Kind, string> = {
@@ -15,6 +15,7 @@ export const LABELS: Record<Kind, string> = {
   "green-wave": "green wave",
   actuated: "actuated",
   "max-pressure": "max-pressure",
+  "max-pressure-plus": "max-pressure+",
 };
 
 /**
@@ -38,6 +39,7 @@ export function waveDirection(spec: CorridorSpec): "northbound" | "southbound" {
 export function controllerFor(kind: Kind, spec: CorridorSpec, net: Network): Controller {
   if (kind === "actuated") return actuated;
   if (kind === "max-pressure") return maxPressure;
+  if (kind === "max-pressure-plus") return maxPressurePlus;
   const { cycle, greens } = corridorTiming(spec);
   const xs = net.nodes.map((n) => n.x);
   let offsets = xs.map(() => 0);

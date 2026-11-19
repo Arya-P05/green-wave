@@ -40,7 +40,7 @@ function Sweep({
         xs={xs}
         xTicks={xTicks}
         xFormat={xFormat}
-        series={KINDS.map((k) => ({ key: k, label: LABELS[k], values: results[k].map(m.get) }))}
+        series={KINDS.filter((k) => k in results).map((k) => ({ key: k, label: LABELS[k], values: results[k].map(m.get) }))}
         focus={focus}
         yFormat={(v) => (platoon ? v.toFixed(1) : `${Math.round(v)}${m.unit}`)}
         reference={platoon ? { y: 1, label: "1 = lights ignore each other" } : undefined}

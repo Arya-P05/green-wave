@@ -3,12 +3,13 @@ import test from "node:test";
 import { CLEARANCE_S } from "../model.ts";
 import { corridor, MAIN, SIDE } from "../network.ts";
 import type { CorridorSpec } from "../network.ts";
-import { controllerFor } from "../scenario.ts";
+import { controllerFor, metrics } from "../scenario.ts";
 import { Sim } from "../sim.ts";
 import { webster } from "../webster.ts";
 import { actuated, MIN_GREEN_S } from "./actuated.ts";
 import { fixedTime } from "./fixed.ts";
-import { maxPressure } from "./max-pressure.ts";
+import { maxPressure, maxPressurePlus } from "./max-pressure.ts";
+import { cliff } from "../../cliff.ts";
 
 test("Webster: C = (1.5L + 5) / (1 - Y), greens split by y", () => {
   // Two phases, L = 8 s: C = (12 + 5) / (1 - 0.5) = 34 s, usable green 26 s.
@@ -89,4 +90,19 @@ test("max-pressure serves a side queue once it outweighs the main street, never 
   const greens = main.join("").split(/amber|red/).filter(Boolean).map((g) => g.length / 5);
   for (const g of greens.slice(0, -1)) assert.ok(g >= MIN_GREEN_S, `green of ${g}s`);
   assert.ok(sim.trips.some((t) => t.origin === network.nodes[0].phases[SIDE][0]));
+});
+
+test("max-pressure+ survives a busy intersection that breaks the textbook rule", () => {
+  const delay = (ctl: typeof maxPressure) => {
+    let total = 0;
+    for (let seed = 1; seed <= 3; seed++) {
+      const { network, index } = cliff(0.85);
+      const sim = new Sim(network, ctl, { seed, warmup: 600 }).run(3000);
+      total += metrics(sim, index, 600).delay;
+    }
+    return total / 3;
+  };
+  const textbook = delay(maxPressure);
+  const plus = delay(maxPressurePlus);
+  assert.ok(plus < textbook / 2, `plus ${plus} vs textbook ${textbook}`);
 });
