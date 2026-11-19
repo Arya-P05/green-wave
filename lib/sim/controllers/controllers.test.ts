@@ -108,11 +108,13 @@ test("max-pressure+ survives a busy intersection that breaks the textbook rule",
 });
 
 test("be the light: a light that never switches loses to every controller", async () => {
-  const { byHand, gameStart, rivalScore, RIVALS } = await import("../../game.ts");
-  const you = byHand();
-  const { sim, end } = gameStart(you);
-  you.want = sim.nodes[0].phase;
-  sim.run(end);
-  for (const k of RIVALS) assert.ok(sim.delay > rivalScore(k), k);
-  assert.equal(rivalScore("actuated"), rivalScore("actuated"), "the rivals' runs are deterministic");
+  const { byHand, roundStart, rivalScore, RIVALS } = await import("../../game.ts");
+  for (const seed of [1, 2]) {
+    const you = byHand();
+    const { sim, end } = roundStart(you, seed);
+    you.want = sim.nodes[0].phase;
+    sim.run(end);
+    for (const k of RIVALS) assert.ok(sim.delay > rivalScore(k, seed), `${k}, seed ${seed}`);
+  }
+  assert.equal(rivalScore("actuated", 3), rivalScore("actuated", 3), "a round's traffic is fixed by its seed");
 });
