@@ -44,7 +44,7 @@ export default function PhantomJam() {
     play.current = { pace, paused };
   }, [pace, paused]);
   const size = Math.min(MAX_LOOP, width);
-  const outer = size / 2 - 18; // room outside the road for trees
+  const outer = size / 2 - 8;
   const inner = outer - 11;
   // With reduced motion each brake redraws a still of what happens next.
   const redraw = still ? braked : 0;
@@ -70,46 +70,16 @@ export default function PhantomJam() {
     const lctx = sizeCanvas(loop.current, size, size);
     const c = size / 2;
     const radius = [outer, inner];
-
-    // The ground, drawn once: the road, a dashed line between the lanes, a start line at the top, and
-    // trees that stay put, so you can see the cars moving past them rather than the ring turning.
-    const ground = document.createElement("canvas");
-    const g = sizeCanvas(ground, size, size);
-    const mid = (outer + inner) / 2;
-    g.strokeStyle = faint;
-    g.lineWidth = outer - inner + 9;
-    g.beginPath();
-    g.arc(c, c, mid, 0, Math.PI * 2);
-    g.stroke();
-    g.strokeStyle = token("canvas");
-    g.lineWidth = 1;
-    g.setLineDash([4, 5]);
-    g.beginPath();
-    g.arc(c, c, mid, 0, Math.PI * 2);
-    g.stroke();
-    g.setLineDash([]);
-    g.strokeStyle = token("muted");
-    g.lineWidth = 2;
-    g.beginPath();
-    g.moveTo(c, c - outer - 6);
-    g.lineTo(c, c - inner + 6);
-    g.stroke();
-    g.fillStyle = token("green");
-    g.globalAlpha = 0.35;
-    const trees: [number, number][] = [
-      [0.07, outer + 11], [0.19, outer + 12], [0.33, outer + 10], [0.46, outer + 12], [0.58, outer + 11],
-      [0.71, outer + 10], [0.86, outer + 12], [0.12, inner - 22], [0.52, inner - 30], [0.78, inner - 18],
-    ];
-    for (const [turn, r] of trees) {
-      const angle = turn * Math.PI * 2 - Math.PI / 2;
-      g.beginPath();
-      g.arc(c + r * Math.cos(angle), c + r * Math.sin(angle), 4, 0, Math.PI * 2);
-      g.fill();
-    }
     const len = ((2 * Math.PI * inner) / RING_CELLS) * 0.75;
     const drawLoop = (a: number) => {
       lctx.clearRect(0, 0, size, size);
-      lctx.drawImage(ground, 0, 0, size, size);
+      lctx.strokeStyle = faint;
+      lctx.lineWidth = 9;
+      for (const r of radius) {
+        lctx.beginPath();
+        lctx.arc(c, c, r, 0, Math.PI * 2);
+        lctx.stroke();
+      }
       s.cells.forEach((lane, l) =>
         lane.forEach((car, pos) => {
           if (!car) return;
