@@ -6,8 +6,13 @@ const g = geometry(60, 64);
 const at = (out: Float32Array, fx: number, fy: number) => out[Math.floor(fy * g.h) * g.w + Math.floor(fx * g.w)];
 
 test("the face is in the middle of the picture, with empty space at the top corners", () => {
-  assert.ok(!Number.isNaN(g.pos[(Math.floor(0.4 * g.h) * g.w + Math.floor(0.5 * g.w)) * 3]));
+  assert.equal(g.cover[Math.floor(0.4 * g.h) * g.w + Math.floor(0.5 * g.w)], 1);
+  assert.equal(g.cover[0], 0);
   assert.ok(Number.isNaN(g.pos[0]));
+});
+
+test("the outline has pixels that are partly covered, so it isn't stair-stepped", () => {
+  assert.ok(g.cover.some((c) => c > 0.05 && c < 0.95));
 });
 
 test("light from the camera lights the face; light from behind leaves it dark and the backdrop bright", () => {

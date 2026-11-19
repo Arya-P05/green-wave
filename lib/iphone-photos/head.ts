@@ -58,28 +58,42 @@ export type Geometry = {
   /** Per pixel: hit point (xyz) and surface normal (xyz); NaN where the ray missed. */
   pos: Float32Array;
   nrm: Float32Array;
+  /** How much of the pixel the head covers, 0–1, so the outline is smooth instead of stair-stepped. */
+  cover: Float32Array;
 };
 
 /** March a ray from in front of the face, straight back, for every pixel. */
 export function geometry(w: number, h: number): Geometry {
   const pos = new Float32Array(w * h * 3).fill(NaN);
   const nrm = new Float32Array(w * h * 3).fill(NaN);
+  const cover = new Float32Array(w * h);
   const e = 0.002;
+  const pixel = (VIEW.x1 - VIEW.x0) / w;
   for (let j = 0; j < h; j++) {
     const y = VIEW.y1 - ((j + 0.5) / h) * (VIEW.y1 - VIEW.y0);
     for (let i = 0; i < w; i++) {
       const x = VIEW.x0 + ((i + 0.5) / w) * (VIEW.x1 - VIEW.x0);
       let z = 2;
       let hit = false;
+      // A ray that just misses still passes close to the edge: keep where it came closest.
+      let near = Infinity;
+      let nearZ = 0;
       for (let s = 0; s < 80 && z > -1.5; s++) {
         const d = sdf(x, y, z);
+        if (d < near) {
+          near = d;
+          nearZ = z;
+        }
         if (d < 0.001) {
           hit = true;
           break;
         }
-        z -= d;
+        z -= Math.max(d, 0.004);
       }
-      if (!hit) continue;
+      const covered = hit ? 1 : Math.max(0, 1 - near / pixel);
+      if (covered <= 0) continue;
+      if (!hit) z = nearZ;
+      cover[j * w + i] = covered;
       const k = (j * w + i) * 3;
       pos[k] = x;
       pos[k + 1] = y;
@@ -98,7 +112,7 @@ export function geometry(w: number, h: number): Geometry {
       nrm[k + 2] = nz / l;
     }
   }
-  return { w, h, pos, nrm };
+  return { w, h, pos, nrm, cover };
 }
 
 export type Light = {
@@ -118,7 +132,8 @@ export function direction({ azimuth, elevation }: Light): V {
 }
 
 /**
- * How bright each pixel is, 0–1, plus the background. A big light wraps
+ * How bright each pixel is, 0–1 (edge pixels already blended with the
+ * background), and the background's own brightness. A big light wraps
  * around the curve of the face and casts shadows with soft edges; a small one
  * stops dead at the edge of its shadow.
  */
@@ -130,12 +145,14 @@ export function shade(g: Geometry, light: Light, out: Float32Array): number {
   const ambient = 0.06 + 0.06 * light.size;
   // From behind, light skims the edges of the face (the rim you see in backlit photos).
   const behind = Math.max(0, -lz);
+  // The backdrop: behind a backlit face you're looking toward the light, so it's bright.
+  const bg = Math.min(1, 0.6 + 0.4 * Math.max(0, -lz));
   const n = g.w * g.h;
   for (let p = 0; p < n; p++) {
     const q = p * 3;
     const x = g.pos[q];
     if (Number.isNaN(x)) {
-      out[p] = -1;
+      out[p] = bg;
       continue;
     }
     const nx = g.nrm[q];
@@ -164,9 +181,9 @@ export function shade(g: Geometry, light: Light, out: Float32Array): number {
     // Some light always bounces in from the sky above and the ground below.
     const fill = ambient + 0.07 * (0.5 + 0.5 * ny);
     const rim = behind * Math.pow(1 - Math.max(0, nz), 4) * 0.7;
-    out[p] = Math.min(1, fill + 0.95 * dif * sh + rim);
+    const face = Math.min(1, fill + 0.95 * dif * sh + rim);
+    const c = g.cover[p];
+    out[p] = face * c + bg * (1 - c);
   }
-  // The backdrop: behind a backlit face you're looking toward the light, so it's bright.
-  const toward = Math.max(0, -lz);
-  return Math.min(1, 0.6 + 0.4 * toward);
+  return bg;
 }
