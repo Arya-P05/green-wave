@@ -110,14 +110,16 @@ export default function Home() {
           {/* <!-- ARYA-TWEAK --> */}
           <p>
             I grew up around Toronto, and Spadina was how we got downtown. I remember sitting in the back seat
-            counting red lights from the lake up to College, pretty sure the city was doing it on purpose.
+            counting red lights from the lake up to College, half convinced the city had timed them to catch us.
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
           <p>
             What I wanted was the opposite: a <span className="text-ink">green wave</span>. That’s when the
             lights are timed so that once you catch one green, the next one turns green just as you get there,
-            and the next, all the way up the street. Green waves are real. Somebody sets them up by hand,
-            usually a traffic engineer with a spreadsheet.
+            and the next, all the way up the street. Turns out, when I looked into it during my rabbit hole, green waves are actually
+            real. What surprised me is how they get made: mostly by hand. A traffic engineer sits down with a
+            spreadsheet, works out the timings light by light, and that’s the plan until someone redoes it.
+            By hand! In this day and age! There had to be a better way.
           </p>
           <p>
             Then I found out researchers have a light that needs no spreadsheet. It’s called{" "}
@@ -128,9 +130,8 @@ export default function Home() {
           </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
-            I’m a software engineer in San Francisco, not a traffic engineer, so this is me learning in
-            public. Everything below runs in your browser, and every number comes from a simulation you can
-            poke.
+            I’m by no means a traffic engineer. I just wanted to experiment and nerd out, so take all of this
+            as me learning as I go.
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
         </Section>
@@ -144,7 +145,7 @@ export default function Home() {
           <p>
             Every time it swaps turns, it pays a tax: 3 seconds of amber, then 1 second where every direction
             is red so the last car can clear the box. That’s 4 seconds where nobody moves, however many people
-            are waiting. Keep that tax in mind; it comes back to bite.
+            are waiting. Keep those 4 seconds in mind, because they end up mattering a lot later on.
           </p>
           <p>The only question a light ever answers is “whose turn is it?” There are three kinds of brain:</p>
           <ul className="grid gap-y-1">
