@@ -8,6 +8,7 @@ One Next.js site, one post per route.
 |---|---|---|
 | `/` | the index | |
 | `/green-wave` | green wave | Can traffic lights find the green wave on their own? |
+| `/sliding-doors` | sliding doors | How do pickleball rallies really get won? |
 
 ```
 npm install
@@ -72,3 +73,30 @@ npm run experiment     # rerun the experiment into data/green-wave/experiment.js
 Traffic counts are from the City of Toronto's open data; see
 `data/green-wave/README.md`. Contains information licensed under the Open
 Government Licence – Toronto. Lane counts © OpenStreetMap contributors, ODbL.
+
+## sliding doors
+
+How do pickleball rallies really get won? A pretend doubles court where every
+shot is a choice plus a roll of the dice, tuned to published 4.0-level stats,
+then replayed from any moment to see which decisions actually matter.
+
+```
+npm run pickleball:calibrate    # the model's stats next to the published ones
+npm run pickleball:experiment   # rerun into data/pickleball/results.json (~1 min)
+```
+
+- `lib/pickleball`: the court (`court.ts`), the tuned odds (`params.ts`), one
+  rally shot by shot (`rally.ts`), the "sensible 4.0" players and the habit
+  variants (`policy.ts`), the calibration stats (`stats.ts`), replays with
+  shared seeds and decision costs (`value.ts`), and whole games with side-out
+  scoring (`game.ts`). `calibration.test.ts` holds the model to the published
+  ranges.
+- `components/pickleball`: the Rewind demo (`Rewind.tsx`, drawing in
+  `court.ts`, playback in `play.ts`, replays in `ghosts.worker.ts`), the
+  no-man's land chart (`NoMansLand.tsx`) and the decision and habit tables
+  (`Ledger.tsx`).
+- `docs/pickleball/CONCEPTS.md`: the research notes and the three pitches.
+  `docs/pickleball/FINDINGS.md`: what the experiment found, with the numbers.
+
+The real-world stats and their sources are cited in the post's notes. Every
+simulated number in the post is read from `data/pickleball/results.json`.
