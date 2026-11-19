@@ -27,18 +27,35 @@ const OUT = new URL("../data/spadina.json", import.meta.url);
  * Wellington St (between King and Front) and the minor signals north of
  * Dundas were not counted that day, so they are not in the model.
  * Listed south to north.
+ *
+ * Lanes are the approach lanes at the stop line (turn lanes included, since
+ * the counts include turning cars), read from OpenStreetMap via the Overpass
+ * API on 18 Nov 2026: the way nearest each intersection on each side, its
+ * `lanes:forward` / `lanes:backward` tags, or `lanes` split evenly on a
+ * two-way street with no per-direction tags. OSM way ids are noted per street.
  */
 const LIGHTS = [
-  { countId: "112535", short: "Fort York", crossLanes: 2 },
-  { countId: "112537", short: "Front", crossLanes: 2 },
-  { countId: "112536", short: "King", crossLanes: 1 },
-  { countId: "112538", short: "Adelaide", crossLanes: 2 },
-  { countId: "112540", short: "Richmond", crossLanes: 2 },
-  { countId: "112542", short: "Queen", crossLanes: 1 },
-  { countId: "112539", short: "Dundas", crossLanes: 1 },
-  { countId: "112541", short: "College", crossLanes: 1 },
+  // EB: Fort York Blvd 299158323, oneway, lanes=2 (left|none). WB: Bremner Blvd 219144645, oneway, lanes=3 (left|left|through;right).
+  { countId: "112535", short: "Fort York", lanes: { eastbound: 2, westbound: 3 } },
+  // EB: 334797593 lanes:forward=2. WB: 1218024093 lanes:backward=3 (left|left|through;right).
+  { countId: "112537", short: "Front", lanes: { eastbound: 2, westbound: 3 } },
+  // EB: 1381914106 lanes:forward=1 (King St transit priority corridor). WB: 34386966 lanes=4, two-way, so 2.
+  { countId: "112536", short: "King", lanes: { eastbound: 1, westbound: 2 } },
+  // One-way eastbound: 1196248421 lanes=3 (left||). No westbound approach.
+  { countId: "112538", short: "Adelaide", lanes: { eastbound: 3, westbound: 1 } },
+  // One-way westbound: 203841007 lanes=3 (left|through|through;right). No eastbound approach.
+  { countId: "112540", short: "Richmond", lanes: { eastbound: 1, westbound: 3 } },
+  // 5686852 / 220921559 lanes=4, two-way (streetcar in mixed traffic), so 2 each.
+  { countId: "112542", short: "Queen", lanes: { eastbound: 2, westbound: 2 } },
+  // 34614458 / 4651746 lanes=4, two-way, so 2 each.
+  { countId: "112539", short: "Dundas", lanes: { eastbound: 2, westbound: 2 } },
+  // EB: 1556820636 lanes:forward=1. WB: 277877819 lanes:backward=1.
+  { countId: "112541", short: "College", lanes: { eastbound: 1, westbound: 1 } },
 ];
-/** Spadina has two general traffic lanes each way beside the streetcar right-of-way. */
+/**
+ * Spadina has two general traffic lanes each way beside the streetcar
+ * right-of-way (OSM: each carriageway lanes=2, e.g. 30759229, 5686851).
+ */
 const MAIN_LANES = 2;
 
 /** Split one CSV line, honouring double quotes. */
@@ -93,8 +110,8 @@ const bins: Bin[] = starts.map((start) => {
     northbound: perSecond(mean(LIGHTS.map((l) => approach(row(l.countId), "s"))), MAIN_LANES),
     southbound: perSecond(mean(LIGHTS.map((l) => approach(row(l.countId), "n"))), MAIN_LANES),
     cross: LIGHTS.map((l) => ({
-      eastbound: perSecond(approach(row(l.countId), "w"), l.crossLanes),
-      westbound: perSecond(approach(row(l.countId), "e"), l.crossLanes),
+      eastbound: perSecond(approach(row(l.countId), "w"), l.lanes.eastbound),
+      westbound: perSecond(approach(row(l.countId), "e"), l.lanes.westbound),
     })),
   };
 });
@@ -127,7 +144,7 @@ const data: SpadinaData = {
     date: DATE,
     countIds: LIGHTS.map((l) => l.countId),
   },
-  lanes: { main: MAIN_LANES, cross: LIGHTS.map((l) => l.crossLanes) },
+  lanes: { main: MAIN_LANES, cross: LIGHTS.map((l) => l.lanes) },
   lights,
   spacing,
   bins,

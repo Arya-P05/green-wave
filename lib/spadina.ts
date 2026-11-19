@@ -12,7 +12,7 @@ export type SpadinaData = {
     countIds: string[];
   };
   /** Lanes each approach volume was divided across (see scripts/toronto.ts). */
-  lanes: { main: number; cross: number[] };
+  lanes: { main: number; cross: { eastbound: number; westbound: number }[] };
   /** South to north, the direction the corridor's x runs. */
   lights: { name: string; short: string; lat: number; lon: number; x: number }[];
   /** Cells between consecutive lights. */

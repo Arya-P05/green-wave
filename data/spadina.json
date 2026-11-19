@@ -20,14 +20,38 @@
  "lanes": {
   "main": 2,
   "cross": [
-   2,
-   2,
-   1,
-   2,
-   2,
-   1,
-   1,
-   1
+   {
+    "eastbound": 2,
+    "westbound": 3
+   },
+   {
+    "eastbound": 2,
+    "westbound": 3
+   },
+   {
+    "eastbound": 1,
+    "westbound": 2
+   },
+   {
+    "eastbound": 3,
+    "westbound": 1
+   },
+   {
+    "eastbound": 1,
+    "westbound": 3
+   },
+   {
+    "eastbound": 2,
+    "westbound": 2
+   },
+   {
+    "eastbound": 2,
+    "westbound": 2
+   },
+   {
+    "eastbound": 1,
+    "westbound": 1
+   }
   ]
  },
  "lights": [
@@ -105,31 +129,31 @@
    "cross": [
     {
      "eastbound": 0.0261,
-     "westbound": 0.0039
+     "westbound": 0.0026
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.0289
+     "westbound": 0.0193
     },
     {
      "eastbound": 0.0033,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.0361,
+     "eastbound": 0.0241,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0294
+     "westbound": 0.0196
     },
     {
-     "eastbound": 0.0422,
-     "westbound": 0.0144
+     "eastbound": 0.0211,
+     "westbound": 0.0072
     },
     {
-     "eastbound": 0.0778,
-     "westbound": 0.0211
+     "eastbound": 0.0389,
+     "westbound": 0.0106
     },
     {
      "eastbound": 0.0567,
@@ -144,31 +168,31 @@
    "cross": [
     {
      "eastbound": 0.0244,
-     "westbound": 0.0083
+     "westbound": 0.0056
     },
     {
      "eastbound": 0.0156,
-     "westbound": 0.0289
+     "westbound": 0.0193
     },
     {
      "eastbound": 0.0067,
-     "westbound": 0.0044
+     "westbound": 0.0022
     },
     {
-     "eastbound": 0.035,
+     "eastbound": 0.0233,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0339
+     "westbound": 0.0226
     },
     {
-     "eastbound": 0.0689,
-     "westbound": 0.0289
+     "eastbound": 0.0344,
+     "westbound": 0.0144
     },
     {
-     "eastbound": 0.0556,
-     "westbound": 0.04
+     "eastbound": 0.0278,
+     "westbound": 0.02
     },
     {
      "eastbound": 0.0722,
@@ -183,31 +207,31 @@
    "cross": [
     {
      "eastbound": 0.0339,
-     "westbound": 0.0206
+     "westbound": 0.0137
     },
     {
      "eastbound": 0.0283,
-     "westbound": 0.0378
+     "westbound": 0.0252
     },
     {
      "eastbound": 0.0122,
-     "westbound": 0.0033
+     "westbound": 0.0017
     },
     {
-     "eastbound": 0.0756,
+     "eastbound": 0.0504,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0322
+     "westbound": 0.0215
     },
     {
-     "eastbound": 0.0889,
-     "westbound": 0.0356
+     "eastbound": 0.0444,
+     "westbound": 0.0178
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.0478
+     "eastbound": 0.0417,
+     "westbound": 0.0239
     },
     {
      "eastbound": 0.0878,
@@ -222,31 +246,31 @@
    "cross": [
     {
      "eastbound": 0.0333,
-     "westbound": 0.0194
+     "westbound": 0.013
     },
     {
      "eastbound": 0.0317,
-     "westbound": 0.0428
+     "westbound": 0.0285
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0033
+     "westbound": 0.0017
     },
     {
-     "eastbound": 0.0839,
+     "eastbound": 0.0559,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0406
+     "westbound": 0.027
     },
     {
-     "eastbound": 0.1111,
-     "westbound": 0.0278
+     "eastbound": 0.0556,
+     "westbound": 0.0139
     },
     {
-     "eastbound": 0.0956,
-     "westbound": 0.0467
+     "eastbound": 0.0478,
+     "westbound": 0.0233
     },
     {
      "eastbound": 0.0933,
@@ -261,31 +285,31 @@
    "cross": [
     {
      "eastbound": 0.0389,
-     "westbound": 0.0178
+     "westbound": 0.0119
     },
     {
      "eastbound": 0.0433,
-     "westbound": 0.0561
+     "westbound": 0.0374
     },
     {
      "eastbound": 0.0111,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.0733,
+     "eastbound": 0.0489,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0711
+     "westbound": 0.0474
     },
     {
-     "eastbound": 0.1033,
-     "westbound": 0.0511
+     "eastbound": 0.0517,
+     "westbound": 0.0256
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.0611
+     "eastbound": 0.0483,
+     "westbound": 0.0306
     },
     {
      "eastbound": 0.1022,
@@ -300,31 +324,31 @@
    "cross": [
     {
      "eastbound": 0.0544,
-     "westbound": 0.0189
+     "westbound": 0.0126
     },
     {
      "eastbound": 0.0361,
-     "westbound": 0.065
+     "westbound": 0.0433
     },
     {
      "eastbound": 0.0044,
-     "westbound": 0.0044
+     "westbound": 0.0022
     },
     {
-     "eastbound": 0.1011,
+     "eastbound": 0.0674,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0761
+     "westbound": 0.0507
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.0644
+     "eastbound": 0.0483,
+     "westbound": 0.0322
     },
     {
-     "eastbound": 0.0789,
-     "westbound": 0.0667
+     "eastbound": 0.0394,
+     "westbound": 0.0333
     },
     {
      "eastbound": 0.1256,
@@ -339,31 +363,31 @@
    "cross": [
     {
      "eastbound": 0.0639,
-     "westbound": 0.0561
+     "westbound": 0.0374
     },
     {
      "eastbound": 0.0444,
-     "westbound": 0.0756
+     "westbound": 0.0504
     },
     {
      "eastbound": 0.0067,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.0944,
+     "eastbound": 0.063,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0783
+     "westbound": 0.0522
     },
     {
-     "eastbound": 0.0856,
-     "westbound": 0.0622
+     "eastbound": 0.0428,
+     "westbound": 0.0311
     },
     {
-     "eastbound": 0.12,
-     "westbound": 0.0733
+     "eastbound": 0.06,
+     "westbound": 0.0367
     },
     {
      "eastbound": 0.1711,
@@ -378,31 +402,31 @@
    "cross": [
     {
      "eastbound": 0.0622,
-     "westbound": 0.0489
+     "westbound": 0.0326
     },
     {
      "eastbound": 0.0567,
-     "westbound": 0.0778
+     "westbound": 0.0519
     },
     {
      "eastbound": 0.0078,
-     "westbound": 0.01
+     "westbound": 0.005
     },
     {
-     "eastbound": 0.1128,
+     "eastbound": 0.0752,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0883
+     "westbound": 0.0589
     },
     {
-     "eastbound": 0.1156,
-     "westbound": 0.0811
+     "eastbound": 0.0578,
+     "westbound": 0.0406
     },
     {
-     "eastbound": 0.13,
-     "westbound": 0.0911
+     "eastbound": 0.065,
+     "westbound": 0.0456
     },
     {
      "eastbound": 0.1689,
@@ -417,31 +441,31 @@
    "cross": [
     {
      "eastbound": 0.055,
-     "westbound": 0.0494
+     "westbound": 0.033
     },
     {
      "eastbound": 0.06,
-     "westbound": 0.0972
+     "westbound": 0.0648
     },
     {
      "eastbound": 0.0178,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.1317,
+     "eastbound": 0.0878,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0894
+     "westbound": 0.0596
     },
     {
-     "eastbound": 0.1311,
-     "westbound": 0.1
+     "eastbound": 0.0656,
+     "westbound": 0.05
     },
     {
-     "eastbound": 0.1322,
-     "westbound": 0.09
+     "eastbound": 0.0661,
+     "westbound": 0.045
     },
     {
      "eastbound": 0.1444,
@@ -456,31 +480,31 @@
    "cross": [
     {
      "eastbound": 0.0594,
-     "westbound": 0.0483
+     "westbound": 0.0322
     },
     {
      "eastbound": 0.0539,
-     "westbound": 0.0828
+     "westbound": 0.0552
     },
     {
      "eastbound": 0.0133,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.1344,
+     "eastbound": 0.0896,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0867
+     "westbound": 0.0578
     },
     {
-     "eastbound": 0.12,
-     "westbound": 0.0933
+     "eastbound": 0.06,
+     "westbound": 0.0467
     },
     {
-     "eastbound": 0.16,
-     "westbound": 0.0844
+     "eastbound": 0.08,
+     "westbound": 0.0422
     },
     {
      "eastbound": 0.1833,
@@ -495,31 +519,31 @@
    "cross": [
     {
      "eastbound": 0.0433,
-     "westbound": 0.0522
+     "westbound": 0.0348
     },
     {
      "eastbound": 0.0756,
-     "westbound": 0.08
+     "westbound": 0.0533
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.1311,
+     "eastbound": 0.0874,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.0939
+     "eastbound": 0.0011,
+     "westbound": 0.0626
     },
     {
-     "eastbound": 0.1111,
-     "westbound": 0.0922
+     "eastbound": 0.0556,
+     "westbound": 0.0461
     },
     {
-     "eastbound": 0.1867,
-     "westbound": 0.1067
+     "eastbound": 0.0933,
+     "westbound": 0.0533
     },
     {
      "eastbound": 0.1378,
@@ -534,31 +558,31 @@
    "cross": [
     {
      "eastbound": 0.065,
-     "westbound": 0.0394
+     "westbound": 0.0263
     },
     {
      "eastbound": 0.0689,
-     "westbound": 0.0772
+     "westbound": 0.0515
     },
     {
      "eastbound": 0.0189,
-     "westbound": 0.0111
+     "westbound": 0.0056
     },
     {
-     "eastbound": 0.1339,
+     "eastbound": 0.0893,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.0928
+     "eastbound": 0.0011,
+     "westbound": 0.0619
     },
     {
-     "eastbound": 0.1256,
-     "westbound": 0.12
+     "eastbound": 0.0628,
+     "westbound": 0.06
     },
     {
-     "eastbound": 0.1589,
-     "westbound": 0.1078
+     "eastbound": 0.0794,
+     "westbound": 0.0539
     },
     {
      "eastbound": 0.1967,
@@ -573,31 +597,31 @@
    "cross": [
     {
      "eastbound": 0.0683,
-     "westbound": 0.0489
+     "westbound": 0.0326
     },
     {
      "eastbound": 0.0689,
-     "westbound": 0.0917
+     "westbound": 0.0611
     },
     {
      "eastbound": 0.0078,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.14,
+     "eastbound": 0.0933,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0933
+     "westbound": 0.0622
     },
     {
-     "eastbound": 0.1289,
-     "westbound": 0.1044
+     "eastbound": 0.0644,
+     "westbound": 0.0522
     },
     {
-     "eastbound": 0.1689,
-     "westbound": 0.1211
+     "eastbound": 0.0844,
+     "westbound": 0.0606
     },
     {
      "eastbound": 0.1567,
@@ -612,31 +636,31 @@
    "cross": [
     {
      "eastbound": 0.0589,
-     "westbound": 0.0383
+     "westbound": 0.0256
     },
     {
      "eastbound": 0.0422,
-     "westbound": 0.0694
+     "westbound": 0.0463
     },
     {
      "eastbound": 0.0233,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.12,
+     "eastbound": 0.08,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.0789
+     "eastbound": 0.0011,
+     "westbound": 0.0526
     },
     {
-     "eastbound": 0.1244,
-     "westbound": 0.11
+     "eastbound": 0.0622,
+     "westbound": 0.055
     },
     {
-     "eastbound": 0.1311,
-     "westbound": 0.0956
+     "eastbound": 0.0656,
+     "westbound": 0.0478
     },
     {
      "eastbound": 0.1767,
@@ -651,31 +675,31 @@
    "cross": [
     {
      "eastbound": 0.0617,
-     "westbound": 0.0361
+     "westbound": 0.0241
     },
     {
      "eastbound": 0.06,
-     "westbound": 0.0817
+     "westbound": 0.0544
     },
     {
      "eastbound": 0.0189,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.0956,
+     "eastbound": 0.0637,
      "westbound": 0
     },
     {
-     "eastbound": 0.0011,
-     "westbound": 0.1044
+     "eastbound": 0.0022,
+     "westbound": 0.0696
     },
     {
-     "eastbound": 0.1178,
-     "westbound": 0.0844
+     "eastbound": 0.0589,
+     "westbound": 0.0422
     },
     {
-     "eastbound": 0.1167,
-     "westbound": 0.1167
+     "eastbound": 0.0583,
+     "westbound": 0.0583
     },
     {
      "eastbound": 0.1867,
@@ -690,31 +714,31 @@
    "cross": [
     {
      "eastbound": 0.0667,
-     "westbound": 0.0322
+     "westbound": 0.0215
     },
     {
      "eastbound": 0.0467,
-     "westbound": 0.0644
+     "westbound": 0.043
     },
     {
      "eastbound": 0.0122,
-     "westbound": 0.02
+     "westbound": 0.01
     },
     {
-     "eastbound": 0.1383,
+     "eastbound": 0.0922,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1083
+     "westbound": 0.0722
     },
     {
-     "eastbound": 0.1111,
-     "westbound": 0.0933
+     "eastbound": 0.0556,
+     "westbound": 0.0467
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.0867
+     "eastbound": 0.05,
+     "westbound": 0.0433
     },
     {
      "eastbound": 0.1567,
@@ -729,31 +753,31 @@
    "cross": [
     {
      "eastbound": 0.0644,
-     "westbound": 0.0344
+     "westbound": 0.023
     },
     {
      "eastbound": 0.0456,
-     "westbound": 0.0622
+     "westbound": 0.0415
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.0056
+     "westbound": 0.0028
     },
     {
-     "eastbound": 0.0783,
+     "eastbound": 0.0522,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1006
+     "westbound": 0.067
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.0967
+     "eastbound": 0.0483,
+     "westbound": 0.0483
     },
     {
-     "eastbound": 0.1122,
-     "westbound": 0.1133
+     "eastbound": 0.0561,
+     "westbound": 0.0567
     },
     {
      "eastbound": 0.1389,
@@ -768,31 +792,31 @@
    "cross": [
     {
      "eastbound": 0.0517,
-     "westbound": 0.0339
+     "westbound": 0.0226
     },
     {
      "eastbound": 0.0422,
-     "westbound": 0.0644
+     "westbound": 0.043
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0067
+     "westbound": 0.0033
     },
     {
-     "eastbound": 0.1044,
+     "eastbound": 0.0696,
      "westbound": 0
     },
     {
-     "eastbound": 0.0017,
-     "westbound": 0.0956
+     "eastbound": 0.0033,
+     "westbound": 0.0637
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.0656
+     "eastbound": 0.05,
+     "westbound": 0.0328
     },
     {
-     "eastbound": 0.0911,
-     "westbound": 0.0922
+     "eastbound": 0.0456,
+     "westbound": 0.0461
     },
     {
      "eastbound": 0.1356,
@@ -807,31 +831,31 @@
    "cross": [
     {
      "eastbound": 0.0644,
-     "westbound": 0.0256
+     "westbound": 0.017
     },
     {
      "eastbound": 0.0467,
-     "westbound": 0.0672
+     "westbound": 0.0448
     },
     {
      "eastbound": 0.0067,
-     "westbound": 0.0067
+     "westbound": 0.0033
     },
     {
-     "eastbound": 0.0778,
+     "eastbound": 0.0519,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.0994
+     "eastbound": 0.0011,
+     "westbound": 0.0663
     },
     {
-     "eastbound": 0.1044,
-     "westbound": 0.0789
+     "eastbound": 0.0522,
+     "westbound": 0.0394
     },
     {
-     "eastbound": 0.1033,
-     "westbound": 0.11
+     "eastbound": 0.0517,
+     "westbound": 0.055
     },
     {
      "eastbound": 0.1067,
@@ -846,31 +870,31 @@
    "cross": [
     {
      "eastbound": 0.0622,
-     "westbound": 0.0339
+     "westbound": 0.0226
     },
     {
      "eastbound": 0.0411,
-     "westbound": 0.0656
+     "westbound": 0.0437
     },
     {
      "eastbound": 0.0067,
-     "westbound": 0.0078
+     "westbound": 0.0039
     },
     {
-     "eastbound": 0.0922,
+     "eastbound": 0.0615,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1028
+     "westbound": 0.0685
     },
     {
-     "eastbound": 0.0811,
-     "westbound": 0.09
+     "eastbound": 0.0406,
+     "westbound": 0.045
     },
     {
-     "eastbound": 0.0822,
-     "westbound": 0.0889
+     "eastbound": 0.0411,
+     "westbound": 0.0444
     },
     {
      "eastbound": 0.0911,
@@ -885,31 +909,31 @@
    "cross": [
     {
      "eastbound": 0.0583,
-     "westbound": 0.0394
+     "westbound": 0.0263
     },
     {
      "eastbound": 0.0561,
-     "westbound": 0.0839
+     "westbound": 0.0559
     },
     {
      "eastbound": 0.01,
-     "westbound": 0.0078
+     "westbound": 0.0039
     },
     {
-     "eastbound": 0.0967,
+     "eastbound": 0.0644,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.0911
+     "westbound": 0.0607
     },
     {
-     "eastbound": 0.11,
-     "westbound": 0.0811
+     "eastbound": 0.055,
+     "westbound": 0.0406
     },
     {
-     "eastbound": 0.0889,
-     "westbound": 0.0967
+     "eastbound": 0.0444,
+     "westbound": 0.0483
     },
     {
      "eastbound": 0.1367,
@@ -924,31 +948,31 @@
    "cross": [
     {
      "eastbound": 0.0422,
-     "westbound": 0.025
+     "westbound": 0.0167
     },
     {
      "eastbound": 0.04,
-     "westbound": 0.0683
+     "westbound": 0.0456
     },
     {
      "eastbound": 0.0167,
-     "westbound": 0.0122
+     "westbound": 0.0061
     },
     {
-     "eastbound": 0.09,
+     "eastbound": 0.06,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1167
+     "westbound": 0.0778
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.0867
+     "eastbound": 0.0483,
+     "westbound": 0.0433
     },
     {
-     "eastbound": 0.0844,
-     "westbound": 0.1322
+     "eastbound": 0.0422,
+     "westbound": 0.0661
     },
     {
      "eastbound": 0.1578,
@@ -963,31 +987,31 @@
    "cross": [
     {
      "eastbound": 0.0339,
-     "westbound": 0.0322
+     "westbound": 0.0215
     },
     {
      "eastbound": 0.0428,
-     "westbound": 0.0806
+     "westbound": 0.0537
     },
     {
      "eastbound": 0.0278,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.0722,
+     "eastbound": 0.0481,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1094
+     "westbound": 0.073
     },
     {
-     "eastbound": 0.0867,
-     "westbound": 0.0833
+     "eastbound": 0.0433,
+     "westbound": 0.0417
     },
     {
-     "eastbound": 0.08,
-     "westbound": 0.1211
+     "eastbound": 0.04,
+     "westbound": 0.0606
     },
     {
      "eastbound": 0.1156,
@@ -1002,31 +1026,31 @@
    "cross": [
     {
      "eastbound": 0.0461,
-     "westbound": 0.0317
+     "westbound": 0.0211
     },
     {
      "eastbound": 0.0567,
-     "westbound": 0.0772
+     "westbound": 0.0515
     },
     {
      "eastbound": 0.0133,
-     "westbound": 0.0144
+     "westbound": 0.0072
     },
     {
-     "eastbound": 0.0944,
+     "eastbound": 0.063,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1172
+     "eastbound": 0.0011,
+     "westbound": 0.0781
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.0689
+     "eastbound": 0.0417,
+     "westbound": 0.0344
     },
     {
-     "eastbound": 0.0867,
-     "westbound": 0.0911
+     "eastbound": 0.0433,
+     "westbound": 0.0456
     },
     {
      "eastbound": 0.1222,
@@ -1041,31 +1065,31 @@
    "cross": [
     {
      "eastbound": 0.0378,
-     "westbound": 0.0344
+     "westbound": 0.023
     },
     {
      "eastbound": 0.0511,
-     "westbound": 0.0678
+     "westbound": 0.0452
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0144
+     "westbound": 0.0072
     },
     {
-     "eastbound": 0.0778,
+     "eastbound": 0.0519,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1139
+     "eastbound": 0.0011,
+     "westbound": 0.0759
     },
     {
-     "eastbound": 0.0856,
-     "westbound": 0.0744
+     "eastbound": 0.0428,
+     "westbound": 0.0372
     },
     {
-     "eastbound": 0.0878,
-     "westbound": 0.1144
+     "eastbound": 0.0439,
+     "westbound": 0.0572
     },
     {
      "eastbound": 0.11,
@@ -1080,31 +1104,31 @@
    "cross": [
     {
      "eastbound": 0.0494,
-     "westbound": 0.0472
+     "westbound": 0.0315
     },
     {
      "eastbound": 0.05,
-     "westbound": 0.0872
+     "westbound": 0.0581
     },
     {
      "eastbound": 0.0167,
-     "westbound": 0.0189
+     "westbound": 0.0094
     },
     {
-     "eastbound": 0.0922,
+     "eastbound": 0.0615,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1372
+     "eastbound": 0.0011,
+     "westbound": 0.0915
     },
     {
-     "eastbound": 0.1011,
-     "westbound": 0.1044
+     "eastbound": 0.0506,
+     "westbound": 0.0522
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.1211
+     "eastbound": 0.0417,
+     "westbound": 0.0606
     },
     {
      "eastbound": 0.1056,
@@ -1119,31 +1143,31 @@
    "cross": [
     {
      "eastbound": 0.0394,
-     "westbound": 0.0361
+     "westbound": 0.0241
     },
     {
      "eastbound": 0.0372,
-     "westbound": 0.0822
+     "westbound": 0.0548
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.0222
+     "westbound": 0.0111
     },
     {
-     "eastbound": 0.08,
+     "eastbound": 0.0533,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1339
+     "westbound": 0.0893
     },
     {
-     "eastbound": 0.0856,
-     "westbound": 0.08
+     "eastbound": 0.0428,
+     "westbound": 0.04
     },
     {
-     "eastbound": 0.1011,
-     "westbound": 0.1444
+     "eastbound": 0.0506,
+     "westbound": 0.0722
     },
     {
      "eastbound": 0.1411,
@@ -1158,31 +1182,31 @@
    "cross": [
     {
      "eastbound": 0.0406,
-     "westbound": 0.0678
+     "westbound": 0.0452
     },
     {
      "eastbound": 0.0383,
-     "westbound": 0.0744
+     "westbound": 0.0496
     },
     {
      "eastbound": 0.02,
-     "westbound": 0.0133
+     "westbound": 0.0067
     },
     {
-     "eastbound": 0.0894,
+     "eastbound": 0.0596,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1289
+     "westbound": 0.0859
     },
     {
-     "eastbound": 0.08,
-     "westbound": 0.0867
+     "eastbound": 0.04,
+     "westbound": 0.0433
     },
     {
-     "eastbound": 0.09,
-     "westbound": 0.1056
+     "eastbound": 0.045,
+     "westbound": 0.0528
     },
     {
      "eastbound": 0.1433,
@@ -1197,31 +1221,31 @@
    "cross": [
     {
      "eastbound": 0.0406,
-     "westbound": 0.0617
+     "westbound": 0.0411
     },
     {
      "eastbound": 0.0361,
-     "westbound": 0.0811
+     "westbound": 0.0541
     },
     {
      "eastbound": 0.0178,
-     "westbound": 0.0211
+     "westbound": 0.0106
     },
     {
-     "eastbound": 0.0844,
+     "eastbound": 0.0563,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1272
+     "eastbound": 0.0011,
+     "westbound": 0.0848
     },
     {
-     "eastbound": 0.0733,
-     "westbound": 0.1144
+     "eastbound": 0.0367,
+     "westbound": 0.0572
     },
     {
-     "eastbound": 0.1111,
-     "westbound": 0.1544
+     "eastbound": 0.0556,
+     "westbound": 0.0772
     },
     {
      "eastbound": 0.1233,
@@ -1236,31 +1260,31 @@
    "cross": [
     {
      "eastbound": 0.0311,
-     "westbound": 0.0561
+     "westbound": 0.0374
     },
     {
      "eastbound": 0.0467,
-     "westbound": 0.085
+     "westbound": 0.0567
     },
     {
      "eastbound": 0.0178,
-     "westbound": 0.0133
+     "westbound": 0.0067
     },
     {
-     "eastbound": 0.09,
+     "eastbound": 0.06,
      "westbound": 0
     },
     {
-     "eastbound": 0.0011,
-     "westbound": 0.1183
+     "eastbound": 0.0022,
+     "westbound": 0.0789
     },
     {
-     "eastbound": 0.0822,
-     "westbound": 0.0811
+     "eastbound": 0.0411,
+     "westbound": 0.0406
     },
     {
-     "eastbound": 0.0933,
-     "westbound": 0.1022
+     "eastbound": 0.0467,
+     "westbound": 0.0511
     },
     {
      "eastbound": 0.1289,
@@ -1275,31 +1299,31 @@
    "cross": [
     {
      "eastbound": 0.0417,
-     "westbound": 0.0767
+     "westbound": 0.0511
     },
     {
      "eastbound": 0.0394,
-     "westbound": 0.0917
+     "westbound": 0.0611
     },
     {
      "eastbound": 0.0133,
-     "westbound": 0.0222
+     "westbound": 0.0111
     },
     {
-     "eastbound": 0.0756,
+     "eastbound": 0.0504,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1411
+     "eastbound": 0.0011,
+     "westbound": 0.0941
     },
     {
-     "eastbound": 0.0989,
-     "westbound": 0.0967
+     "eastbound": 0.0494,
+     "westbound": 0.0483
     },
     {
-     "eastbound": 0.09,
-     "westbound": 0.1244
+     "eastbound": 0.045,
+     "westbound": 0.0622
     },
     {
      "eastbound": 0.1278,
@@ -1314,31 +1338,31 @@
    "cross": [
     {
      "eastbound": 0.0306,
-     "westbound": 0.0706
+     "westbound": 0.047
     },
     {
      "eastbound": 0.0233,
-     "westbound": 0.0989
+     "westbound": 0.0659
     },
     {
      "eastbound": 0.01,
-     "westbound": 0.0178
+     "westbound": 0.0089
     },
     {
-     "eastbound": 0.0778,
+     "eastbound": 0.0519,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1561
+     "westbound": 0.1041
     },
     {
-     "eastbound": 0.0611,
-     "westbound": 0.0956
+     "eastbound": 0.0306,
+     "westbound": 0.0478
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.1089
+     "eastbound": 0.0483,
+     "westbound": 0.0544
     },
     {
      "eastbound": 0.1067,
@@ -1353,31 +1377,31 @@
    "cross": [
     {
      "eastbound": 0.0411,
-     "westbound": 0.0722
+     "westbound": 0.0481
     },
     {
      "eastbound": 0.0372,
-     "westbound": 0.0878
+     "westbound": 0.0585
     },
     {
      "eastbound": 0.0156,
-     "westbound": 0.01
+     "westbound": 0.005
     },
     {
-     "eastbound": 0.0722,
+     "eastbound": 0.0481,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1344
+     "eastbound": 0.0011,
+     "westbound": 0.0896
     },
     {
-     "eastbound": 0.0789,
-     "westbound": 0.1022
+     "eastbound": 0.0394,
+     "westbound": 0.0511
     },
     {
-     "eastbound": 0.0889,
-     "westbound": 0.1444
+     "eastbound": 0.0444,
+     "westbound": 0.0722
     },
     {
      "eastbound": 0.1144,
@@ -1392,31 +1416,31 @@
    "cross": [
     {
      "eastbound": 0.0344,
-     "westbound": 0.0767
+     "westbound": 0.0511
     },
     {
      "eastbound": 0.0317,
-     "westbound": 0.07
+     "westbound": 0.0467
     },
     {
      "eastbound": 0.02,
-     "westbound": 0.03
+     "westbound": 0.015
     },
     {
-     "eastbound": 0.0922,
+     "eastbound": 0.0615,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1289
+     "westbound": 0.0859
     },
     {
-     "eastbound": 0.0678,
-     "westbound": 0.1289
+     "eastbound": 0.0339,
+     "westbound": 0.0644
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.1289
+     "eastbound": 0.05,
+     "westbound": 0.0644
     },
     {
      "eastbound": 0.1244,
@@ -1431,31 +1455,31 @@
    "cross": [
     {
      "eastbound": 0.0406,
-     "westbound": 0.0678
+     "westbound": 0.0452
     },
     {
      "eastbound": 0.035,
-     "westbound": 0.0994
+     "westbound": 0.0663
     },
     {
      "eastbound": 0.0178,
-     "westbound": 0.0067
+     "westbound": 0.0033
     },
     {
-     "eastbound": 0.0583,
+     "eastbound": 0.0389,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1294
+     "westbound": 0.0863
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.1211
+     "eastbound": 0.05,
+     "westbound": 0.0606
     },
     {
-     "eastbound": 0.0956,
-     "westbound": 0.1756
+     "eastbound": 0.0478,
+     "westbound": 0.0878
     },
     {
      "eastbound": 0.1233,
@@ -1470,31 +1494,31 @@
    "cross": [
     {
      "eastbound": 0.0439,
-     "westbound": 0.0689
+     "westbound": 0.0459
     },
     {
      "eastbound": 0.0378,
-     "westbound": 0.0706
+     "westbound": 0.047
     },
     {
      "eastbound": 0.01,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.09,
+     "eastbound": 0.06,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1444
+     "westbound": 0.0963
     },
     {
-     "eastbound": 0.0589,
-     "westbound": 0.1189
+     "eastbound": 0.0294,
+     "westbound": 0.0594
     },
     {
-     "eastbound": 0.0767,
-     "westbound": 0.1233
+     "eastbound": 0.0383,
+     "westbound": 0.0617
     },
     {
      "eastbound": 0.1178,
@@ -1509,31 +1533,31 @@
    "cross": [
     {
      "eastbound": 0.0322,
-     "westbound": 0.0594
+     "westbound": 0.0396
     },
     {
      "eastbound": 0.0461,
-     "westbound": 0.0972
+     "westbound": 0.0648
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0189
+     "westbound": 0.0094
     },
     {
-     "eastbound": 0.0928,
+     "eastbound": 0.0619,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.16
+     "eastbound": 0.0011,
+     "westbound": 0.1067
     },
     {
-     "eastbound": 0.0933,
-     "westbound": 0.1522
+     "eastbound": 0.0467,
+     "westbound": 0.0761
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.1522
+     "eastbound": 0.0483,
+     "westbound": 0.0761
     },
     {
      "eastbound": 0.1244,
@@ -1548,31 +1572,31 @@
    "cross": [
     {
      "eastbound": 0.0328,
-     "westbound": 0.0756
+     "westbound": 0.0504
     },
     {
      "eastbound": 0.03,
-     "westbound": 0.0817
+     "westbound": 0.0544
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.0156
+     "westbound": 0.0078
     },
     {
-     "eastbound": 0.0906,
+     "eastbound": 0.0604,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1406
+     "westbound": 0.0937
     },
     {
-     "eastbound": 0.0711,
-     "westbound": 0.1533
+     "eastbound": 0.0356,
+     "westbound": 0.0767
     },
     {
-     "eastbound": 0.0867,
-     "westbound": 0.1411
+     "eastbound": 0.0433,
+     "westbound": 0.0706
     },
     {
      "eastbound": 0.12,
@@ -1587,31 +1611,31 @@
    "cross": [
     {
      "eastbound": 0.0428,
-     "westbound": 0.07
+     "westbound": 0.0467
     },
     {
      "eastbound": 0.0289,
-     "westbound": 0.0661
+     "westbound": 0.0441
     },
     {
      "eastbound": 0.0122,
-     "westbound": 0.0144
+     "westbound": 0.0072
     },
     {
-     "eastbound": 0.0872,
+     "eastbound": 0.0581,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1406
+     "westbound": 0.0937
     },
     {
-     "eastbound": 0.08,
-     "westbound": 0.1278
+     "eastbound": 0.04,
+     "westbound": 0.0639
     },
     {
-     "eastbound": 0.0933,
-     "westbound": 0.1589
+     "eastbound": 0.0467,
+     "westbound": 0.0794
     },
     {
      "eastbound": 0.12,
@@ -1626,31 +1650,31 @@
    "cross": [
     {
      "eastbound": 0.0489,
-     "westbound": 0.0678
+     "westbound": 0.0452
     },
     {
      "eastbound": 0.0294,
-     "westbound": 0.0711
+     "westbound": 0.0474
     },
     {
      "eastbound": 0.0078,
-     "westbound": 0.0167
+     "westbound": 0.0083
     },
     {
-     "eastbound": 0.0861,
+     "eastbound": 0.0574,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1661
+     "westbound": 0.1107
     },
     {
-     "eastbound": 0.0789,
-     "westbound": 0.0956
+     "eastbound": 0.0394,
+     "westbound": 0.0478
     },
     {
-     "eastbound": 0.0989,
-     "westbound": 0.1611
+     "eastbound": 0.0494,
+     "westbound": 0.0806
     },
     {
      "eastbound": 0.1378,
@@ -1665,31 +1689,31 @@
    "cross": [
     {
      "eastbound": 0.04,
-     "westbound": 0.0694
+     "westbound": 0.0463
     },
     {
      "eastbound": 0.0394,
-     "westbound": 0.0644
+     "westbound": 0.043
     },
     {
      "eastbound": 0.0156,
-     "westbound": 0.0222
+     "westbound": 0.0111
     },
     {
-     "eastbound": 0.0778,
+     "eastbound": 0.0519,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1444
+     "westbound": 0.0963
     },
     {
-     "eastbound": 0.0622,
-     "westbound": 0.13
+     "eastbound": 0.0311,
+     "westbound": 0.065
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.1756
+     "eastbound": 0.0417,
+     "westbound": 0.0878
     },
     {
      "eastbound": 0.1278,
@@ -1704,31 +1728,31 @@
    "cross": [
     {
      "eastbound": 0.0428,
-     "westbound": 0.0789
+     "westbound": 0.0526
     },
     {
      "eastbound": 0.0317,
-     "westbound": 0.0511
+     "westbound": 0.0341
     },
     {
      "eastbound": 0.0133,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.0794,
+     "eastbound": 0.053,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1733
+     "westbound": 0.1156
     },
     {
-     "eastbound": 0.0678,
-     "westbound": 0.1922
+     "eastbound": 0.0339,
+     "westbound": 0.0961
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.1767
+     "eastbound": 0.05,
+     "westbound": 0.0883
     },
     {
      "eastbound": 0.1256,
@@ -1743,31 +1767,31 @@
    "cross": [
     {
      "eastbound": 0.0522,
-     "westbound": 0.065
+     "westbound": 0.0433
     },
     {
      "eastbound": 0.0317,
-     "westbound": 0.1128
+     "westbound": 0.0752
     },
     {
      "eastbound": 0.01,
-     "westbound": 0.0189
+     "westbound": 0.0094
     },
     {
-     "eastbound": 0.0772,
+     "eastbound": 0.0515,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1628
+     "westbound": 0.1085
     },
     {
-     "eastbound": 0.0689,
-     "westbound": 0.14
+     "eastbound": 0.0344,
+     "westbound": 0.07
     },
     {
-     "eastbound": 0.09,
-     "westbound": 0.1733
+     "eastbound": 0.045,
+     "westbound": 0.0867
     },
     {
      "eastbound": 0.1467,
@@ -1782,31 +1806,31 @@
    "cross": [
     {
      "eastbound": 0.0372,
-     "westbound": 0.0694
+     "westbound": 0.0463
     },
     {
      "eastbound": 0.0322,
-     "westbound": 0.0928
+     "westbound": 0.0619
     },
     {
      "eastbound": 0.0089,
-     "westbound": 0.0089
+     "westbound": 0.0044
     },
     {
-     "eastbound": 0.0911,
+     "eastbound": 0.0607,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1483
+     "westbound": 0.0989
     },
     {
-     "eastbound": 0.08,
-     "westbound": 0.11
+     "eastbound": 0.04,
+     "westbound": 0.055
     },
     {
-     "eastbound": 0.0867,
-     "westbound": 0.1478
+     "eastbound": 0.0433,
+     "westbound": 0.0739
     },
     {
      "eastbound": 0.1111,
@@ -1821,31 +1845,31 @@
    "cross": [
     {
      "eastbound": 0.0328,
-     "westbound": 0.0667
+     "westbound": 0.0444
     },
     {
      "eastbound": 0.0311,
-     "westbound": 0.0878
+     "westbound": 0.0585
     },
     {
      "eastbound": 0.0133,
-     "westbound": 0.0111
+     "westbound": 0.0056
     },
     {
-     "eastbound": 0.0928,
+     "eastbound": 0.0619,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1528
+     "westbound": 0.1019
     },
     {
-     "eastbound": 0.0856,
-     "westbound": 0.1178
+     "eastbound": 0.0428,
+     "westbound": 0.0589
     },
     {
-     "eastbound": 0.1167,
-     "westbound": 0.1867
+     "eastbound": 0.0583,
+     "westbound": 0.0933
     },
     {
      "eastbound": 0.1656,
@@ -1860,31 +1884,31 @@
    "cross": [
     {
      "eastbound": 0.055,
-     "westbound": 0.0506
+     "westbound": 0.0337
     },
     {
      "eastbound": 0.0383,
-     "westbound": 0.07
+     "westbound": 0.0467
     },
     {
      "eastbound": 0.0156,
-     "westbound": 0.0122
+     "westbound": 0.0061
     },
     {
-     "eastbound": 0.1028,
+     "eastbound": 0.0685,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1756
+     "westbound": 0.117
     },
     {
-     "eastbound": 0.0911,
-     "westbound": 0.1411
+     "eastbound": 0.0456,
+     "westbound": 0.0706
     },
     {
-     "eastbound": 0.1111,
-     "westbound": 0.1689
+     "eastbound": 0.0556,
+     "westbound": 0.0844
     },
     {
      "eastbound": 0.1211,
@@ -1899,31 +1923,31 @@
    "cross": [
     {
      "eastbound": 0.0433,
-     "westbound": 0.0594
+     "westbound": 0.0396
     },
     {
      "eastbound": 0.0389,
-     "westbound": 0.1006
+     "westbound": 0.067
     },
     {
      "eastbound": 0.0189,
-     "westbound": 0.0222
+     "westbound": 0.0111
     },
     {
-     "eastbound": 0.0911,
+     "eastbound": 0.0607,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1544
+     "westbound": 0.103
     },
     {
-     "eastbound": 0.0978,
-     "westbound": 0.1367
+     "eastbound": 0.0489,
+     "westbound": 0.0683
     },
     {
-     "eastbound": 0.1033,
-     "westbound": 0.1822
+     "eastbound": 0.0517,
+     "westbound": 0.0911
     },
     {
      "eastbound": 0.1044,
@@ -1938,31 +1962,31 @@
    "cross": [
     {
      "eastbound": 0.0289,
-     "westbound": 0.0583
+     "westbound": 0.0389
     },
     {
      "eastbound": 0.035,
-     "westbound": 0.1017
+     "westbound": 0.0678
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.0122
+     "westbound": 0.0061
     },
     {
-     "eastbound": 0.0883,
+     "eastbound": 0.0589,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1672
+     "westbound": 0.1115
     },
     {
-     "eastbound": 0.07,
-     "westbound": 0.1622
+     "eastbound": 0.035,
+     "westbound": 0.0811
     },
     {
-     "eastbound": 0.0967,
-     "westbound": 0.1956
+     "eastbound": 0.0483,
+     "westbound": 0.0978
     },
     {
      "eastbound": 0.1433,
@@ -1977,31 +2001,31 @@
    "cross": [
     {
      "eastbound": 0.0467,
-     "westbound": 0.065
+     "westbound": 0.0433
     },
     {
      "eastbound": 0.0483,
-     "westbound": 0.0956
+     "westbound": 0.0637
     },
     {
      "eastbound": 0.0278,
-     "westbound": 0.02
+     "westbound": 0.01
     },
     {
-     "eastbound": 0.0794,
+     "eastbound": 0.053,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1656
+     "westbound": 0.1104
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.1478
+     "eastbound": 0.0417,
+     "westbound": 0.0739
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.1633
+     "eastbound": 0.05,
+     "westbound": 0.0817
     },
     {
      "eastbound": 0.1456,
@@ -2016,31 +2040,31 @@
    "cross": [
     {
      "eastbound": 0.045,
-     "westbound": 0.0706
+     "westbound": 0.047
     },
     {
      "eastbound": 0.0406,
-     "westbound": 0.1078
+     "westbound": 0.0719
     },
     {
      "eastbound": 0.0144,
-     "westbound": 0.01
+     "westbound": 0.005
     },
     {
-     "eastbound": 0.0978,
+     "eastbound": 0.0652,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1633
+     "eastbound": 0.0011,
+     "westbound": 0.1089
     },
     {
-     "eastbound": 0.1,
-     "westbound": 0.1489
+     "eastbound": 0.05,
+     "westbound": 0.0744
     },
     {
-     "eastbound": 0.1056,
-     "westbound": 0.1556
+     "eastbound": 0.0528,
+     "westbound": 0.0778
     },
     {
      "eastbound": 0.1167,
@@ -2055,31 +2079,31 @@
    "cross": [
     {
      "eastbound": 0.0394,
-     "westbound": 0.0789
+     "westbound": 0.0526
     },
     {
      "eastbound": 0.0394,
-     "westbound": 0.0817
+     "westbound": 0.0544
     },
     {
      "eastbound": 0.0178,
-     "westbound": 0.0244
+     "westbound": 0.0122
     },
     {
-     "eastbound": 0.105,
+     "eastbound": 0.07,
      "westbound": 0
     },
     {
-     "eastbound": 0.0006,
-     "westbound": 0.1656
+     "eastbound": 0.0011,
+     "westbound": 0.1104
     },
     {
-     "eastbound": 0.0911,
-     "westbound": 0.1167
+     "eastbound": 0.0456,
+     "westbound": 0.0583
     },
     {
-     "eastbound": 0.0978,
-     "westbound": 0.1267
+     "eastbound": 0.0489,
+     "westbound": 0.0633
     },
     {
      "eastbound": 0.1389,
@@ -2094,31 +2118,31 @@
    "cross": [
     {
      "eastbound": 0.0489,
-     "westbound": 0.0639
+     "westbound": 0.0426
     },
     {
      "eastbound": 0.0433,
-     "westbound": 0.1072
+     "westbound": 0.0715
     },
     {
      "eastbound": 0.0222,
-     "westbound": 0.0233
+     "westbound": 0.0117
     },
     {
-     "eastbound": 0.0939,
+     "eastbound": 0.0626,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1594
+     "westbound": 0.1063
     },
     {
-     "eastbound": 0.0833,
-     "westbound": 0.1033
+     "eastbound": 0.0417,
+     "westbound": 0.0517
     },
     {
-     "eastbound": 0.1122,
-     "westbound": 0.1367
+     "eastbound": 0.0561,
+     "westbound": 0.0683
     },
     {
      "eastbound": 0.1444,
@@ -2133,31 +2157,31 @@
    "cross": [
     {
      "eastbound": 0.0417,
-     "westbound": 0.0756
+     "westbound": 0.0504
     },
     {
      "eastbound": 0.0517,
-     "westbound": 0.1072
+     "westbound": 0.0715
     },
     {
      "eastbound": 0.0267,
-     "westbound": 0.0178
+     "westbound": 0.0089
     },
     {
-     "eastbound": 0.0906,
+     "eastbound": 0.0604,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1528
+     "westbound": 0.1019
     },
     {
-     "eastbound": 0.1222,
-     "westbound": 0.1178
+     "eastbound": 0.0611,
+     "westbound": 0.0589
     },
     {
-     "eastbound": 0.0856,
-     "westbound": 0.1233
+     "eastbound": 0.0428,
+     "westbound": 0.0617
     },
     {
      "eastbound": 0.1156,
@@ -2172,31 +2196,31 @@
    "cross": [
     {
      "eastbound": 0.0489,
-     "westbound": 0.0606
+     "westbound": 0.0404
     },
     {
      "eastbound": 0.0372,
-     "westbound": 0.1067
+     "westbound": 0.0711
     },
     {
      "eastbound": 0.0244,
-     "westbound": 0.0278
+     "westbound": 0.0139
     },
     {
-     "eastbound": 0.0956,
+     "eastbound": 0.0637,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1617
+     "westbound": 0.1078
     },
     {
-     "eastbound": 0.1089,
-     "westbound": 0.1356
+     "eastbound": 0.0544,
+     "westbound": 0.0678
     },
     {
-     "eastbound": 0.1144,
-     "westbound": 0.1544
+     "eastbound": 0.0572,
+     "westbound": 0.0772
     },
     {
      "eastbound": 0.1311,
@@ -2211,31 +2235,31 @@
    "cross": [
     {
      "eastbound": 0.0422,
-     "westbound": 0.0578
+     "westbound": 0.0385
     },
     {
      "eastbound": 0.0539,
-     "westbound": 0.09
+     "westbound": 0.06
     },
     {
      "eastbound": 0.0256,
-     "westbound": 0.0222
+     "westbound": 0.0111
     },
     {
-     "eastbound": 0.0839,
+     "eastbound": 0.0559,
      "westbound": 0
     },
     {
-     "eastbound": 0.0011,
-     "westbound": 0.1539
+     "eastbound": 0.0022,
+     "westbound": 0.1026
     },
     {
-     "eastbound": 0.1056,
-     "westbound": 0.1056
+     "eastbound": 0.0528,
+     "westbound": 0.0528
     },
     {
-     "eastbound": 0.0956,
-     "westbound": 0.1144
+     "eastbound": 0.0478,
+     "westbound": 0.0572
     },
     {
      "eastbound": 0.1244,
@@ -2250,31 +2274,31 @@
    "cross": [
     {
      "eastbound": 0.0367,
-     "westbound": 0.0422
+     "westbound": 0.0281
     },
     {
      "eastbound": 0.0478,
-     "westbound": 0.0689
+     "westbound": 0.0459
     },
     {
      "eastbound": 0.0311,
-     "westbound": 0.0189
+     "westbound": 0.0094
     },
     {
-     "eastbound": 0.0867,
+     "eastbound": 0.0578,
      "westbound": 0
     },
     {
      "eastbound": 0,
-     "westbound": 0.1339
+     "westbound": 0.0893
     },
     {
-     "eastbound": 0.0889,
-     "westbound": 0.0844
+     "eastbound": 0.0444,
+     "westbound": 0.0422
     },
     {
-     "eastbound": 0.1067,
-     "westbound": 0.1211
+     "eastbound": 0.0533,
+     "westbound": 0.0606
     },
     {
      "eastbound": 0.1356,

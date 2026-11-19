@@ -18,8 +18,10 @@ Contains information licensed under the
   turn, becomes demand on that approach. The model has no turns.
 - Spadina demand per direction is the average over the eight intersections,
   split across its two general traffic lanes.
-- Side-street demand is split across an approximate lane count per approach
-  (listed in the script). These lane counts are an assumption to verify.
+- Side-street demand is split across each approach's lanes at the stop line,
+  read from OpenStreetMap (Overpass API, 18 Nov 2026). The script lists the
+  OSM way and tag used for every approach. Map data © OpenStreetMap
+  contributors, ODbL.
 - Rates are cars per second per lane.
 
 ## `cliff.json`
