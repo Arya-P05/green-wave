@@ -115,3 +115,61 @@ html {
 nav a {
   text-decoration: none;
 }
+
+/* From arya-site: the signature draws itself once, when it scrolls into view. */
+.signature path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.signature[data-drawn="true"] path {
+  animation: draw cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* From arya-site: the intro arrives once, in reading order. Nothing else moves on its own. */
+.arrive {
+  animation: arrive 700ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+}
+
+/* "For the nerds": an aside that opens in place. */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+  color: var(--color-muted);
+  width: fit-content;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details > summary::before {
+  content: "+ ";
+}
+
+details[open] > summary::before {
+  content: "− ";
+}
+
+details > summary:hover {
+  color: var(--color-ink);
+}
