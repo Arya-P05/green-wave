@@ -11,9 +11,8 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "green wave · Arya Patel",
-  description:
-    "Can traffic lights find the green wave on their own? Max-pressure on eight real Toronto lights, and a fix.",
+  title: { default: "writing · Arya Patel", template: "%s · Arya Patel" },
+  description: "Questions I got curious about, worked out with small simulations you can play with.",
 };
 
 export const viewport: Viewport = {
