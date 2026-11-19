@@ -163,7 +163,7 @@ export default function Home() {
               cars already backed up where they’re headed, and give the green to whoever has the biggest pile.
             </li>
           </ul>
-          <Nerds title="max-pressure, precisely">
+          <Nerds title="max-pressure">
             <p>
               Each phase k serves some links. Its pressure is P_k = Σ (q_l − q_next(l)) over those links, where
               q is the number of stopped cars. Every second, once the current green has lasted its minimum (6 s
@@ -239,7 +239,7 @@ export default function Home() {
             and as it gets close to full, the best cycle shoots up. Then you split the green by how busy each
             direction is.
           </p>
-          <Nerds title="the formula">
+          <Nerds title="Webster’s formula">
             <p>
               C = (1.5 L + 5) / (1 − Y). L is the time lost to clearance per cycle (2 phases × 4 s = 8 s). Y is
               how full the intersection is: for each phase, its busiest approach’s flow divided by the
@@ -380,7 +380,7 @@ export default function Home() {
             edge of the map and never cancel. On a quiet afternoon, one car stopped on a side street can
             outweigh the whole main road.
           </p>
-          <Nerds title="platoon ratio">
+          <Nerds title="the platoon ratio">
             <p>
               R_p = P · C / g, where P is the share of arrivals on green and g / C the green share. I measure it
               at lights 2 to 8, using each car’s arrival time projected at free speed from the previous light,
