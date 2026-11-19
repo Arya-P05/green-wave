@@ -1,5 +1,5 @@
 /**
- * The experiment. All four controllers on the Spadina corridor:
+ * The experiment. All five controllers on the Spadina corridor:
  *   1. across the day: each hour's measured demand, 06:00 to 20:00;
  *   2. side-street sweep: the peak hour's main street, side streets scaled;
  *   3. max-pressure's minimum green, at the peak hour.

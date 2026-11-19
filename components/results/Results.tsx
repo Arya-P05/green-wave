@@ -29,10 +29,11 @@ function Sweep({
   caption: string;
   name: string;
 }) {
-  const [measure, setMeasure] = useState<Measure>("delay");
+  const [measure, setMeasure] = useState<Measure>("stopsNorth");
   const [focus, setFocus] = useState<Kind>("max-pressure");
   const m = MEASURES[measure];
   const platoon = measure === "platoon";
+  const stops = measure === "stopsNorth" || measure === "stopsSouth";
   return (
     <figure className="my-2 grid gap-y-1">
       <Choice label="measure" options={MEASURE_KEYS} value={measure} onChange={setMeasure} names={MEASURE_NAMES} />
@@ -42,7 +43,7 @@ function Sweep({
         xFormat={xFormat}
         series={KINDS.filter((k) => k in results).map((k) => ({ key: k, label: LABELS[k], values: results[k].map(m.get) }))}
         focus={focus}
-        yFormat={(v) => (platoon ? v.toFixed(1) : `${Math.round(v)}${m.unit}`)}
+        yFormat={(v) => (platoon || stops ? v.toFixed(1) : `${Math.round(v)}${m.unit}`)}
         reference={platoon ? { y: 1, label: "1 = lights ignore each other" } : undefined}
         label={`${m.label} ${name}, one line per controller`}
       />

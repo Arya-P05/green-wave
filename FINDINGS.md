@@ -1,4 +1,4 @@
-# Findings, phase 1
+# Findings
 
 Real numbers from `data/experiment.json` (`npm run experiment`) and
 `data/cliff.json` (`npm run data:cliff`). Notes for the write-up, not the
@@ -7,102 +7,141 @@ write-up itself.
 ## Setup in one paragraph
 
 Spadina Avenue, eight signals from Fort York Blvd to College St (2.0 km),
-demand from the City of Toronto's counts on Wed 23 Apr 2025, per lane. Single
-lane each way, no turns. Nagel-Schreckenberg cells (7.5 m, 1 s, vmax 54 km/h,
-p = 0.1), 3 s amber + 1 s all-red at every change. Free-flow corridor trip:
-about 205 s. Each point: 8 seeds, 15 min warm-up, 60 min measured, demand held
-at that hour's average.
+demand from the City of Toronto's counts on Wed 23 Apr 2025, per lane, with
+every approach's lane count read from OpenStreetMap (way ids in
+`scripts/toronto.ts`). Single lane each way, no turns. Nagel-Schreckenberg
+cells (7.5 m, 1 s, vmax 54 km/h, p = 0.1), 3 s amber + 1 s all-red at every
+change. Free-flow corridor trip: about 205 s. Each point: 8 seeds, 15 min
+warm-up, 60 min measured, demand held at that hour's average.
 
 Controllers: **fixed** (Webster cycle on the busiest light, all lights start
 together), **green wave** (same timing, offsets for northbound at free speed;
 northbound is the busier direction all day), **actuated** (min 6 s, max 40 s,
-gap-out on a 37.5 m detector), **max-pressure** (Varaiya: stopped queue in
-minus stopped queue out, re-decided each second after a 6 s minimum green).
+gap-out on a 37.5 m detector), **max-pressure** (Varaiya 2013: stopped queue
+in minus stopped queue out, re-decided each second after a 6 s minimum green),
+**max-pressure+** (the same, but upstream counts every car on the link,
+moving or not, and every green lasts at least 10 s).
 
-Wave measure: the HCM **platoon ratio** at lights 2 to 8: arrivals on green
-divided by what chance would give (the light's green share). 1 = lights ignore
-each other, above 1 = a wave, below 1 = cars arrive on red.
+Measures:
+- **Stops per drive** (the headline): how many times a car driving the whole
+  corridor comes to a halt. Eight lights, so 0 is a perfect wave. Can exceed 8
+  in stop-and-go queues.
+- **Trip time**, end to end, per direction.
+- **Delay per car**: every car, side streets included, against free speed.
+- **Platoon ratio** (HCM): at lights 2 to 8, arrivals on green divided by what
+  chance would give (the light's green share). 1 = lights ignore each other,
+  above 1 = a wave, below 1 = cars arrive on red.
 
-## 1. Does max-pressure form waves? No. It forms anti-waves.
+## 1. Textbook max-pressure makes you stop at almost every light
 
-Platoon ratio, day average (14 hours):
+Day average (14 hours):
 
-| controller   | northbound | southbound |
-|--------------|-----------:|-----------:|
-| fixed        | 0.90 | 1.27 |
-| green wave   | **2.51** | 0.77 |
-| actuated     | 1.40 | 1.48 |
-| max-pressure | **0.76** | **0.79** |
+| controller    | stops nb | stops sb | trip nb | trip sb | platoon nb | platoon sb | delay | side delay |
+|---------------|---:|---:|---:|---:|---:|---:|---:|---:|
+| fixed         | 5.49 | 4.52 | 272 s | 261 s | 0.93 | 1.16 | 18.1 s | 9.8 s |
+| green wave    | **1.82** | 5.84 | **222 s** | 273 s | **2.13** | 0.80 | 14.3 s | 9.8 s |
+| actuated      | 4.74 | 4.30 | 236 s | **234 s** | 1.38 | 1.40 | **9.3 s** | **5.5 s** |
+| max-pressure  | **7.30** | **6.85** | 266 s | 261 s | **0.77** | **0.78** | 15.3 s | 7.2 s |
+| max-pressure+ | 4.95 | 4.39 | 258 s | 253 s | 1.24 | 1.29 | 16.1 s | 9.8 s |
 
-Max-pressure is below 1 in both directions in every one of the 14 hours
-(0.68 to 0.90). Cars reach its lights on red more often than chance. The
-mechanism: it only counts cars that are standing still, so it can't see a
+Max-pressure's platoon ratio is below 1 in both directions in every one of the
+14 hours (0.68 to 0.89). Cars reach its lights on red more often than chance.
+The mechanism: it only counts cars that are standing still, so it can't see a
 platoon until the platoon has stopped. It turns green after the cars arrive,
 by construction.
 
-Exploratory check (4 seeds, peak hour, not in experiment.json): if the same
-rule counts every car on the link (moving too), the platoon ratio flips to
-1.28, so it does start to form weak waves. But with the downstream term also
-counting moving cars, delay doubles (16.1 → 31.5 s) because a busy road ahead
-looks "backed up" to it. Dropping the downstream term entirely: 1.28 and 16.4 s.
+## 2. The fix: count the cars that are coming
 
-## 2. The hand-tuned wave works, for one direction
+Max-pressure+ changes two things. Upstream it counts every car on the link
+(Varaiya's own model counts vehicles on a link, not stopped vehicles; cf.
+position-weighted backpressure, Li & Jabari 2019). It holds every green at
+least 10 s, because the proof assumes switching is free and here each switch
+costs 4 s (cf. capacity-aware backpressure, Gregoire et al. 2015). Downstream
+it still counts only stopped cars; counting moving cars there too made peak
+delay double in exploratory runs (16.1 → 31.5 s) because a busy road ahead
+looks backed up.
 
-Day average, vs plain fixed-time with no offsets:
+Day averages, textbook → plus:
+- stops per drive 7.30 → 4.95 northbound, 6.85 → 4.39 southbound (-1/3);
+- platoon ratio 0.77 → 1.24 and 0.78 → 1.29: anti-waves become weak waves,
+  above 1 in every hour (1.19 to 1.32);
+- trip times 266 → 258 s and 261 → 253 s;
+- but delay per car 15.3 → 16.1 s, because side-street delay rises 7.2 → 9.8 s.
+  Plus is better than textbook on delay in only 1 of 14 hours.
+
+So the fix trades side-street waiting for main-street flow. It's what makes a
+drive down Spadina feel better, not a free lunch.
+
+The minimum green alone doesn't do it (peak hour, textbook rule):
+
+| min green | delay | trip nb | stops nb | platoon nb |
+|---:|---:|---:|---:|---:|
+| 6 s | 18.1 s | 273 s | 7.71 | 0.78 |
+| 10 s | 18.8 s | 269 s | 7.49 | 0.87 |
+| 15 s | 23.5 s | 292 s | 7.86 | 0.64 |
+| 20 s | 25.8 s | 301 s | 8.02 | 0.72 |
+| 30 s | 35.6 s | 338 s | 9.20 | 0.55 |
+
+The change that matters is what it counts.
+
+Variants tried and dropped (4 seeds, peak hour, not in experiment.json):
+dropping the downstream term (stops 5.11, but then it isn't max-pressure);
+cyclic max-pressure, Le et al. 2015 (delay 21.5 s).
+
+## 3. The hand-tuned wave works, for one direction
 
 | | fixed | green wave |
 |---|---:|---:|
-| northbound trip | 294 s | **225 s** (-23%) |
-| northbound stops/trip | 6.35 | **2.16** |
-| southbound trip | 273 s | 291 s (+7%) |
-| southbound stops/trip | 4.88 | 6.47 |
-| delay, every car | 17.2 s | 13.4 s |
+| northbound trip | 272 s | **222 s** (-18%) |
+| northbound stops | 5.49 | **1.82** |
+| southbound trip | 261 s | 273 s (+5%) |
+| southbound stops | 4.52 | 5.84 |
+| delay, every car | 18.1 s | 14.3 s |
 
-Band score (no stop at all, end to end) is 8.6% northbound with the wave and
-0% for everything else. With side streets at a quarter of measured demand the
-wave carries 31.6% of northbound cars through all eight lights without a stop.
+Band score (no stop at all, end to end) is 11.3% northbound with the wave and
+under 0.5% for everything else. A wave is a choice of direction.
 
-## 3. Actuated wins overall
+## 4. Actuated wins overall
 
-Day average delay per car (all cars, side streets included):
-actuated **8.9 s**, green wave 13.4 s, max-pressure 13.9 s, fixed 17.2 s.
-Actuated is best in every hour and in every side-street scale. It's also the
-only controller with a platoon ratio above 1 in both directions (1.40 / 1.48):
-its detector sees cars about 2.5 s before the stop line, so it holds the green
-for arriving platoons. Trip times 240 s / 237 s, about 35 s over free flow.
+Best delay in every one of the 14 hours and at every side-street scale. Its
+detector sees cars about 2.5 s before the stop line, so it holds the green
+for arriving platoons: platoon ratio 1.38 / 1.40, both directions. Max-pressure+
+nearly matches it on stops (4.95 / 4.39 vs 4.74 / 4.30) but not on delay.
 
-## 4. Where max-pressure wins and loses
+## 5. Side-street sweep (peak hour, side streets × 0.25 to × 2)
 
-- Beats plain fixed-time on delay in every hour (13.9 vs 17.2 s average) and
-  on side streets (7.6 vs 8.8 s).
-- Loses to actuated everywhere, and to the green wave on northbound trips
-  (267 vs 225 s).
-- Worst when side streets are quiet: at a quarter of measured side demand its
-  delay is 26.9 s (fixed 22.5, actuated 13.1). Spadina's downstream queues
-  cancel its upstream ones, so a single stopped car on a side street outweighs
-  the main street. The side streets drain off the map and never cancel.
-- At double side demand it falls apart on the main street: northbound trip
-  530 s, 13.2 stops (actuated 284 s).
+Delay per car:
 
-## 5. The Cliff (one intersection, 60/40 main/side)
+| side × | fixed | green wave | actuated | max-pressure | max-pressure+ |
+|---:|---:|---:|---:|---:|---:|
+| 0.25 | 23.1 | 17.7 | 13.8 | 30.8 | 25.3 |
+| 1 | 18.4 | 16.8 | 10.8 | 18.1 | 18.0 |
+| 2 | 41.4 | 33.0 | 16.7 | 34.6 | 22.6 |
+
+Northbound trip at × 2: fixed 463 s, green wave 290 s, actuated 259 s,
+max-pressure 477 s (12.5 stops), max-pressure+ 355 s (8.3 stops).
+Textbook max-pressure is worst when side streets are quiet: one stopped car on
+a side street outweighs Spadina, whose downstream queues cancel its upstream
+ones, while side streets drain off the map and never cancel.
+
+## 6. The Cliff (one intersection, 60/40 main/side)
 
 Mean delay per car, 8 seeds, one hour:
 
-| demand Y | fixed | actuated | max-pressure | Webster formula |
-|---:|---:|---:|---:|---:|
-| 0.50 | 10.2 | 6.7 | 10.3 | 12.1 |
-| 0.70 | 16.4 | 10.7 | 22.4 | 21.0 |
-| 0.80 | 23.8 | 15.1 | 59.2 | 32.9 |
-| 0.85 | 30.9 | 19.2 | 172.9 | 45.4 |
-| 0.90 | 35.9 | 25.8 | 239.8 | 83.2 |
-| 1.00 | 55.4 | 111.4 | 419.9 | n/a |
+| demand Y | fixed | actuated | max-pressure | max-pressure+ | Webster formula |
+|---:|---:|---:|---:|---:|---:|
+| 0.50 | 10.2 | 6.7 | 10.3 | 10.4 | 12.1 |
+| 0.70 | 16.4 | 10.7 | 22.4 | 14.0 | 21.0 |
+| 0.80 | 23.8 | 15.1 | 59.2 | 20.7 | 32.9 |
+| 0.85 | 30.9 | 19.2 | **172.9** | 30.6 | 45.4 |
+| 0.90 | 35.9 | 25.8 | 239.8 | 63.7 | 83.2 |
+| 1.00 | 55.4 | 111.4 | 419.9 | 219.4 | n/a |
 
-Max-pressure goes over the edge first, around Y = 0.75 to 0.8: with a 6 s
-minimum green it switches so often that the 4 s of amber and all-red per change
-eats its capacity. Its proof assumes switching is free. Exploratory check at
-one intersection: a 20 s minimum moves its cliff out (Y = 0.9: 36.5 s with a
-20 s minimum vs 241 s with 6 s). On the corridor a longer minimum does not help
-(peak-hour delay 16.1 s at 6 s, 22.5 s at 20 s, 30.5 s at 30 s).
+Textbook max-pressure goes over the edge first, around Y = 0.75 to 0.8: with
+a 6 s minimum green it switches so often that the 4 s of clearance per change
+eats its capacity. Max-pressure+ moves the edge out to about 0.9, level with
+fixed-time up to 0.85. At low demand it is slightly worse than textbook
+(8.3 vs 5.4 s at 0.2), the price of a 10 s minimum.
 
 The sim tracks Webster's formula closely at low demand and beats it near
 capacity because the sim's fixed plan is capped at a 120 s cycle and arrivals
@@ -111,9 +150,8 @@ are Bernoulli, not the formula's assumptions.
 ## Caveats to say out loud
 
 - No turns, one lane, no pedestrians, no streetcar, no right turn on red.
-- Per-lane demand uses an approximate lane count per approach.
+- Lane counts are OpenStreetMap's, read off the approach way nearest each
+  light; a two-way street with only `lanes` tagged is split evenly.
 - Stops are generous: Nagel-Schreckenberg's random slowdown makes queues
   stop-and-go, so stops per trip are high for everyone. Band score is harsh
   for the same reason, and because the first light catches random arrivals.
-- Max-pressure is the textbook version with one knob (6 s minimum green). Known
-  fixes exist (capacity-aware, position-weighted backpressure); none tried.

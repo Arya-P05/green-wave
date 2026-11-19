@@ -25,6 +25,8 @@ export type Experiment = {
 
 /** The measures a results figure can show, and how to read each off a point. */
 export const MEASURES = {
+  stopsNorth: { label: "stops, northbound", unit: "", get: (p: Point) => p.northbound.stops },
+  stopsSouth: { label: "stops, southbound", unit: "", get: (p: Point) => p.southbound.stops },
   delay: { label: "delay, every car", unit: "s", get: (p: Point) => p.delay },
   northbound: { label: "northbound trip", unit: "s", get: (p: Point) => p.northbound.travelTime },
   southbound: { label: "southbound trip", unit: "s", get: (p: Point) => p.southbound.travelTime },
