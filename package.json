@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test \"lib/**/*.test.ts\"",
     "data:cliff": "node scripts/cliff.ts",
-    "data:toronto": "node scripts/toronto.ts"
+    "data:toronto": "node scripts/toronto.ts",
+    "experiment": "node scripts/experiment.ts"
   },
   "dependencies": {
     "next": "^16.4.6",
