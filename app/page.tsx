@@ -1,4 +1,5 @@
 import Cliff from "@/components/cliff/Cliff";
+import Demand from "@/components/Demand";
 import Toc from "@/components/Toc";
 import type { Entry } from "@/components/Toc";
 import Todo from "@/components/Todo";
@@ -85,6 +86,7 @@ export default function Home() {
 
         <Section id="spadina" title="spadina">
           <Todo>why spadina: eight consecutive signals counted on the same day. the counts, the per-lane assumption.</Todo>
+          <Demand />
         </Section>
 
         <Section id="wave" title="the green wave">
