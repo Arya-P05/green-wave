@@ -1,46 +1,28 @@
-import { VMAX } from "./model.ts";
+import { FREE_SPEED } from "./model.ts";
 
 /**
- * Where did a car stop? Given its corridor path ([t, x, t, x, ...]) and the
- * lights' positions in driving order, return for each light whether the car
- * stopped on its approach (between the previous light and this one). Uses the
- * sim's own rule: a stop is a halt after having been at full speed.
+ * When would the car have reached each light (after the first) if nothing had
+ * slowed it after it cleared the previous one? That projected arrival is what
+ * a coordination engineer reads off an advance detector. Returns one tick per
+ * light from index 1 on, or null where the path doesn't cover it.
  */
-export function stoppedAt(path: number[], lights: number[], dir: 1 | -1): boolean[] {
-  const out = lights.map(() => false);
-  let moving = true;
-  for (let k = 2; k < path.length; k += 2) {
-    const v = Math.abs(path[k + 1] - path[k - 1]);
-    if (v === 0 && moving) {
-      const x = path[k + 1];
-      const i = lights.findIndex((l) => dir * (l - x) > 0);
-      if (i !== -1) out[i] = true;
+export function projectedArrivals(path: number[], lights: number[], dir: 1 | -1): (number | null)[] {
+  return lights.slice(1).map((light, i) => {
+    const from = lights[i];
+    for (let k = 0; k < path.length; k += 2) {
+      if (dir * (path[k + 1] - from) >= 0) return Math.round(path[k] + Math.abs(light - from) / FREE_SPEED);
     }
-    if (v === 0) moving = false;
-    if (v === VMAX) moving = true;
-  }
-  return out;
+    return null;
+  });
 }
 
 /**
- * The wave test. If you made one light without stopping, how much likelier
- * are you to make the next one? lift = P(no stop at i+1 | no stop at i) /
- * P(no stop at i+1), pooled over consecutive pairs. Unrelated lights give
- * about 1; a green wave gives more.
+ * The wave test: the platoon ratio (Highway Capacity Manual). Of the cars
+ * arriving at a light, how many arrive on green, compared with how many would
+ * if they arrived at random (the light's green share)? About 1 means the
+ * lights ignore each other; above 1 means cars arrive in platoons on green, a
+ * wave; below 1 means they arrive in platoons on red.
  */
-export function progressionLift(stops: boolean[][]): number {
-  let both = 0;
-  let first = 0;
-  let second = 0;
-  let pairs = 0;
-  for (const s of stops) {
-    for (let i = 0; i + 1 < s.length; i++) {
-      pairs++;
-      if (!s[i]) first++;
-      if (!s[i + 1]) second++;
-      if (!s[i] && !s[i + 1]) both++;
-    }
-  }
-  if (!first || !second) return NaN;
-  return both / first / (second / pairs);
+export function platoonRatio(onGreen: number, expected: number): number {
+  return expected > 0 ? onGreen / expected : NaN;
 }
