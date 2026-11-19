@@ -10,10 +10,11 @@ import { webster } from "./webster.ts";
 export const KINDS = ["fixed", "green-wave", "actuated", "max-pressure", "max-pressure-plus"] as const;
 export type Kind = (typeof KINDS)[number];
 
+/** Plain names for the reader: a timer, a sensor light, and the two max-pressures. */
 export const LABELS: Record<Kind, string> = {
-  fixed: "fixed-time",
+  fixed: "timer",
   "green-wave": "green wave",
-  actuated: "actuated",
+  actuated: "sensor",
   "max-pressure": "max-pressure",
   "max-pressure-plus": "max-pressure+",
 };
