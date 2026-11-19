@@ -13,7 +13,8 @@
     "data:cliff": "node scripts/green-wave/cliff.ts",
     "data:toronto": "node scripts/green-wave/toronto.ts",
     "experiment": "node scripts/green-wave/experiment.ts",
-    "pickleball:calibrate": "node scripts/pickleball/calibrate.ts"
+    "pickleball:calibrate": "node scripts/pickleball/calibrate.ts",
+    "pickleball:experiment": "node scripts/pickleball/experiment.ts"
   },
   "dependencies": {
     "next": "^16.4.6",

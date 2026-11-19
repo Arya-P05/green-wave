@@ -46,8 +46,10 @@ export const PARAMS = {
 
   /** Hard shots (drive, speed-up, put-away). */
   hard: {
-    err: 0.1,
-    errD: 0.19,
+    err: 0.08,
+    errD: 0.17,
+    /** Extra misses hitting hard from close in: a short court to keep it in. */
+    errNear: 0.06,
     errLow: 0.2,
     errPace: 0.37,
     errMoving: 0.09,
@@ -62,7 +64,7 @@ export const PARAMS = {
     lowFromHigh: 0.74,
   },
 
-  lob: { err: 0.2, errPace: 0.15, errMoving: 0.08, good: 0.65 },
+  lob: { err: 0.25, errPace: 0.15, errMoving: 0.08, good: 0.35 },
 };
 
 export type Params = typeof PARAMS;

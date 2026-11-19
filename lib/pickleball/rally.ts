@@ -109,11 +109,12 @@ export function label(kind: Kind, s: State): string {
     case "short":
       return "short return";
     case "soft":
-      if (zone(d) === "kitchen") return "dink";
+      if (zone(d) === "kitchen") return s.ball.pace > 0.3 ? "block" : "dink";
       return s.shot === 3 || s.ball.bounce ? "drop" : "reset";
     case "hard":
       if (s.ball.h === "high") return "put-away";
-      return zone(d) === "kitchen" ? "speed-up" : "drive";
+      if (zone(d) === "kitchen") return s.ball.pace > 0.3 ? "counter" : "speed-up";
+      return "drive";
     case "lob":
       return "lob";
   }
@@ -140,7 +141,7 @@ export function odds(kind: Kind, s: State, p: Params = PARAMS): { err: number; h
     }
     case "hard": {
       const q = p.hard;
-      const err = q.err + q.errD * D + (h === "low" ? q.errLow : 0) + q.errPace * pace + q.errMoving * m + (h === "high" ? q.errHigh : 0);
+      const err = q.err + q.errD * D + q.errNear * (1 - Math.min(1, D)) + (h === "low" ? q.errLow : 0) + q.errPace * pace + q.errMoving * m + (h === "high" ? q.errHigh : 0);
       const high = h === "low" ? q.highFromLow : h === "mid" ? q.highFromMid : q.highFromHigh;
       const low = h === "low" ? q.lowFromLow : h === "mid" ? q.lowFromMid : q.lowFromHigh;
       return { err: clamp(err, 0.01, 0.9), high, mid: 1 - high - low };

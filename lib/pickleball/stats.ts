@@ -31,6 +31,8 @@ export type Calibration = {
   serveArrive: number;
   /** The serving team's win rate when they do. */
   winWhenArrived: number;
+  /** When someone at the kitchen line speeds up a ball that isn't a sitter, how often their team wins the rally. */
+  speedupWin: number;
 };
 
 const rate = (a: number, b: number) => (b ? a / b : NaN);
@@ -56,6 +58,8 @@ export function calibrate(n: number, seed = 1, policy: Policy = sensible, p?: Pa
     reach5: 0,
     arrived: 0,
     arrivedWins: 0,
+    speedups: 0,
+    speedupWins: 0,
   };
   for (let i = 0; i < n; i++) {
     const server = (i % 2) as Team;
@@ -92,6 +96,11 @@ export function calibrate(n: number, seed = 1, policy: Policy = sensible, p?: Pa
         if (failed) c.driveFail++;
       }
     }
+    states.forEach((s, k) => {
+      if (k < 3 || events[k].action.kind !== "hard" || s.ball.h === "high" || zone(s.players[s.hitter].d) !== "kitchen") return;
+      c.speedups++;
+      if ((s.hitter < 2 ? 0 : 1) === winner) c.speedupWins++;
+    });
     if (events.length >= 5) {
       c.reach5++;
       const servers = [2 * server, 2 * server + 1];
@@ -118,5 +127,23 @@ export function calibrate(n: number, seed = 1, policy: Policy = sensible, p?: Pa
     meanLength: rate(c.shots, n),
     serveArrive: rate(c.arrived, c.reach5),
     winWhenArrived: rate(c.arrivedWins, c.arrived),
+    speedupWin: rate(c.speedupWins, c.speedups),
   };
+}
+
+/** Team 0's rally win rates when serving and when receiving, playing `policy` against sensible opponents. */
+export function teamRates(n: number, seed: number, policy: Policy): { serve: number; receive: number } {
+  const r = rng(seed);
+  const both: Policy = (s, rr) => (s.hitter < 2 ? policy(s, rr) : sensible(s, rr));
+  let serveWins = 0;
+  let receiveWins = 0;
+  for (let i = 0; i < n; i++) {
+    const server = (i % 2) as Team;
+    const { winner } = play(start(server), r, both);
+    if (winner === 0) {
+      if (server === 0) serveWins++;
+      else receiveWins++;
+    }
+  }
+  return { serve: serveWins / Math.ceil(n / 2), receive: receiveWins / Math.floor(n / 2) };
 }
