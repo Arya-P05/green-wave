@@ -105,6 +105,13 @@ export class Sim {
     return n;
   }
 
+  /** Cars standing still on a link, plus any queued outside it waiting to enter. */
+  queue(link: number): number {
+    let n = this.waiting[link].length;
+    for (const c of this.cells[link]) if (c && c.v === 0) n++;
+    return n;
+  }
+
   /** Is any car within the last `cells` cells before the stop line? */
   detects(link: number, cells: number): boolean {
     const row = this.cells[link];

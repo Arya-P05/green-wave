@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { CLEARANCE_S } from "../model.ts";
-import { corridor, MAIN } from "../network.ts";
+import { corridor, MAIN, SIDE } from "../network.ts";
 import type { CorridorSpec } from "../network.ts";
 import { Sim } from "../sim.ts";
 import { webster } from "../webster.ts";
-import { actuated } from "./actuated.ts";
+import { actuated, MIN_GREEN_S } from "./actuated.ts";
 import { fixedTime } from "./fixed.ts";
+import { maxPressure } from "./max-pressure.ts";
 
 test("Webster: C = (1.5L + 5) / (1 - Y), greens split by y", () => {
   // Two phases, L = 8 s: C = (12 + 5) / (1 - 0.5) = 34 s, usable green 26 s.
@@ -50,5 +51,23 @@ test("actuated rests in green when nobody waits on the other phase", () => {
   const { network } = corridor(spec);
   const sim = new Sim(network, actuated, { seed: 2 }).run(1000);
   assert.ok(sim.nodes.every((n) => n.phase === MAIN && n.since === 0));
+});
+
+test("max-pressure serves a side queue once it outweighs the main street, never before min green", () => {
+  const { network } = corridor({
+    spacing: [],
+    approach: 40,
+    arm: 30,
+    northbound: 0.05,
+    southbound: 0,
+    cross: [{ eastbound: 0.3, westbound: 0 }],
+  });
+  const sim = new Sim(network, maxPressure, { seed: 3, record: true }).run(600);
+  const main = sim.aspects![0];
+  assert.ok(main.includes("red"));
+  // Every main green lasts at least the minimum (the last one may be cut off by the end of the run).
+  const greens = main.join("").split(/amber|red/).filter(Boolean).map((g) => g.length / 5);
+  for (const g of greens.slice(0, -1)) assert.ok(g >= MIN_GREEN_S, `green of ${g}s`);
+  assert.ok(sim.trips.some((t) => t.origin === network.nodes[0].phases[SIDE][0]));
 });
 
