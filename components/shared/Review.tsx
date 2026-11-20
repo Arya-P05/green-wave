@@ -4,13 +4,14 @@
 // Comments go to review/comments.json through app/api/review. Rendered only in `next dev`.
 import { useEffect, useRef, useState } from "react";
 import type { ReviewComment } from "@/app/api/review/route.dev";
+import { Edit } from "./Edit";
 
 type Draft = Pick<ReviewComment, "quote" | "section" | "figure"> & { left: number; top: number };
 
 const API = "/api/review";
 const WIDTH = 320;
 const TEXT = "p, li, h1, h2, h3, dt, dd, figcaption, td, th";
-const INTERACTIVE = "button, a, input, select, textarea, label, canvas, svg, [data-review]";
+const INTERACTIVE = "button, a, input, select, textarea, label, canvas, svg, [data-review], [contenteditable]";
 
 function draftAt(target: Element): Draft | null {
   if (target.closest(INTERACTIVE)) return null;
@@ -113,12 +114,15 @@ function DevReview() {
             ))}
           </ol>
         )}
-        <button
-          onClick={() => setOpen(!open)}
-          className="border border-faint bg-canvas px-[8px] py-[2px] text-muted hover:text-ink"
-        >
-          comments ({comments.length})
-        </button>
+        <div className="flex items-center gap-x-[8px]">
+          <Edit />
+          <button
+            onClick={() => setOpen(!open)}
+            className="border border-faint bg-canvas px-[8px] py-[2px] text-muted hover:text-ink"
+          >
+            comments ({comments.length})
+          </button>
+        </div>
       </div>
     </div>
   );

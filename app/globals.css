@@ -173,3 +173,16 @@ details[open] > summary::before {
 details > summary:hover {
   color: var(--color-ink);
 }
+
+/* Dev-only inline editing (components/shared/Edit.tsx): editable blocks get a dotted underline. */
+[data-editable] {
+  text-decoration: underline dotted var(--color-faint);
+  text-underline-offset: 4px;
+  cursor: text;
+}
+
+[data-editable]:hover,
+[data-editable]:focus {
+  text-decoration-color: var(--color-muted);
+  outline: none;
+}
