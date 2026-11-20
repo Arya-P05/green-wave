@@ -190,3 +190,34 @@ details > summary:hover {
 [data-editable][data-unsaved] {
   text-decoration-color: var(--color-red);
 }
+
+/*
+ * A Picture with side="left|right" (components/shared/Picture.tsx) floats beside the text after it on wider screens.
+ * Its section flows as blocks (floats don't work in a grid), keeps the grid's one-line gap between blocks, and keeps
+ * to the paragraph measure so the picture sits beside the text, not out past it.
+ */
+@media (min-width: 48rem) {
+  section:has(> figure[data-side]) {
+    display: flow-root;
+    max-width: 64ch;
+  }
+
+  section:has(> figure[data-side]) > * + * {
+    margin-top: var(--spacing);
+  }
+
+  figure[data-side] {
+    width: 40%;
+    margin-bottom: calc(var(--spacing) / 2);
+  }
+
+  figure[data-side="right"] {
+    float: right;
+    margin-left: var(--spacing);
+  }
+
+  figure[data-side="left"] {
+    float: left;
+    margin-right: var(--spacing);
+  }
+}
