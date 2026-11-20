@@ -1,5 +1,5 @@
 // Dev-only (a .dev.ts file, see next.config.ts): Arya's inline word edits, written straight back into the post's
-// page.tsx so hot reload shows them. Every method is a 404 outside `next dev`.
+// page.tsx so hot reload shows them, or whole blocks deleted from it. Every method is a 404 outside `next dev`.
 //
 // A block's rendered text is found in the source as a whole JSX text child: an opening tag's `>`, the text, `</`.
 // JSX folds every run of whitespace (line wraps, indentation) into one space, so each space in the rendered text
@@ -61,6 +61,24 @@ function places(code: string, text: string): RegExpExecArray[] {
 
 const count = (code: string, text: string) => places(code, text).length;
 
+/** Widen [from, to) to its whole line(s) when nothing else is on them, so a removal leaves no blank line behind. */
+function withLine(code: string, from: number, to: number): [number, number] {
+  const lineStart = code.lastIndexOf("\n", from - 1) + 1;
+  const newline = code.indexOf("\n", to);
+  const lineEnd = newline === -1 ? code.length : newline;
+  if (code.slice(lineStart, from).trim() || code.slice(to, lineEnd).trim()) return [from, to];
+  return [lineStart, newline === -1 ? code.length : newline + 1];
+}
+
+/** The whole element a place is the text of, from its `<tag` to its `</tag>`, or null if the tag doesn't close there. */
+function element(code: string, m: RegExpExecArray): [number, number] | null {
+  const start = code.lastIndexOf("<", m.index);
+  const name = /^<([A-Za-z][\w.]*)/.exec(code.slice(start))?.[1];
+  const close = m.index + m[0].length;
+  if (!name || !code.startsWith(`${name}>`, close)) return null;
+  return withLine(code, start, close + name.length + 1);
+}
+
 async function read(file: string): Promise<string | null> {
   try {
     return await readFile(file, "utf8");
@@ -79,6 +97,8 @@ export async function POST(request: Request) {
   return Response.json(texts.map((t) => (typeof t === "string" ? count(code, t) : 0)));
 }
 
+const notOnce = (n: number) => new Response(`the original words are in the source ${n} times, expected once`, { status: 409 });
+
 /** { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't. */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
@@ -88,13 +108,27 @@ export async function PUT(request: Request) {
   if (!file || !code) return notFound();
   if (typeof old !== "string" || typeof text !== "string") return new Response("old and text are required", { status: 400 });
   const next = text.trim().replace(/\s+/g, " ");
-  if (!next) return new Response("can't save an empty paragraph (deleting a whole paragraph isn't supported)", { status: 400 });
+  if (!next) return new Response("can't save an empty paragraph (use × delete to remove it)", { status: 400 });
   const found = places(code, old);
-  if (found.length !== 1) {
-    return new Response(`the original words are in the source ${found.length} times, expected once`, { status: 409 });
-  }
+  if (found.length !== 1) return notOnce(found.length);
   const [m] = found;
   const [whole, before, after] = m;
   await writeFile(file, code.slice(0, m.index) + `>${before}${encode(next)}${after}</` + code.slice(m.index + whole.length));
   return Response.json({ text: next });
+}
+
+/** { path, old } → removes the whole element (tag and all) whose text is `old`, from the one place it's found. */
+export async function DELETE(request: Request) {
+  if (!dev) return notFound();
+  const { path: pathname, old } = await request.json();
+  const file = sourceFor(pathname);
+  const code = file && (await read(file));
+  if (!file || !code) return notFound();
+  if (typeof old !== "string") return new Response("old is required", { status: 400 });
+  const found = places(code, old);
+  if (found.length !== 1) return notOnce(found.length);
+  const span = element(code, found[0]);
+  if (!span) return new Response("couldn't find where that block's tag closes", { status: 409 });
+  await writeFile(file, code.slice(0, span[0]) + code.slice(span[1]));
+  return new Response(null, { status: 204 });
 }
