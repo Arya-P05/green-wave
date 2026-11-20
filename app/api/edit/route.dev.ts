@@ -7,7 +7,10 @@
 //
 // The characters JSX text can't hold as typed (or that lint flags) are written as HTML entities, which JSX turns back
 // into the same characters, so what Arya types is exactly what renders and the block stays editable.
-import { readFile, writeFile } from "node:fs/promises";
+//
+// Images are <Picture src="…" … /> tags (components/shared/Picture.tsx), found by their src: they can be added after
+// any editable block (the file is copied into public/<post>/), set full width or beside the text, and deleted.
+import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export const dynamic = "force-dynamic";
@@ -70,13 +73,25 @@ function withLine(code: string, from: number, to: number): [number, number] {
   return [lineStart, newline === -1 ? code.length : newline + 1];
 }
 
-/** The whole element a place is the text of, from its `<tag` to its `</tag>`, or null if the tag doesn't close there. */
-function element(code: string, m: RegExpExecArray): [number, number] | null {
+/** The element a place is the text of, from its `<tag` to its `</tag>`, or null if the tag doesn't close there. */
+function elementAt(code: string, m: RegExpExecArray): [number, number] | null {
   const start = code.lastIndexOf("<", m.index);
   const name = /^<([A-Za-z][\w.]*)/.exec(code.slice(start))?.[1];
   const close = m.index + m[0].length;
   if (!name || !code.startsWith(`${name}>`, close)) return null;
-  return withLine(code, start, close + name.length + 1);
+  return [start, close + name.length + 1];
+}
+
+/** The same, widened to its line(s) for removal. */
+function element(code: string, m: RegExpExecArray): [number, number] | null {
+  const span = elementAt(code, m);
+  return span && withLine(code, ...span);
+}
+
+/** The indentation of the line `i` is on, if only whitespace comes before it there. */
+function indentAt(code: string, i: number): string {
+  const lead = code.slice(code.lastIndexOf("\n", i - 1) + 1, i);
+  return lead.trim() ? "" : lead;
 }
 
 /** Text exactly as written in a JSX attribute string, which takes entities but no whitespace folding. */
@@ -122,6 +137,127 @@ function retitle(code: string, section: string, old: string, next: string | null
   return out;
 }
 
+const PICTURE_IMPORT = 'import Picture from "@/components/shared/Picture";';
+
+/** Props on tags the editor writes: `&`, `"`, `<` and `>` as entities, so the tag itself never holds a raw `>`. */
+const encodeProp = (text: string) => text.replace(/[&"<>]/g, (c) => ENTITIES[c]);
+
+const picturePattern = (src: string) => new RegExp(`<Picture\\s[^>]*?src="${inAttribute(src)}"[^>]*?/>`, "g");
+const pictures = (code: string, src: string) => (src ? [...code.matchAll(picturePattern(src))] : []);
+
+/** Adds the Picture import after the last import when it's missing, or drops it when no Picture is left. */
+function pictureImport(code: string): string {
+  const has = code.includes(PICTURE_IMPORT);
+  const used = /<Picture\s/.test(code);
+  if (has && !used) return code.replace(`${PICTURE_IMPORT}\n`, "");
+  if (has || !used) return code;
+  const last = [...code.matchAll(/^import [^;]*;\n/gm)].at(-1);
+  const at = last ? last.index + last[0].length : 0;
+  return code.slice(0, at) + PICTURE_IMPORT + "\n" + code.slice(at);
+}
+
+/** Full width (no prop) or side="left" / side="right" on the one Picture with this src. */
+function setSide(code: string, src: string, side: unknown): string | Response {
+  if (side !== "full" && side !== "left" && side !== "right") return new Response("side is full, left or right", { status: 400 });
+  const found = pictures(code, src);
+  if (found.length !== 1) return notOnce(found.length, "that image");
+  const [m] = found;
+  const bare = m[0].replace(/\s+side="[^"]*"/, "");
+  const tag = side === "full" ? bare : bare.replace(/\s*\/>$/, ` side="${side}" />`);
+  return code.slice(0, m.index) + tag + code.slice(m.index + m[0].length);
+}
+
+function removePicture(code: string, src: string): string | Response {
+  const found = pictures(code, src);
+  if (found.length !== 1) return notOnce(found.length, "that image");
+  const [from, to] = withLine(code, found[0].index, found[0].index + found[0][0].length);
+  return pictureImport(code.slice(0, from) + code.slice(to));
+}
+
+type Anchor = { text?: unknown; section?: unknown; title?: unknown; picture?: unknown };
+
+/** Where a new image goes after a block: after its closing tag, after a section's opening tag, or after a Picture. */
+function after(code: string, anchor: Anchor): { at: number; indent: string } | Response {
+  if (typeof anchor.picture === "string") {
+    const found = pictures(code, anchor.picture);
+    if (found.length !== 1) return notOnce(found.length, "that image");
+    return { at: found[0].index + found[0][0].length, indent: indentAt(code, found[0].index) };
+  }
+  if (typeof anchor.section === "string" && typeof anchor.title === "string") {
+    const found = [...code.matchAll(titlePattern(anchor.section, anchor.title))];
+    if (found.length !== 1) return notOnce(found.length, "that heading");
+    const end = code.indexOf(">", found[0].index + found[0][0].length) + 1;
+    return { at: end, indent: indentAt(code, found[0].index) + "  " };
+  }
+  if (typeof anchor.text === "string") {
+    const found = places(code, anchor.text);
+    if (found.length !== 1) return notOnce(found.length);
+    const span = elementAt(code, found[0]);
+    if (!span) return new Response("couldn't find where that block's tag closes", { status: 409 });
+    return { at: span[1], indent: indentAt(code, span[0]) };
+  }
+  return new Response("say which block the image goes after", { status: 400 });
+}
+
+const IMAGE = /\.(png|jpe?g|gif|webp|avif)$/i;
+
+/** A safe, unused file name in dir: lowercase letters, digits and dashes, plus the extension. */
+async function freeName(dir: string, original: string): Promise<string> {
+  const ext = IMAGE.exec(original)![0].toLowerCase();
+  const stem = original.slice(0, -ext.length).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "image";
+  for (let n = 1; ; n++) {
+    const name = n === 1 ? `${stem}${ext}` : `${stem}-${n}${ext}`;
+    try {
+      await access(path.join(dir, name));
+    } catch {
+      return name;
+    }
+  }
+}
+
+/** Multipart { path, after, file, alt, caption, width, height } → copies the file into public/<post>/ and adds it. */
+async function addImage(request: Request): Promise<Response> {
+  const form = await request.formData();
+  const pathname = form.get("path");
+  const file = sourceFor(pathname);
+  const code = file && (await read(file));
+  if (!file || !code || typeof pathname !== "string") return notFound();
+  const image = form.get("file");
+  const alt = String(form.get("alt") ?? "").trim();
+  const caption = String(form.get("caption") ?? "").trim();
+  const width = Number(form.get("width"));
+  const height = Number(form.get("height"));
+  if (!(image instanceof File) || !IMAGE.test(image.name)) return new Response("pick a png, jpg, gif, webp or avif", { status: 400 });
+  if (!alt) return new Response("alt text is required", { status: 400 });
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1) {
+    return new Response("couldn't read the image's size", { status: 400 });
+  }
+  let anchor: Anchor;
+  try {
+    anchor = JSON.parse(String(form.get("after")));
+  } catch {
+    return new Response("say which block the image goes after", { status: 400 });
+  }
+  const spot = after(code, anchor ?? {});
+  if (spot instanceof Response) return spot;
+  const post = pathname === "/" ? "index" : pathname.slice(1);
+  const dir = path.join(process.cwd(), "public", post);
+  await mkdir(dir, { recursive: true });
+  const name = await freeName(dir, image.name);
+  const src = `/${post}/${name}`;
+  const props = [`src="${src}"`, `alt="${encodeProp(alt)}"`, `width={${width}}`, `height={${height}}`];
+  if (caption) props.push(`caption="${encodeProp(caption)}"`);
+  const tag = `\n${spot.indent}<Picture ${props.join(" ")} />`;
+  await writeFile(path.join(dir, name), Buffer.from(await image.arrayBuffer()));
+  try {
+    await writeFile(file, pictureImport(code.slice(0, spot.at) + tag + code.slice(spot.at)));
+  } catch (e) {
+    await unlink(path.join(dir, name));
+    throw e;
+  }
+  return Response.json({ src });
+}
+
 async function read(file: string): Promise<string | null> {
   try {
     return await readFile(file, "utf8");
@@ -135,33 +271,43 @@ const isTitle = (t: unknown): t is Title =>
   typeof t === "object" && t !== null && typeof (t as Title).section === "string" && typeof (t as Title).title === "string";
 
 /**
- * { path, texts, titles } → how many places each block's text, and each section title, is found in that post's
- * source. Only a 1 is editable.
+ * { path, texts, titles, pictures } → how many places each block's text, section title and image src is found in
+ * that post's source. Only a 1 is editable. A multipart body adds an image instead (see addImage).
  */
 export async function POST(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, texts, titles = [] } = await request.json();
+  if (request.headers.get("content-type")?.startsWith("multipart/form-data")) return addImage(request);
+  const { path: pathname, texts, titles = [], pictures: srcs = [] } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
-  if (!code || !Array.isArray(texts) || !Array.isArray(titles)) return notFound();
+  if (!code || !Array.isArray(texts) || !Array.isArray(titles) || !Array.isArray(srcs)) return notFound();
   return Response.json({
     texts: texts.map((t) => (typeof t === "string" ? count(code, t) : 0)),
     titles: titles.map((t) => (isTitle(t) ? countTitle(code, t.section, t.title) : 0)),
+    pictures: srcs.map((src) => (typeof src === "string" ? pictures(code, src).length : 0)),
   });
 }
 
-const notOnce = (n: number) => new Response(`the original words are in the source ${n} times, expected once`, { status: 409 });
+const notOnce = (n: number, what = "the original words") =>
+  new Response(`found ${what} ${n} times in the source, expected once`, { status: 409 });
 
 /**
  * { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't.
+ * With `picture` (a src), sets that image's `side` instead: full, left or right.
  * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
  */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, section, old, text } = await request.json();
+  const { path: pathname, section, old, text, picture, side } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
+  if (typeof picture === "string") {
+    const out = setSide(code, picture, side);
+    if (out instanceof Response) return out;
+    await writeFile(file, out);
+    return Response.json({ side });
+  }
   if (typeof old !== "string" || typeof text !== "string") return new Response("old and text are required", { status: 400 });
   const next = text.trim().replace(/\s+/g, " ");
   if (!next) return new Response("can't save it empty (use × delete to remove it)", { status: 400 });
@@ -182,13 +328,20 @@ export async function PUT(request: Request) {
 /**
  * { path, old } → removes the whole element (tag and all) whose text is `old`, from the one place it's found.
  * With `section`, only that section's title goes (and its contents-list entry); its paragraphs stay.
+ * With `picture` (a src), that <Picture /> goes; its file stays in public/.
  */
 export async function DELETE(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, section, old } = await request.json();
+  const { path: pathname, section, old, picture } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
+  if (typeof picture === "string") {
+    const out = removePicture(code, picture);
+    if (out instanceof Response) return out;
+    await writeFile(file, out);
+    return new Response(null, { status: 204 });
+  }
   if (typeof old !== "string") return new Response("old is required", { status: 400 });
   if (typeof section === "string") {
     const out = retitle(code, section, old, null);

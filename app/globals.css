@@ -221,3 +221,9 @@ details > summary:hover {
     margin-right: var(--spacing);
   }
 }
+
+/* Dev-only inline editing: images the editor can move or delete. */
+[data-picture]:hover {
+  outline: 1px dashed var(--color-muted);
+  outline-offset: 4px;
+}
