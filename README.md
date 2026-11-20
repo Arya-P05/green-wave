@@ -49,6 +49,16 @@ comment; they're saved to `review/comments.json` (gitignored). The route is a
 `*.dev.ts` file that `next.config.ts` only picks up in development, so
 production builds have neither the route nor the tool.
 
+### Inline edits (dev only)
+
+Under `npm run dev`, hit **edit** (next to comments), click a dotted-underlined
+paragraph or heading, change the words, then click away or press enter (esc
+undoes). `app/api/edit/route.dev.ts` writes the new words into that post's
+`app/<post>/page.tsx` and hot reload shows them. Only blocks that are plain
+text (no links or emphasis inside) and whose words appear exactly once in the
+page's source as a whole JSX text are editable. Same `*.dev.ts` gating as the
+comments, so production has neither.
+
 ## green wave
 
 Can traffic lights that only look at their own queues produce a green wave on
