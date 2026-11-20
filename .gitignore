@@ -9,5 +9,3 @@ next-env.d.ts
 # Dev-only review comments (app/api/review); never committed.
 /review
 
-# Arya's own photos for the iPhone photos post; she'll decide later whether they go in git.
-/public/iphone-photos/story/
