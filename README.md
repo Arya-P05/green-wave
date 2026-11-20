@@ -57,7 +57,10 @@ undoes). `app/api/edit/route.dev.ts` writes the new words into that post's
 `app/<post>/page.tsx` and hot reload shows them. Only blocks that are plain
 text (no links or emphasis inside) and whose words appear exactly once in the
 page's source as a whole JSX text are editable. Same `*.dev.ts` gating as the
-comments, so production has neither.
+comments, so production has neither. Characters JSX text can't hold as typed
+(`" ' & < > { }`) are saved as HTML entities, so they render exactly as typed.
+If a save fails, the block keeps your words, turns red, and the reason shows
+right under it.
 
 ## green wave
 
