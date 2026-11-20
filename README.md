@@ -73,9 +73,10 @@ caption, copies the file into `public/<post>/` under a lowercase-dashed name,
 and adds `<Picture src="…" alt="…" width={…} height={…} />`
 (`components/shared/Picture.tsx`) right after that block (after a heading means
 the top of its section). Hovering an image (dashed outline) shows **full /
-left / right**: left and right write `side="left|right"`, which floats the
-image at about 40% width beside the text that follows it on screens 768px and
-wider, and stacks it full width on phones. **× delete** on an image removes the
+right**: right writes `side="right"`, which puts the image in the right margin
+level with the top of the block above it, on screens 1280px and wider, without
+changing the text's width or moving the text below; narrower, it sits below
+that block at text width. **× delete** on an image removes the
 tag; its file stays in `public/`.
 
 ## green wave
