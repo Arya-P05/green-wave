@@ -4,10 +4,13 @@ import Signature from "./Signature";
 /** The intro arrives once, in reading order: give each piece its place in line. */
 export const order = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** One section of a post: a muted heading (if it has a title), then its paragraphs and figures. */
+/**
+ * One section of a post: a muted heading (if it has a title), then its paragraphs and figures. Without a title it
+ * starts one paragraph gap below the section before, so it reads as that section carrying on.
+ */
 export function Section({ id, title, children }: { id: string; title?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className="mt-4 grid scroll-mt-4 gap-y-1">
+    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className={`${title ? "mt-4" : "mt-1"} grid scroll-mt-4 gap-y-1`}>
       {title && (
         <h2 id={`${id}-title`} className="text-muted">
           {title}
