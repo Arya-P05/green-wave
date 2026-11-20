@@ -186,3 +186,7 @@ details > summary:hover {
   text-decoration-color: var(--color-muted);
   outline: none;
 }
+
+[data-editable][data-unsaved] {
+  text-decoration-color: var(--color-red);
+}

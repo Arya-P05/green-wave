@@ -2,11 +2,16 @@
 
 // Dev-only inline editing: toggle "edit", then click a paragraph or heading and change its words in place. On blur
 // (or enter) the new words go to app/api/edit, which writes them into the post's page.tsx; hot reload does the rest.
-// Only plain-text blocks the route finds exactly once in the source are editable (dotted underline).
+// Only plain-text blocks the route finds exactly once in the source are editable (dotted underline). If a save fails,
+// the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 const API = "/api/edit";
+const WIDTH = 320;
 const TEXT = "main p, main li, main h1, main h2, main h3, main dt, main dd, main figcaption, main td, main th";
+
+type Problem = { message: string; left: number; top: number };
 
 /** Blocks with nothing but text inside: links, emphasis or figures inside a block make it read-only. */
 function plainBlocks(): HTMLElement[] {
@@ -17,61 +22,89 @@ function plainBlocks(): HTMLElement[] {
 
 const words = (el: HTMLElement) => el.textContent!.replace(/\s+/g, " ").trim();
 
+/** Put words back without swapping out the text node React rendered, so hot reload can still update it. */
+function setWords(el: HTMLElement, text: string) {
+  const node = el.firstChild;
+  if (el.childNodes.length === 1 && node?.nodeType === Node.TEXT_NODE) (node as Text).data = text;
+  else el.textContent = text;
+}
+
+function problemAt(el: HTMLElement, message: string): Problem {
+  const rect = el.getBoundingClientRect();
+  return {
+    message,
+    left: Math.max(8, Math.min(rect.left, window.innerWidth - WIDTH - 8)) + window.scrollX,
+    top: rect.bottom + window.scrollY + 6,
+  };
+}
+
 function DevEdit() {
   const [on, setOn] = useState(false);
   const [status, setStatus] = useState("");
+  const [problem, setProblem] = useState<Problem | null>(null);
 
   useEffect(() => {
     if (!on) return;
-    const original = new Map<HTMLElement, string>();
+    const saved = new Map<HTMLElement, string>();
     let cancelled = false;
+
+    function fail(el: HTMLElement, message: string) {
+      el.dataset.unsaved = "";
+      setStatus("not saved");
+      setProblem(problemAt(el, `not saved: ${message}. Fix it and click away to retry, or esc to undo.`));
+    }
+
+    function clear(el: HTMLElement) {
+      delete el.dataset.unsaved;
+      setProblem(null);
+    }
 
     async function enable() {
       const blocks = plainBlocks();
       const res = await fetch(API, {
         method: "POST",
         body: JSON.stringify({ path: location.pathname, texts: blocks.map(words) }),
-      });
+      }).catch(() => null);
       if (cancelled) return;
-      if (!res.ok) return setStatus("no source file for this page");
+      if (!res?.ok) return setStatus(res ? `can't edit this page (no app${location.pathname}/page.tsx)` : "dev server unreachable");
       const counts: number[] = await res.json();
       blocks.forEach((el, i) => {
         if (counts[i] !== 1) return;
-        original.set(el, words(el));
+        saved.set(el, words(el));
         el.contentEditable = "plaintext-only";
         el.dataset.editable = "";
       });
-      setStatus(`${original.size} editable`);
+      setStatus(`${saved.size} editable`);
     }
 
     async function save(el: HTMLElement) {
-      const old = original.get(el)!;
+      const old = saved.get(el)!;
       const text = words(el);
-      if (text === old) return;
+      if (text === old) return clear(el);
       setStatus("saving…");
-      const res = await fetch(API, { method: "PUT", body: JSON.stringify({ path: location.pathname, old, text }) });
-      if (!res.ok) {
-        el.textContent = old;
-        return setStatus(await res.text());
-      }
-      const saved: string = (await res.json()).text;
-      if (saved !== text) el.textContent = saved;
-      original.set(el, saved);
+      const res = await fetch(API, { method: "PUT", body: JSON.stringify({ path: location.pathname, old, text }) }).catch(
+        () => null,
+      );
+      if (!res) return fail(el, "dev server unreachable");
+      if (!res.ok) return fail(el, (await res.text()) || `error ${res.status}`);
+      saved.set(el, (await res.json()).text);
+      clear(el);
       setStatus("saved");
     }
 
     const onBlur = (e: FocusEvent) => {
       const el = e.target as HTMLElement;
-      if (original.has(el)) save(el);
+      if (saved.has(el)) save(el);
     };
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
-      if (!original.has(el)) return;
+      if (!saved.has(el)) return;
       if (e.key === "Enter") {
         e.preventDefault();
         el.blur();
       } else if (e.key === "Escape") {
-        el.textContent = original.get(el)!;
+        setWords(el, saved.get(el)!);
+        clear(el);
         el.blur();
       }
     };
@@ -83,24 +116,42 @@ function DevEdit() {
       cancelled = true;
       document.removeEventListener("focusout", onBlur);
       document.removeEventListener("keydown", onKey);
-      for (const el of original.keys()) {
+      for (const [el, text] of saved) {
+        if (words(el) !== text) setWords(el, text);
         el.removeAttribute("contenteditable");
         delete el.dataset.editable;
+        delete el.dataset.unsaved;
       }
       setStatus("");
+      setProblem(null);
     };
   }, [on]);
 
   return (
-    <div className="flex items-center gap-x-[8px]">
-      {status && <span className="text-muted">{status}</span>}
-      <button
-        onClick={() => setOn(!on)}
-        className={`border border-faint bg-canvas px-[8px] py-[2px] hover:text-ink ${on ? "text-ink" : "text-muted"}`}
-      >
-        {on ? "done editing" : "edit"}
-      </button>
-    </div>
+    <>
+      {/* In the page, not the fixed corner, so it sits right under the block and scrolls with it. */}
+      {problem &&
+        createPortal(
+          <p
+            role="alert"
+            data-review
+            className="absolute z-50 border border-red bg-canvas p-[10px] text-[13px] leading-[20px] text-red"
+            style={{ left: problem.left, top: problem.top, width: WIDTH }}
+          >
+            {problem.message}
+          </p>,
+          document.body,
+        )}
+      <div className="flex items-center gap-x-[8px]">
+        {status && <span className={problem ? "text-red" : "text-muted"}>{status}</span>}
+        <button
+          onClick={() => setOn(!on)}
+          className={`border border-faint bg-canvas px-[8px] py-[2px] hover:text-ink ${on ? "text-ink" : "text-muted"}`}
+        >
+          {on ? "done editing" : "edit"}
+        </button>
+      </div>
+    </>
   );
 }
 
