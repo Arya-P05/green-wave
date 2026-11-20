@@ -6,7 +6,7 @@
 // Section headings come from <Section title="…">: editing one rewrites that title (and its contents-list entry), and
 // deleting one removes just the heading, never the section's paragraphs.
 // "+ image" by any block picks a file and adds it as a <Picture /> right after that block; images (dashed outline)
-// get "full / left / right" to sit full width or beside the text after them, and "× delete".
+// get "full / right" to sit full width or in the right margin beside the block above them, and "× delete".
 // Only plain-text blocks the route finds exactly once in the source are editable (dotted underline). If a save fails,
 // the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useRef, useState } from "react";
@@ -21,10 +21,10 @@ const HEADING = 'main section > h2[id$="-title"]';
 type Spot = { left: number; top: number };
 type Problem = Spot & { message: string };
 type Kind = "text" | "heading" | "picture";
-type Side = "full" | "left" | "right";
+type Side = "full" | "right";
 type Target = Spot & { el: HTMLElement; kind: Kind; side: Side };
 type Actions = { remove: (el: HTMLElement) => void; add: (el: HTMLElement) => void; side: (el: HTMLElement, side: Side) => void };
-const SIDES: Side[] = ["full", "left", "right"];
+const SIDES: Side[] = ["full", "right"];
 const CONTROL = "border border-faint bg-canvas px-[6px] text-muted hover:text-ink";
 
 /** Blocks with nothing but text inside: links, emphasis or figures inside a block make it read-only. */
@@ -40,7 +40,7 @@ function plainBlocks(): HTMLElement[] {
 
 const headings = () => [...document.querySelectorAll<HTMLElement>(HEADING)];
 const figures = () => [...document.querySelectorAll<HTMLElement>("main figure[data-src]")];
-const sideOf = (el: HTMLElement): Side => (el.dataset.side === "left" || el.dataset.side === "right" ? el.dataset.side : "full");
+const sideOf = (el: HTMLElement): Side => (el.dataset.side === "right" ? "right" : "full");
 
 const words = (el: HTMLElement) => el.textContent!.replace(/\s+/g, " ").trim();
 
@@ -237,7 +237,7 @@ function DevEdit() {
       setStatus("moving…");
       const res = await fetch(API, { method: "PUT", body: JSON.stringify({ path, picture: src, side: to }) }).catch(() => null);
       if (!res?.ok) return refuse(el, "moved", res);
-      setStatus(to === "full" ? "full width" : `beside the text, ${to}`);
+      setStatus(to === "full" ? "full width" : "in the right margin");
       await rescan(() => {
         const now = document.querySelector<HTMLElement>(`main figure[data-src="${CSS.escape(src)}"]`);
         return !!now && sideOf(now) === to;

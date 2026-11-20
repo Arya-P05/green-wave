@@ -192,33 +192,30 @@ details > summary:hover {
 }
 
 /*
- * A Picture with side="left|right" (components/shared/Picture.tsx) floats beside the text after it on wider screens.
- * Its section flows as blocks (floats don't work in a grid), keeps the grid's one-line gap between blocks, and keeps
- * to the paragraph measure so the picture sits beside the text, not out past it.
+ * A Picture with side="right" (components/shared/Picture.tsx) sits in the right margin, level with the top of the
+ * block just above it, and never narrows the text. Its section gets a second column past the 64ch measure; the block
+ * before the picture keeps to the first, everything else spans both as before, and the picture takes no height, so
+ * the text below doesn't move. Narrower than 1280px there's no margin to use, so it stays below the block.
  */
-@media (min-width: 48rem) {
+@media (min-width: 80rem) {
   section:has(> figure[data-side]) {
-    display: flow-root;
-    max-width: 64ch;
+    grid-template-columns: 64ch minmax(0, 1fr);
+    column-gap: var(--spacing);
   }
 
-  section:has(> figure[data-side]) > * + * {
-    margin-top: var(--spacing);
+  section:has(> figure[data-side]) > * {
+    grid-column: 1 / -1;
   }
 
-  figure[data-side] {
-    width: 40%;
-    margin-bottom: calc(var(--spacing) / 2);
+  section:has(> figure[data-side]) > :has(+ figure[data-side]) {
+    grid-column: 1;
   }
 
-  figure[data-side="right"] {
-    float: right;
-    margin-left: var(--spacing);
-  }
-
-  figure[data-side="left"] {
-    float: left;
-    margin-right: var(--spacing);
+  section > figure[data-side] {
+    grid-column: 2;
+    align-self: start;
+    height: 0;
+    margin: 0;
   }
 }
 

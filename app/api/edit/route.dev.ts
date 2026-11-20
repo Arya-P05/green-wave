@@ -9,7 +9,7 @@
 // into the same characters, so what Arya types is exactly what renders and the block stays editable.
 //
 // Images are <Picture src="…" … /> tags (components/shared/Picture.tsx), found by their src: they can be added after
-// any editable block (the file is copied into public/<post>/), set full width or beside the text, and deleted.
+// any editable block (the file is copied into public/<post>/), set full width or in the right margin, and deleted.
 import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -156,9 +156,9 @@ function pictureImport(code: string): string {
   return code.slice(0, at) + PICTURE_IMPORT + "\n" + code.slice(at);
 }
 
-/** Full width (no prop) or side="left" / side="right" on the one Picture with this src. */
+/** Full width (no prop) or side="right" (in the right margin) on the one Picture with this src. */
 function setSide(code: string, src: string, side: unknown): string | Response {
-  if (side !== "full" && side !== "left" && side !== "right") return new Response("side is full, left or right", { status: 400 });
+  if (side !== "full" && side !== "right") return new Response("side is full or right", { status: 400 });
   const found = pictures(code, src);
   if (found.length !== 1) return notOnce(found.length, "that image");
   const [m] = found;
@@ -293,7 +293,7 @@ const notOnce = (n: number, what = "the original words") =>
 
 /**
  * { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't.
- * With `picture` (a src), sets that image's `side` instead: full, left or right.
+ * With `picture` (a src), sets that image's `side` instead: full or right.
  * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
  */
 export async function PUT(request: Request) {
