@@ -113,7 +113,6 @@ et al.'s selfie geometry). The math is in `lib/iphone-photos/` (`npm test`
 covers it); every source and the claim it supports is in
 `docs/iphone-photos/SOURCES.md`.
 
-Arya's own photos go in `public/iphone-photos/story/` (gitignored for now).
-Each `PhotoSlot` shows the photo when its file is there and a same-shape
-placeholder when it isn't. Strip location data from the photos before they go
-anywhere public.
+Arya's own photos are in `public/iphone-photos/story/`, resized to 1600 px
+and with all metadata (including location) stripped. Strip any new photo the
+same way before adding it.
