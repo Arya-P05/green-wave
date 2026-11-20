@@ -62,7 +62,7 @@ export default function LittlePerson() {
 
         <Section id="3-am" title="3 am">
           <p>
-            we were supposed to be asleep hours ago, like genuinely hours. instead it was 3 am and the three of us were lying on our backs staring at the ceiling in the funniest position possible. one of us was on the bed. then we’d dragged the sofa up against the end of it, and the other two were lying on the sofa with our legs going up over the back and onto the bed, so everyone’s feet ended up in the middle in this big tangle. i drew it, it’s up there. it’s not a good drawing and i love it.
+            we were supposed to be asleep hours ago, like genuinely hours. instead it was 3 am and the three of us were lying on our backs staring at the ceiling in the funniest position possible. one of us was on the bed. then we’d dragged the sofa up against the end of it, and the other two were lying on the sofa with our legs going up over the back and onto the bed, so everyone’s feet ended up in the middle in this big tangle. i drew it, it’s right below. it’s not a good drawing and i love it.
           </p>
           <figure className="my-2 grid max-w-[44ch] gap-y-1">
             <Image
