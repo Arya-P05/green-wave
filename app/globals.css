@@ -192,8 +192,8 @@ details > summary:hover {
 }
 
 /*
- * A Picture with side="right" (components/shared/Picture.tsx) sits in the right margin, level with the top of the
- * block just above it, and never narrows the text. Its section gets a second column past the 64ch measure; the block
+ * A Picture with side="right" (components/shared/Picture.tsx) sits in the right margin, centred on the block just
+ * above it, and never narrows the text. Its section gets a second column past the 64ch measure; the block
  * before the picture keeps to the first, everything else spans both as before, and the picture takes no height, so
  * the text below doesn't move. Narrower than 1280px there's no margin to use, so it stays below the block.
  */
@@ -211,9 +211,18 @@ details > summary:hover {
     grid-column: 1;
   }
 
+  /*
+   * A zero-height box at the middle of the block's row: its column of image and caption overflows it equally up and
+   * down, so the picture's middle lines up with the block's middle. It's a little wider than the margin column,
+   * reaching into the page's right padding, never into the text.
+   */
   section > figure[data-side] {
     grid-column: 2;
-    align-self: start;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 120%;
     height: 0;
     margin: 0;
   }

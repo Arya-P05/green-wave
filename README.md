@@ -74,7 +74,7 @@ and adds `<Picture src="…" alt="…" width={…} height={…} />`
 (`components/shared/Picture.tsx`) right after that block (after a heading means
 the top of its section). Hovering an image (dashed outline) shows **full /
 right**: right writes `side="right"`, which puts the image in the right margin
-level with the top of the block above it, on screens 1280px and wider, without
+centred on the block above it, on screens 1280px and wider, without
 changing the text's width or moving the text below; narrower, it sits below
 that block at text width. **× delete** on an image removes the
 tag; its file stays in `public/`.
