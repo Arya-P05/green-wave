@@ -62,6 +62,12 @@ comments, so production has neither. Characters JSX text can't hold as typed
 If a save fails, the block keeps your words, turns red, and the reason shows
 right under it.
 
+Hovering or focusing an editable block shows **× delete**, which (after a
+confirm) removes the whole element, tag and all, from `page.tsx`. Section
+headings are editable too: they write back to `<Section title="…">` and to the
+matching `{ id, title }` line in the contents list. **× delete heading** removes
+only the title and its contents line; the section's paragraphs stay.
+
 ## green wave
 
 Can traffic lights that only look at their own queues produce a green wave on
