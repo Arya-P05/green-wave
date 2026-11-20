@@ -79,6 +79,49 @@ function element(code: string, m: RegExpExecArray): [number, number] | null {
   return withLine(code, start, close + name.length + 1);
 }
 
+/** Text exactly as written in a JSX attribute string, which takes entities but no whitespace folding. */
+const inAttribute = (text: string) => [...text].map(inSource).join("");
+
+/** Only `&` and `"` need entities inside title="…". */
+const encodeAttribute = (text: string) => text.replace(/[&"]/g, (c) => ENTITIES[c]);
+
+/** A section's title: the `title="…"` on `<Section id="…">`. Groups: everything before it, and the title itself. */
+const titlePattern = (section: string, title: string) =>
+  new RegExp(`(<Section\\s+id="${escapeRegExp(section)}")(\\s+title="${inAttribute(title)}")`, "g");
+
+/** Its entry in the post's contents list, `{ id: "…", title: "…" }`. Groups: before the title, the title, after. */
+const entryPattern = (section: string, title: string) =>
+  new RegExp(`(\\{\\s*id:\\s*"${escapeRegExp(section)}",\\s*title:\\s*)(${escapeRegExp(JSON.stringify(title))})(\\s*\\})`, "g");
+
+const countTitle = (code: string, section: string, title: string) =>
+  title.trim() ? [...code.matchAll(titlePattern(section, title))].length : 0;
+
+/**
+ * A title change: `title="…"` must be found exactly once; the contents-list entry is updated with it when there's
+ * exactly one with the same id and title (a post can have no contents list, or a different label there).
+ */
+function retitle(code: string, section: string, old: string, next: string | null): string | Response {
+  const tags = [...code.matchAll(titlePattern(section, old))];
+  if (tags.length !== 1) return notOnce(tags.length);
+  const entries = [...code.matchAll(entryPattern(section, old))];
+  if (entries.length > 1) return notOnce(entries.length);
+  const [tag] = tags;
+  const replacement = next === null ? tag[1] : `${tag[1]} title="${encodeAttribute(next)}"`;
+  let out = code.slice(0, tag.index) + replacement + code.slice(tag.index + tag[0].length);
+  if (entries.length === 1) {
+    const [entry] = [...out.matchAll(entryPattern(section, old))];
+    let [from, to] = [entry.index, entry.index + entry[0].length];
+    if (next === null) {
+      if (out[to] === ",") to++;
+      [from, to] = withLine(out, from, to);
+      out = out.slice(0, from) + out.slice(to);
+    } else {
+      out = out.slice(0, from) + entry[1] + JSON.stringify(next) + entry[3] + out.slice(to);
+    }
+  }
+  return out;
+}
+
 async function read(file: string): Promise<string | null> {
   try {
     return await readFile(file, "utf8");
@@ -87,28 +130,47 @@ async function read(file: string): Promise<string | null> {
   }
 }
 
-/** { path, texts } → how many places each text is found in that post's source. Only a 1 is editable. */
+type Title = { section: string; title: string };
+const isTitle = (t: unknown): t is Title =>
+  typeof t === "object" && t !== null && typeof (t as Title).section === "string" && typeof (t as Title).title === "string";
+
+/**
+ * { path, texts, titles } → how many places each block's text, and each section title, is found in that post's
+ * source. Only a 1 is editable.
+ */
 export async function POST(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, texts } = await request.json();
+  const { path: pathname, texts, titles = [] } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
-  if (!code || !Array.isArray(texts)) return notFound();
-  return Response.json(texts.map((t) => (typeof t === "string" ? count(code, t) : 0)));
+  if (!code || !Array.isArray(texts) || !Array.isArray(titles)) return notFound();
+  return Response.json({
+    texts: texts.map((t) => (typeof t === "string" ? count(code, t) : 0)),
+    titles: titles.map((t) => (isTitle(t) ? countTitle(code, t.section, t.title) : 0)),
+  });
 }
 
 const notOnce = (n: number) => new Response(`the original words are in the source ${n} times, expected once`, { status: 409 });
 
-/** { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't. */
+/**
+ * { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't.
+ * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
+ */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, old, text } = await request.json();
+  const { path: pathname, section, old, text } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
   if (typeof old !== "string" || typeof text !== "string") return new Response("old and text are required", { status: 400 });
   const next = text.trim().replace(/\s+/g, " ");
-  if (!next) return new Response("can't save an empty paragraph (use × delete to remove it)", { status: 400 });
+  if (!next) return new Response("can't save it empty (use × delete to remove it)", { status: 400 });
+  if (typeof section === "string") {
+    const out = retitle(code, section, old, next);
+    if (out instanceof Response) return out;
+    await writeFile(file, out);
+    return Response.json({ text: next });
+  }
   const found = places(code, old);
   if (found.length !== 1) return notOnce(found.length);
   const [m] = found;
@@ -117,14 +179,23 @@ export async function PUT(request: Request) {
   return Response.json({ text: next });
 }
 
-/** { path, old } → removes the whole element (tag and all) whose text is `old`, from the one place it's found. */
+/**
+ * { path, old } → removes the whole element (tag and all) whose text is `old`, from the one place it's found.
+ * With `section`, only that section's title goes (and its contents-list entry); its paragraphs stay.
+ */
 export async function DELETE(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, old } = await request.json();
+  const { path: pathname, section, old } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
   if (typeof old !== "string") return new Response("old is required", { status: 400 });
+  if (typeof section === "string") {
+    const out = retitle(code, section, old, null);
+    if (out instanceof Response) return out;
+    await writeFile(file, out);
+    return new Response(null, { status: 204 });
+  }
   const found = places(code, old);
   if (found.length !== 1) return notOnce(found.length);
   const span = element(code, found[0]);

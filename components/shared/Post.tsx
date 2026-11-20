@@ -4,13 +4,15 @@ import Signature from "./Signature";
 /** The intro arrives once, in reading order: give each piece its place in line. */
 export const order = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** One section of a post: a muted heading, then its paragraphs and figures. */
-export function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+/** One section of a post: a muted heading (if it has a title), then its paragraphs and figures. */
+export function Section({ id, title, children }: { id: string; title?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="mt-4 grid scroll-mt-4 gap-y-1">
-      <h2 id={`${id}-title`} className="text-muted">
-        {title}
-      </h2>
+    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className="mt-4 grid scroll-mt-4 gap-y-1">
+      {title && (
+        <h2 id={`${id}-title`} className="text-muted">
+          {title}
+        </h2>
+      )}
       {children}
     </section>
   );

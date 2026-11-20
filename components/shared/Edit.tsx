@@ -3,6 +3,8 @@
 // Dev-only inline editing: toggle "edit", then click a paragraph or heading and change its words in place. On blur
 // (or enter) the new words go to app/api/edit, which writes them into the post's page.tsx; hot reload does the rest.
 // Hovering or focusing a block shows "× delete", which (after a confirm) removes the whole block from page.tsx.
+// Section headings come from <Section title="…">: editing one rewrites that title (and its contents-list entry), and
+// deleting one removes just the heading, never the section's paragraphs.
 // Only plain-text blocks the route finds exactly once in the source are editable (dotted underline). If a save fails,
 // the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useRef, useState } from "react";
@@ -11,17 +13,25 @@ import { createPortal } from "react-dom";
 const API = "/api/edit";
 const WIDTH = 320;
 const TEXT = "main p, main li, main h1, main h2, main h3, main dt, main dd, main figcaption, main td, main th";
+/** The heading Section renders from its title prop (components/shared/Post.tsx). */
+const HEADING = 'main section > h2[id$="-title"]';
 
 type Spot = { left: number; top: number };
 type Problem = Spot & { message: string };
-type Target = Spot & { el: HTMLElement };
+type Target = Spot & { el: HTMLElement; heading: boolean };
 
 /** Blocks with nothing but text inside: links, emphasis or figures inside a block make it read-only. */
 function plainBlocks(): HTMLElement[] {
   return [...document.querySelectorAll<HTMLElement>(TEXT)].filter(
-    (el) => el.childNodes.length > 0 && [...el.childNodes].every((n) => n.nodeType === Node.TEXT_NODE) && el.textContent!.trim(),
+    (el) =>
+      !el.matches(HEADING) &&
+      el.childNodes.length > 0 &&
+      [...el.childNodes].every((n) => n.nodeType === Node.TEXT_NODE) &&
+      el.textContent!.trim(),
   );
 }
+
+const headings = () => [...document.querySelectorAll<HTMLElement>(HEADING)];
 
 const words = (el: HTMLElement) => el.textContent!.replace(/\s+/g, " ").trim();
 
@@ -62,6 +72,8 @@ function DevEdit() {
   useEffect(() => {
     if (!on) return;
     const saved = new Map<HTMLElement, string>();
+    // Headings, by the id of the section whose title they are.
+    const sections = new Map<HTMLElement, string>();
     let cancelled = false;
 
     function fail(el: HTMLElement, message: string) {
@@ -77,18 +89,28 @@ function DevEdit() {
 
     async function enable() {
       const blocks = plainBlocks();
+      const titles = headings();
       const res = await fetch(API, {
         method: "POST",
-        body: JSON.stringify({ path: location.pathname, texts: blocks.map(words) }),
+        body: JSON.stringify({
+          path: location.pathname,
+          texts: blocks.map(words),
+          titles: titles.map((el) => ({ section: el.parentElement!.id, title: words(el) })),
+        }),
       }).catch(() => null);
       if (cancelled) return;
       if (!res?.ok) return setStatus(res ? `can't edit this page (no app${location.pathname}/page.tsx)` : "dev server unreachable");
-      const counts: number[] = await res.json();
-      blocks.forEach((el, i) => {
-        if (counts[i] !== 1) return;
+      const counts: { texts: number[]; titles: number[] } = await res.json();
+      const editable = (el: HTMLElement) => {
         saved.set(el, words(el));
         el.contentEditable = "plaintext-only";
         el.dataset.editable = "";
+      };
+      blocks.forEach((el, i) => counts.texts[i] === 1 && editable(el));
+      titles.forEach((el, i) => {
+        if (counts.titles[i] !== 1) return;
+        sections.set(el, el.parentElement!.id);
+        editable(el);
       });
       setStatus(`${saved.size} editable`);
     }
@@ -98,9 +120,8 @@ function DevEdit() {
       const text = words(el);
       if (text === old) return clear(el);
       setStatus("saving…");
-      const res = await fetch(API, { method: "PUT", body: JSON.stringify({ path: location.pathname, old, text }) }).catch(
-        () => null,
-      );
+      const body = JSON.stringify({ path: location.pathname, section: sections.get(el), old, text });
+      const res = await fetch(API, { method: "PUT", body }).catch(() => null);
       if (!res) return fail(el, "dev server unreachable");
       if (!res.ok) return fail(el, (await res.text()) || `error ${res.status}`);
       saved.set(el, (await res.json()).text);
@@ -112,11 +133,13 @@ function DevEdit() {
       const old = saved.get(el);
       if (old === undefined) return;
       const quote = old.length > 140 ? old.slice(0, 140) + "…" : old;
-      if (!window.confirm(`Delete this block from the page?\n\n“${quote}”`)) return;
+      const question = sections.has(el)
+        ? `Delete the heading “${quote}”?\n\nOnly the heading (and its line in the contents) goes. The section’s paragraphs stay.`
+        : `Delete this block from the page?\n\n“${quote}”`;
+      if (!window.confirm(question)) return;
       setStatus("deleting…");
-      const res = await fetch(API, { method: "DELETE", body: JSON.stringify({ path: location.pathname, old }) }).catch(
-        () => null,
-      );
+      const body = JSON.stringify({ path: location.pathname, section: sections.get(el), old });
+      const res = await fetch(API, { method: "DELETE", body }).catch(() => null);
       if (!res?.ok) {
         const why = res ? (await res.text()) || `error ${res.status}` : "dev server unreachable";
         setStatus("not deleted");
@@ -148,7 +171,7 @@ function DevEdit() {
     };
     const onPoint = (e: Event) => {
       const el = (e.target as Element).closest<HTMLElement>("[data-editable]");
-      if (el && saved.has(el)) setTarget({ el, ...beside(el) });
+      if (el && saved.has(el)) setTarget({ el, heading: sections.has(el), ...beside(el) });
     };
 
     enable();
@@ -200,7 +223,7 @@ function DevEdit() {
             className="absolute z-50 border border-faint bg-canvas px-[6px] text-[13px] leading-[20px] text-muted hover:border-red hover:text-red"
             style={{ left: target.left, top: target.top }}
           >
-            × delete
+            {target.heading ? "× delete heading" : "× delete"}
           </button>,
           document.body,
         )}
