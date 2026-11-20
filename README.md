@@ -68,6 +68,16 @@ headings are editable too: they write back to `<Section title="…">` and to the
 matching `{ id, title }` line in the contents list. **× delete heading** removes
 only the title and its contents line; the section's paragraphs stay.
 
+**+ image** by any block picks a file, asks for alt text and an optional
+caption, copies the file into `public/<post>/` under a lowercase-dashed name,
+and adds `<Picture src="…" alt="…" width={…} height={…} />`
+(`components/shared/Picture.tsx`) right after that block (after a heading means
+the top of its section). Hovering an image (dashed outline) shows **full /
+left / right**: left and right write `side="left|right"`, which floats the
+image at about 40% width beside the text that follows it on screens 768px and
+wider, and stacks it full width on phones. **× delete** on an image removes the
+tag; its file stays in `public/`.
+
 ## green wave
 
 Can traffic lights that only look at their own queues produce a green wave on
