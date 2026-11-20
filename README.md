@@ -10,6 +10,7 @@ One Next.js site, one post per route.
 | `/green-wave` | green wave | Can traffic lights find the green wave on their own? |
 | `/sliding-doors` | sliding doors | How do pickleball rallies really get won? |
 | `/iphone-photos` | almost good | How do you take really good iPhone photos? |
+| `/little-person` | the little person | Why is it so embarrassing to say I want to be great? |
 
 ```
 npm install

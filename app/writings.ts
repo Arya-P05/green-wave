@@ -3,6 +3,12 @@ export type Writing = { slug: string; title: string; line: string; date: string 
 
 export const WRITINGS: Writing[] = [
   {
+    slug: "little-person",
+    title: "the little person",
+    line: "Why is it so embarrassing to say I want to be great?",
+    date: "November 2026",
+  },
+  {
     slug: "iphone-photos",
     title: "almost good",
     line: "How do you take really good iPhone photos?",
