@@ -10,7 +10,7 @@ export const order = (i: number) => ({ "--i": i }) as CSSProperties;
  */
 export function Section({ id, title, children }: { id: string; title?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className={`${title ? "mt-4" : "mt-1"} grid scroll-mt-4 gap-y-1`}>
+    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className={`arrive ${title ? "mt-4" : "mt-1"} grid scroll-mt-4 gap-y-1`} style={order(5)}>
       {title && (
         <h2 id={`${id}-title`} className="text-muted">
           {title}
