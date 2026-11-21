@@ -54,7 +54,8 @@ production builds have neither the route nor the tool.
 Under `npm run dev`, hit **edit** (next to comments) or press **E** (again to
 finish; ignored while typing), click a dotted-underlined
 paragraph or heading, change the words, then click away or press enter (esc
-undoes). `app/api/edit/route.dev.ts` writes the new words into that post's
+undoes; shift+enter splits the paragraph at the cursor into two, and at the
+very end opens a new one, kept only if you type in it). `app/api/edit/route.dev.ts` writes the new words into that post's
 `app/<post>/page.tsx` and hot reload shows them. Only blocks that are plain
 text (no links or emphasis inside) and whose words appear exactly once in the
 page's source as a whole JSX text are editable. Same `*.dev.ts` gating as the

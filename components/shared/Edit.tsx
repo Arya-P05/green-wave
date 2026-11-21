@@ -7,6 +7,8 @@
 // deleting one removes just the heading, never the section's paragraphs.
 // "+ image" by any block picks a file and adds it as a <Picture /> right after that block; images (dashed outline)
 // get "full / right" to sit full width or in the right margin, and "× delete".
+// Shift+enter in a paragraph splits it at the cursor: the words after it become a new paragraph right below (same tag),
+// and the cursor moves there. At the very end it opens an empty paragraph, saved on blur only if something was typed.
 // The right margin (screens 1280px and wider) is a free column: hovering it shows "+ image here" at that height, and
 // margin images drag up and down. Either way the image is stored after the block it starts beside, with offset = px
 // from that block's top (see Picture); on narrower screens it shows right after that block.
@@ -85,6 +87,32 @@ function beside(el: HTMLElement): Spot {
   return { left: Math.min(rect.right + 8, window.innerWidth - 130) + window.scrollX, top: rect.top + window.scrollY };
 }
 
+/** Where the selection starts and ends in el, as character offsets into its text, or null if it isn't inside el. */
+function caret(el: HTMLElement): [number, number] | null {
+  const sel = window.getSelection();
+  if (!sel?.rangeCount) return null;
+  const range = sel.getRangeAt(0);
+  if (!el.contains(range.startContainer) || !el.contains(range.endContainer)) return null;
+  const upTo = document.createRange();
+  upTo.selectNodeContents(el);
+  upTo.setEnd(range.startContainer, range.startOffset);
+  const start = upTo.toString().length;
+  upTo.setEnd(range.endContainer, range.endOffset);
+  return [start, upTo.toString().length];
+}
+
+/** Focus el with the cursor at its start or end. */
+function focusAt(el: HTMLElement, end: boolean) {
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(!end);
+  window.getSelection()?.removeAllRanges();
+  window.getSelection()?.addRange(range);
+}
+
+const fold = (text: string) => text.replace(/\s+/g, " ").trim();
+
 /** Resolves once `done()` is true (hot reload has shown the change), or after 5s. */
 async function until(done: () => boolean) {
   for (let t = 0; t < 50 && !done(); t++) await new Promise((r) => setTimeout(r, 100));
@@ -116,6 +144,8 @@ function DevEdit() {
   const [target, setTarget] = useState<Target | null>(null);
   const [slot, setSlot] = useState<Slot | null>(null);
   const actions = useRef<Actions | null>(null);
+  // A paragraph a split just made: focused (at its start, or its end) once hot reload shows it and it's editable again.
+  const focusNext = useRef<{ text: string; end: boolean } | null>(null);
 
   // E (no modifiers) turns edit mode on and off, except while typing in a field or an editable block.
   useEffect(() => {
@@ -202,7 +232,68 @@ function DevEdit() {
         pictures.set(el, el.dataset.src!);
         el.dataset.picture = "";
       });
+      const next = focusNext.current;
+      focusNext.current = null;
+      const made = next && [...saved].find(([el, text]) => !sections.has(el) && text === next.text)?.[0];
+      if (made) focusAt(made, next.end);
       setStatus(`${saved.size} editable${pictures.size ? `, ${pictures.size} image${pictures.size > 1 ? "s" : ""}` : ""}`);
+    }
+
+    // Empty paragraphs opened by shift+enter at the end of a block, by that block; only in the page until saved.
+    const drafts = new Map<HTMLElement, HTMLElement>();
+    // Drafts left with shift+enter: once saved, the cursor goes to the end of the new paragraph, ready for another.
+    const again = new Set<HTMLElement>();
+    let saving: Promise<void> = Promise.resolve();
+
+    /**
+     * Saves el as `head` plus a new paragraph after it holding `tail`, then moves the cursor to the new one's start or
+     * end (or leaves focus alone, with null).
+     */
+    async function splitSave(el: HTMLElement, head: string, tail: string, end: boolean | null): Promise<boolean> {
+      setStatus("saving…");
+      const body = JSON.stringify({ path, old: saved.get(el), text: head, split: tail });
+      const res = await fetch(API, { method: "PUT", body }).catch(() => null);
+      if (!res) return (fail(el, "dev server unreachable"), false);
+      if (!res.ok) return (fail(el, (await res.text()) || `error ${res.status}`), false);
+      const { text, split } = await res.json();
+      saved.set(el, text);
+      setWords(el, text);
+      clear(el);
+      setStatus("new paragraph");
+      focusNext.current = end === null ? null : { text: split, end };
+      await rescan(() => plainBlocks().some((b) => b.dataset.draft === undefined && words(b) === split));
+      return true;
+    }
+
+    /** Shift+enter: split at the cursor, or at the very end open an empty paragraph below to type into. */
+    async function split(el: HTMLElement) {
+      const at = caret(el);
+      if (!at) return;
+      const raw = el.textContent ?? "";
+      const [head, tail] = [fold(raw.slice(0, at[0])), fold(raw.slice(at[1]))];
+      if (!head) return setStatus("can't split at the very start");
+      if (tail) return void splitSave(el, head, tail, false);
+      const draft = document.createElement(el.tagName);
+      draft.className = el.className;
+      draft.contentEditable = "plaintext-only";
+      draft.dataset.editable = "";
+      draft.dataset.draft = "";
+      el.after(draft);
+      drafts.set(draft, el);
+      draft.focus();
+    }
+
+    /** A draft lost focus: gone if it's empty, otherwise added as a new paragraph after its block. */
+    async function commitDraft(draft: HTMLElement) {
+      const el = drafts.get(draft)!;
+      const tail = words(draft);
+      if (!tail) {
+        drafts.delete(draft);
+        return draft.remove();
+      }
+      await saving;
+      const ok = await splitSave(el, saved.get(el)!, tail, again.has(draft) ? true : null);
+      if (!ok) setProblem((p) => p && { ...p, message: `${p.message.replace(/ Fix it.*$/, "")} Your new paragraph wasn't added.` });
     }
 
     async function save(el: HTMLElement) {
@@ -334,12 +425,25 @@ function DevEdit() {
 
     const onBlur = (e: FocusEvent) => {
       const el = e.target as HTMLElement;
-      if (saved.has(el)) save(el);
+      if (saved.has(el)) saving = save(el);
+      else if (drafts.has(el)) commitDraft(el);
     };
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
+      if (drafts.has(el)) {
+        if (e.key === "Escape") el.textContent = "";
+        if (e.key === "Enter" && e.shiftKey) again.add(el);
+        if (e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault();
+          el.blur();
+        }
+        return;
+      }
       if (!saved.has(el)) return;
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && e.shiftKey && !sections.has(el)) {
+        e.preventDefault();
+        split(el);
+      } else if (e.key === "Enter") {
         e.preventDefault();
         el.blur();
       } else if (e.key === "Escape") {
@@ -421,6 +525,7 @@ function DevEdit() {
         delete el.dataset.unsaved;
       }
       for (const el of pictures.keys()) delete el.dataset.picture;
+      for (const draft of drafts.keys()) draft.remove();
       actions.current = null;
       setStatus("");
       setProblem(null);

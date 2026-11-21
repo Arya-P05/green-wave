@@ -345,10 +345,11 @@ const notOnce = (n: number, what = "the original words") =>
  * With `picture` (a src), sets that image's `side` instead: full or right; or, with `after` (a block) and `offset`,
  * moves it in the right margin (see moveMargin).
  * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
+ * With `split`, the block keeps `text` and a copy of its tag holding `split` goes right after it (a new paragraph).
  */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, section, old, text, picture, side, after: anchor, offset } = await request.json();
+  const { path: pathname, section, old, text, picture, side, after: anchor, offset, split } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
@@ -371,8 +372,22 @@ export async function PUT(request: Request) {
   if (found.length !== 1) return notOnce(found.length);
   const [m] = found;
   const [whole, before, after] = m;
-  await writeFile(file, code.slice(0, m.index) + `>${before}${encode(next)}${after}</` + code.slice(m.index + whole.length));
-  return Response.json({ text: next });
+  let out = code.slice(0, m.index) + `>${before}${encode(next)}${after}</` + code.slice(m.index + whole.length);
+  let rest: string | undefined;
+  if (typeof split === "string") {
+    rest = split.trim().replace(/\s+/g, " ");
+    if (!rest) return new Response("nothing to put in the new paragraph", { status: 400 });
+    const span = elementAt(code, m);
+    if (!span) return new Response("couldn't find where that block's tag closes", { status: 409 });
+    // Same opening tag and the same layout (on one line, or text on its own line) as the block it came from.
+    const open = code.slice(span[0], m.index + 1);
+    const close = code.slice(m.index + whole.length - 2, span[1]);
+    const indent = indentAt(code, span[0]);
+    const end = span[1] + out.length - code.length;
+    out = out.slice(0, end) + `\n${indent}${open}${before}${encode(rest)}${after}${close}` + out.slice(end);
+  }
+  await writeFile(file, out);
+  return Response.json({ text: next, split: rest });
 }
 
 /**
