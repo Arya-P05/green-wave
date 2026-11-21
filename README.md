@@ -74,10 +74,18 @@ and adds `<Picture src="…" alt="…" width={…} height={…} />`
 (`components/shared/Picture.tsx`) right after that block (after a heading means
 the top of its section). Hovering an image (dashed outline) shows **full /
 right**: right writes `side="right"`, which puts the image in the right margin
-centred on the block above it, on screens 1280px and wider, without
-changing the text's width or moving the text below; narrower, it sits below
-that block at text width. **× delete** on an image removes the
-tag; its file stays in `public/`.
+on screens 1280px and wider, without changing the text's width or moving the
+text below. **× delete** on an image removes the tag; its file stays in
+`public/`.
+
+The right margin is a free column. Hovering it shows **+ image here** at that
+height, and margin images drag up and down. Either way a margin image is stored
+as the block it starts beside plus a pixel offset: the tag goes right after that
+block in the source, with `offset={N}` meaning its top sits N px below that
+block's top (negative is above, no prop is 0). Dropping it lower or higher picks
+whichever block's top is the last one at or above the image's top. One margin
+image per block. Under 1280px the offset is ignored and the image sits right
+after that block at text width.
 
 ## green wave
 
