@@ -17,6 +17,7 @@ export default function Picture({
   note,
   side,
   offset = 0,
+  priority,
 }: {
   /** Path under public/, e.g. "/little-person/sketch.png". */
   src: string;
@@ -30,6 +31,8 @@ export default function Picture({
   side?: "right";
   /** With side: px from the top of the block above to the image's top. */
   offset?: number;
+  /** Load right away (for an image in the first screen) instead of lazily as it nears the viewport. */
+  priority?: boolean;
 }) {
   return (
     <figure
@@ -44,6 +47,7 @@ export default function Picture({
         width={width}
         height={height}
         sizes={side ? "(max-width: 1280px) 100vw, 340px" : "(max-width: 768px) 100vw, 700px"}
+        priority={priority}
         className="w-full"
       />
       {note ? (
