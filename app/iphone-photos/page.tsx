@@ -51,7 +51,6 @@ const SECTIONS: Entry[] = [
 ];
 
 const META: [string, React.ReactNode][] = [
-  ["when", "November 2026"],
   ["tools", "TypeScript, Next.js, SVG and a small ray marcher on a canvas, no libraries"],
   ["data", "published studies and Apple’s own guides (sources in the notes); the photos are mine"],
   ["code", <a key="code" href={CODE}>github.com/Arya-P05/green-wave</a>],

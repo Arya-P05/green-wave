@@ -45,7 +45,6 @@ const SECTIONS: Entry[] = [
 ];
 
 const META: [string, React.ReactNode][] = [
-  ["when", "November 2026"],
   ["tools", "TypeScript, Next.js, a canvas and a web worker, no libraries"],
   ["data", "published rally stats (sources in the notes); the simulation is mine"],
   ["code", <a key="code" href={CODE}>github.com/Arya-P05/green-wave</a>],

@@ -42,7 +42,6 @@ const SECTIONS: Entry[] = [
 ];
 
 const META: [string, React.ReactNode][] = [
-  ["when", "November 2026"],
   ["tools", "TypeScript, Next.js, a cellular automaton, no libraries"],
   ["data", "City of Toronto traffic counts, Spadina Ave, 23 Apr 2025; lanes from OpenStreetMap"],
   ["code", <a key="code" href={CODE}>github.com/Arya-P05/green-wave</a>],

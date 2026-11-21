@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Meta, order, Section, SignOff } from "@/components/shared/Post";
+import { order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
 import type { Entry } from "@/components/shared/Toc";
 import Picture from "@/components/shared/Picture";
@@ -22,7 +22,6 @@ const SECTIONS: Entry[] = [
   { id: "is-it-smart-to-write-this", title: "is it smart to write this?" },
 ];
 
-const META: [string, React.ReactNode][] = [["when", "November 2026"]];
 
 export default function LittlePerson() {
   return (
@@ -192,7 +191,6 @@ export default function LittlePerson() {
           </p>
         </Section>
 
-        <Meta rows={META} />
         <SignOff />
       </article>
     </main>
