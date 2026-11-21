@@ -232,3 +232,11 @@ details > summary:hover {
   outline: 1px dashed var(--color-muted);
   outline-offset: 4px;
 }
+
+/* Margin images drag up and down in edit mode (components/shared/Edit.tsx). */
+@media (min-width: 80rem) {
+  [data-picture][data-side] {
+    cursor: grab;
+    touch-action: none;
+  }
+}

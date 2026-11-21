@@ -6,7 +6,10 @@
 // Section headings come from <Section title="…">: editing one rewrites that title (and its contents-list entry), and
 // deleting one removes just the heading, never the section's paragraphs.
 // "+ image" by any block picks a file and adds it as a <Picture /> right after that block; images (dashed outline)
-// get "full / right" to sit full width or in the right margin beside the block above them, and "× delete".
+// get "full / right" to sit full width or in the right margin, and "× delete".
+// The right margin (screens 1280px and wider) is a free column: hovering it shows "+ image here" at that height, and
+// margin images drag up and down. Either way the image is stored after the block it starts beside, with offset = px
+// from that block's top (see Picture); on narrower screens it shows right after that block.
 // Only plain-text blocks the route finds exactly once in the source are editable (dotted underline). If a save fails,
 // the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useRef, useState } from "react";
@@ -23,7 +26,16 @@ type Problem = Spot & { message: string };
 type Kind = "text" | "heading" | "picture";
 type Side = "full" | "right";
 type Target = Spot & { el: HTMLElement; kind: Kind; side: Side };
-type Actions = { remove: (el: HTMLElement) => void; add: (el: HTMLElement) => void; side: (el: HTMLElement, side: Side) => void };
+type Actions = {
+  remove: (el: HTMLElement) => void;
+  add: (el: HTMLElement) => void;
+  side: (el: HTMLElement, side: Side) => void;
+  addAt: (y: number) => void;
+};
+/** "+ image here" in the margin: where it's drawn, and the page y (px from the top of the document) it adds at. */
+type Slot = Spot & { y: number };
+/** Below this the margin column doesn't exist (globals.css, 80rem). */
+const MARGIN_MIN = 1280;
 const SIDES: Side[] = ["full", "right"];
 const CONTROL = "border border-faint bg-canvas px-[6px] text-muted hover:text-ink";
 
@@ -41,6 +53,14 @@ function plainBlocks(): HTMLElement[] {
 const headings = () => [...document.querySelectorAll<HTMLElement>(HEADING)];
 const figures = () => [...document.querySelectorAll<HTMLElement>("main figure[data-src]")];
 const sideOf = (el: HTMLElement): Side => (el.dataset.side === "right" ? "right" : "full");
+const pageTop = (el: HTMLElement) => el.getBoundingClientRect().top + window.scrollY;
+const hasMargin = () => window.innerWidth >= MARGIN_MIN;
+
+/** Where the text column ends: the right edge of the widest paragraph (they all share the 64ch measure). */
+function textRight(): number | null {
+  const rights = [...document.querySelectorAll<HTMLElement>("main section > p")].map((p) => p.getBoundingClientRect().right);
+  return rights.length ? Math.max(...rights) : null;
+}
 
 const words = (el: HTMLElement) => el.textContent!.replace(/\s+/g, " ").trim();
 
@@ -94,6 +114,7 @@ function DevEdit() {
   const [status, setStatus] = useState("");
   const [problem, setProblem] = useState<Problem | null>(null);
   const [target, setTarget] = useState<Target | null>(null);
+  const [slot, setSlot] = useState<Slot | null>(null);
   const actions = useRef<Actions | null>(null);
 
   useEffect(() => {
@@ -203,18 +224,33 @@ function DevEdit() {
       await rescan(() => !el.isConnected || (src !== undefined ? el.dataset.src : words(el)) !== shown);
     }
 
-    async function add(el: HTMLElement) {
+    /** How the route finds a block to put an image after. */
+    const anchorOf = (el: HTMLElement) =>
+      kind(el) === "picture"
+        ? { picture: pictures.get(el) }
+        : kind(el) === "heading"
+          ? { section: sections.get(el), title: saved.get(el) }
+          : { text: saved.get(el) };
+
+    /**
+     * The block a margin image whose top is at page y starts beside: the last block (paragraph, heading or full-width
+     * image directly in a section, that the route can find) whose top is at or above y, or the first one.
+     */
+    function anchorAt(y: number): { el: HTMLElement; top: number } | null {
+      const blocks = [...saved.keys(), ...pictures.keys()]
+        .filter((el) => el.parentElement?.tagName === "SECTION" && el.isConnected && !(pictures.has(el) && sideOf(el) === "right"))
+        .map((el) => ({ el, top: pageTop(el) }))
+        .sort((a, b) => a.top - b.top);
+      return blocks.filter((b) => b.top <= y).at(-1) ?? blocks[0] ?? null;
+    }
+
+    async function add(el: HTMLElement, margin?: { offset: number }) {
       const picked = await pickImage();
       if (!picked) return;
       const alt = window.prompt("Describe the image for someone who can’t see it (alt text):")?.trim();
       if (!alt) return;
       const caption = window.prompt("Caption (optional, shown under the image):") ?? "";
-      const anchor =
-        kind(el) === "picture"
-          ? { picture: pictures.get(el) }
-          : kind(el) === "heading"
-            ? { section: sections.get(el), title: saved.get(el) }
-            : { text: saved.get(el) };
+      const anchor = anchorOf(el);
       const form = new FormData();
       form.set("path", path);
       form.set("after", JSON.stringify(anchor));
@@ -223,6 +259,10 @@ function DevEdit() {
       form.set("caption", caption);
       form.set("width", String(picked.width));
       form.set("height", String(picked.height));
+      if (margin) {
+        form.set("side", "right");
+        form.set("offset", String(margin.offset));
+      }
       setStatus("adding image…");
       const res = await fetch(API, { method: "POST", body: form }).catch(() => null);
       if (!res?.ok) return refuse(el, "added", res);
@@ -244,7 +284,37 @@ function DevEdit() {
       });
     }
 
-    actions.current = { remove, add, side };
+    /** "+ image here" in the margin at page y. */
+    async function addAt(y: number) {
+      const at = anchorAt(y);
+      if (!at) return setStatus("nothing on this page to place an image beside");
+      setSlot(null);
+      await add(at.el, { offset: Math.round(y - at.top) });
+    }
+
+    /** Dropping a dragged margin image: its new top decides the block it's after and the offset from that block. */
+    async function drop(el: HTMLElement, top: number) {
+      const src = pictures.get(el)!;
+      const at = anchorAt(top);
+      const undrag = () => (el.style.transform = "");
+      if (!at) return undrag();
+      const offset = Math.round(top - at.top);
+      setStatus("moving…");
+      const body = JSON.stringify({ path, picture: src, after: anchorOf(at.el), offset });
+      const res = await fetch(API, { method: "PUT", body }).catch(() => null);
+      if (!res?.ok) {
+        undrag();
+        return refuse(el, "moved", res);
+      }
+      setStatus("moved");
+      await rescan(() => {
+        const now = document.querySelector<HTMLElement>(`main figure[data-src="${CSS.escape(src)}"]`);
+        return !!now && now.style.getPropertyValue("--offset") === `${offset}px`;
+      });
+      undrag();
+    }
+
+    actions.current = { remove, add, side, addAt };
 
     const onBlur = (e: FocusEvent) => {
       const el = e.target as HTMLElement;
@@ -267,17 +337,66 @@ function DevEdit() {
       if (el && (saved.has(el) || pictures.has(el))) setTarget({ el, kind: kind(el), side: sideOf(el), ...beside(el) });
     };
 
+    // Dragging a margin image: it follows the pointer up and down, and is saved where it's let go.
+    let dragging: { el: HTMLElement; startY: number; top: number } | null = null;
+
+    // "+ image here" follows the pointer down the empty margin, beside the article, but not over images or controls.
+    const onMove = (e: MouseEvent) => {
+      const over = e.target as Element;
+      if (over.closest("[data-slot]") || dragging) return;
+      const right = textRight();
+      const main = document.querySelector("main section")?.closest("main, article");
+      const box = main?.getBoundingClientRect();
+      const inMargin =
+        hasMargin() &&
+        right !== null &&
+        box &&
+        e.clientX > right + 12 &&
+        e.clientY > box.top &&
+        e.clientY < box.bottom &&
+        !over.closest("[data-picture], [data-review], a, button");
+      setSlot(inMargin ? { left: right + 24 + window.scrollX, top: e.pageY - 10, y: e.pageY } : null);
+    };
+
+    const onDown = (e: PointerEvent) => {
+      const el = (e.target as Element).closest<HTMLElement>("[data-picture]");
+      if (!el || !pictures.has(el) || sideOf(el) !== "right" || !hasMargin() || e.button !== 0) return;
+      e.preventDefault();
+      dragging = { el, startY: e.pageY, top: pageTop(el) };
+      setTarget(null);
+      setSlot(null);
+    };
+    const onDrag = (e: PointerEvent) => {
+      if (dragging) dragging.el.style.transform = `translateY(${e.pageY - dragging.startY}px)`;
+    };
+    const onUp = (e: PointerEvent) => {
+      if (!dragging) return;
+      const { el, startY, top } = dragging;
+      dragging = null;
+      const dy = e.pageY - startY;
+      if (Math.abs(dy) < 3) el.style.transform = "";
+      else drop(el, top + dy);
+    };
+
     enable();
     document.addEventListener("focusout", onBlur);
     document.addEventListener("keydown", onKey);
     document.addEventListener("mouseover", onPoint);
     document.addEventListener("focusin", onPoint);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("pointermove", onDrag);
+    document.addEventListener("pointerup", onUp);
     return () => {
       cancelled = true;
       document.removeEventListener("focusout", onBlur);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("mouseover", onPoint);
       document.removeEventListener("focusin", onPoint);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("pointermove", onDrag);
+      document.removeEventListener("pointerup", onUp);
       for (const [el, text] of saved) {
         if (words(el) !== text) setWords(el, text);
         el.removeAttribute("contenteditable");
@@ -289,6 +408,7 @@ function DevEdit() {
       setStatus("");
       setProblem(null);
       setTarget(null);
+      setSlot(null);
     };
   }, [on, scan]);
 
@@ -329,13 +449,28 @@ function DevEdit() {
                 ))}
               </div>
             )}
-            <button onClick={() => actions.current?.add(target.el)} className={CONTROL}>
-              + image
-            </button>
+            {target.side !== "right" && (
+              <button onClick={() => actions.current?.add(target.el)} className={CONTROL}>
+                + image
+              </button>
+            )}
             <button onClick={() => actions.current?.remove(target.el)} className={`${CONTROL} hover:border-red hover:text-red`}>
               {target.kind === "heading" ? "× delete heading" : "× delete"}
             </button>
           </div>,
+          document.body,
+        )}
+      {slot &&
+        createPortal(
+          <button
+            data-review
+            data-slot
+            onClick={() => actions.current?.addAt(slot.y)}
+            className={`absolute z-50 text-[13px] leading-[20px] ${CONTROL}`}
+            style={{ left: slot.left, top: slot.top }}
+          >
+            + image here
+          </button>,
           document.body,
         )}
       <div className="flex items-center gap-x-[8px]">
