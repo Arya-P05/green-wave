@@ -2,8 +2,8 @@ import Link from "next/link";
 import Signature from "@/components/shared/Signature";
 import { WRITINGS } from "./writings";
 
-/** Where "Arya Patel" points. TODO(arya): her site's URL once these live there. */
-const SITE = "https://github.com/Arya-P05";
+/** Where "Arya Patel" points. */
+const SITE = "https://www.aryap.me";
 
 /** The index: every writing, one line each, in the style of arya-site's sidequests. */
 export default function Writing() {
