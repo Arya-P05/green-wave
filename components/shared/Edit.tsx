@@ -138,6 +138,8 @@ function DevEdit() {
     // Images, by their src.
     const pictures = new Map<HTMLElement, string>();
     let cancelled = false;
+    // Set when hot reload has just rewritten the page: blocks then hold the new source's words, not ours to put back.
+    let reloaded = false;
     const kind = (el: HTMLElement): Kind => (pictures.has(el) ? "picture" : sections.has(el) ? "heading" : "text");
     const path = location.pathname;
 
@@ -153,6 +155,7 @@ function DevEdit() {
       setTarget(null);
       setProblem(null);
       await until(done);
+      reloaded = true;
       if (!cancelled) setScan((n) => n + 1);
     }
 
@@ -411,7 +414,8 @@ function DevEdit() {
       document.removeEventListener("pointermove", onDrag);
       document.removeEventListener("pointerup", onUp);
       for (const [el, text] of saved) {
-        if (words(el) !== text) setWords(el, text);
+        // Turning edit mode off drops unsaved words; after a reload, React may have reused this element for another block.
+        if (!reloaded && words(el) !== text) setWords(el, text);
         el.removeAttribute("contenteditable");
         delete el.dataset.editable;
         delete el.dataset.unsaved;
