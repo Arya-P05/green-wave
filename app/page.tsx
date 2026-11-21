@@ -9,17 +9,16 @@ export default function Writing() {
       <h1>writing</h1>
 
       <ol className="mt-2 max-w-[68ch] space-y-1">
-        {WRITINGS.map(({ slug, title, line, date }, i) => (
+        {WRITINGS.map(({ slug, title, line, date, released }, i) => (
           <li key={slug} className="grid grid-cols-[4ch_1fr]">
             <span aria-hidden className="text-muted tabular-nums">
               {String(WRITINGS.length - i).padStart(2, "0")}
             </span>
-            <div>
-              <h2>
-                <Link href={`/${slug}`}>{title}</Link>
-              </h2>
+            <div className={released ? undefined : "cursor-default select-none blur-[5px]"}>
+              <h2>{released ? <Link href={`/${slug}`}>{title}</Link> : title}</h2>
               <p className="text-muted">{line}</p>
               <p className="text-muted">{date}</p>
+              {!released && <span className="sr-only">coming soon</span>}
             </div>
           </li>
         ))}
