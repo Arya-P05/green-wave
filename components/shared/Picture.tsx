@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
  * A margin image's place is the block just above it in the source plus `offset`: its top sits that many px below
  * the top of that block (negative is above). On screens too narrow for a margin (under 1280px) it sits right after
  * that block at text width and the offset is ignored. Written as one self-closing tag with plain props so the dev
- * edit mode (app/api/edit) can add, drag and delete it.
+ * edit mode (app/api/edit) can add, drag and delete it. data-prop marks the text of a prop, so edit mode can rewrite it.
  */
 export default function Picture({
   src,
@@ -48,11 +48,13 @@ export default function Picture({
       />
       {note ? (
         <figcaption className="text-muted">
-          <small className="block text-[0.85em] opacity-80">{note}</small>
-          {caption && <small className="mt-1 block text-[0.7em] opacity-80">{caption}</small>}
+          <small data-prop="note" className="block text-[0.85em] opacity-80">{note}</small>
+          {caption && <small data-prop="caption" className="mt-1 block text-[0.7em] opacity-80">{caption}</small>}
         </figcaption>
       ) : (
-        caption && <figcaption className="text-muted">{caption}</figcaption>
+        caption && <figcaption data-prop="caption" className="text-muted">
+          {caption}
+        </figcaption>
       )}
     </figure>
   );

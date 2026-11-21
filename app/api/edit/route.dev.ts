@@ -142,6 +142,12 @@ const PICTURE_IMPORT = 'import Picture from "@/components/shared/Picture";';
 /** Props on tags the editor writes: `&`, `"`, `<` and `>` as entities, so the tag itself never holds a raw `>`. */
 const encodeProp = (text: string) => text.replace(/[&"<>]/g, (c) => ENTITIES[c]);
 
+/** Picture text props: where `prop="…"` holds exactly `text`. Groups: the `prop="` part, then the closing quote. */
+const PROPS = ["caption", "note"];
+const propPattern = (prop: string, text: string) => new RegExp(`(\\s${prop}=")${inAttribute(text.trim())}(")`, "g");
+const propPlaces = (code: string, prop: unknown, text: string) =>
+  typeof prop === "string" && PROPS.includes(prop) && text.trim() ? [...code.matchAll(propPattern(prop, text))] : [];
+
 const picturePattern = (src: string) => new RegExp(`<Picture\\s[^>]*?src="${inAttribute(src)}"[^>]*?/>`, "g");
 const pictures = (code: string, src: string) => (src ? [...code.matchAll(picturePattern(src))] : []);
 
@@ -315,6 +321,10 @@ async function read(file: string): Promise<string | null> {
   }
 }
 
+type Prop = { prop: string; text: string };
+const isProp = (t: unknown): t is Prop =>
+  typeof t === "object" && t !== null && typeof (t as Prop).prop === "string" && typeof (t as Prop).text === "string";
+
 type Title = { section: string; title: string };
 const isTitle = (t: unknown): t is Title =>
   typeof t === "object" && t !== null && typeof (t as Title).section === "string" && typeof (t as Title).title === "string";
@@ -326,13 +336,14 @@ const isTitle = (t: unknown): t is Title =>
 export async function POST(request: Request) {
   if (!dev) return notFound();
   if (request.headers.get("content-type")?.startsWith("multipart/form-data")) return addImage(request);
-  const { path: pathname, texts, titles = [], pictures: srcs = [] } = await request.json();
+  const { path: pathname, texts, titles = [], pictures: srcs = [], props = [] } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
-  if (!code || !Array.isArray(texts) || !Array.isArray(titles) || !Array.isArray(srcs)) return notFound();
+  if (!code || !Array.isArray(texts) || !Array.isArray(titles) || !Array.isArray(srcs) || !Array.isArray(props)) return notFound();
   return Response.json({
     texts: texts.map((t) => (typeof t === "string" ? count(code, t) : 0)),
     titles: titles.map((t) => (isTitle(t) ? countTitle(code, t.section, t.title) : 0)),
+    props: props.map((t) => (isProp(t) ? propPlaces(code, t.prop, t.text).length : 0)),
     pictures: srcs.map((src) => (typeof src === "string" ? pictures(code, src).length : 0)),
   });
 }
@@ -344,12 +355,13 @@ const notOnce = (n: number, what = "the original words") =>
  * { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't.
  * With `picture` (a src), sets that image's `side` instead: full or right; or, with `after` (a block) and `offset`,
  * moves it in the right margin (see moveMargin).
+ * With `prop` ("caption" or "note"), `old` is that Picture prop's text, found as `prop="…"`, and only it changes.
  * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
  * With `split`, the block keeps `text` and a copy of its tag holding `split` goes right after it (a new paragraph).
  */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, section, old, text, picture, side, after: anchor, offset, split } = await request.json();
+  const { path: pathname, section, prop, old, text, picture, side, after: anchor, offset, split } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
@@ -366,6 +378,13 @@ export async function PUT(request: Request) {
     const out = retitle(code, section, old, next);
     if (out instanceof Response) return out;
     await writeFile(file, out);
+    return Response.json({ text: next });
+  }
+  if (typeof prop === "string") {
+    const found = propPlaces(code, prop, old);
+    if (found.length !== 1) return notOnce(found.length);
+    const [m] = found;
+    await writeFile(file, code.slice(0, m.index) + `${m[1]}${encodeProp(next)}${m[2]}` + code.slice(m.index + m[0].length));
     return Response.json({ text: next });
   }
   const found = places(code, old);

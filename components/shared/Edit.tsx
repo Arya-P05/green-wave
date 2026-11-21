@@ -12,6 +12,7 @@
 // The right margin (screens 1280px and wider) is a free column: hovering it shows "+ image here" at that height, and
 // margin images drag up and down. Either way the image is stored after the block it starts beside, with offset = px
 // from that block's top (see Picture); on narrower screens it shows right after that block.
+// Image captions and notes (Picture's props) are editable the same way, on one line (shift+enter just saves).
 // Only plain-text blocks the route finds exactly once in the source are editable (dotted underline). If a save fails,
 // the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +20,8 @@ import { createPortal } from "react-dom";
 
 const API = "/api/edit";
 const WIDTH = 320;
+/** Image captions and notes: the text of a Picture prop, not of a JSX child. */
+const PROP = "main figure[data-src] [data-prop]";
 const TEXT = "main p, main li, main h1, main h2, main h3, main dt, main dd, main figcaption, main td, main th";
 /** The heading Section renders from its title prop (components/shared/Post.tsx). */
 const HEADING = 'main section > h2[id$="-title"]';
@@ -43,7 +46,7 @@ const CONTROL = "border border-faint bg-canvas px-[6px] text-muted hover:text-in
 
 /** Blocks with nothing but text inside: links, emphasis or figures inside a block make it read-only. */
 function plainBlocks(): HTMLElement[] {
-  return [...document.querySelectorAll<HTMLElement>(TEXT)].filter(
+  return [...document.querySelectorAll<HTMLElement>(`${TEXT}, ${PROP}`)].filter(
     (el) =>
       !el.matches(HEADING) &&
       el.childNodes.length > 0 &&
@@ -165,6 +168,8 @@ function DevEdit() {
     const saved = new Map<HTMLElement, string>();
     // Headings, by the id of the section whose title they are.
     const sections = new Map<HTMLElement, string>();
+    // Picture captions and notes, by the prop they are.
+    const props = new Map<HTMLElement, string>();
     // Images, by their src.
     const pictures = new Map<HTMLElement, string>();
     let cancelled = false;
@@ -208,20 +213,26 @@ function DevEdit() {
         method: "POST",
         body: JSON.stringify({
           path,
-          texts: blocks.map(words),
+          texts: blocks.map((el) => (el.dataset.prop ? "" : words(el))),
+          props: blocks.map((el) => ({ prop: el.dataset.prop ?? "", text: words(el) })),
           titles: titles.map((el) => ({ section: el.parentElement!.id, title: words(el) })),
           pictures: images.map((el) => el.dataset.src),
         }),
       }).catch(() => null);
       if (cancelled) return;
       if (!res?.ok) return setStatus(res ? `can't edit this page (no app${location.pathname}/page.tsx)` : "dev server unreachable");
-      const counts: { texts: number[]; titles: number[]; pictures: number[] } = await res.json();
+      const counts: { texts: number[]; props: number[]; titles: number[]; pictures: number[] } = await res.json();
       const editable = (el: HTMLElement) => {
         saved.set(el, words(el));
         el.contentEditable = "plaintext-only";
         el.dataset.editable = "";
       };
-      blocks.forEach((el, i) => counts.texts[i] === 1 && editable(el));
+      blocks.forEach((el, i) => {
+        const prop = el.dataset.prop;
+        if ((prop ? counts.props[i] : counts.texts[i]) !== 1) return;
+        if (prop) props.set(el, prop);
+        editable(el);
+      });
       titles.forEach((el, i) => {
         if (counts.titles[i] !== 1) return;
         sections.set(el, el.parentElement!.id);
@@ -301,7 +312,7 @@ function DevEdit() {
       const text = words(el);
       if (text === old) return clear(el);
       setStatus("saving…");
-      const body = JSON.stringify({ path, section: sections.get(el), old, text });
+      const body = JSON.stringify({ path, section: sections.get(el), prop: props.get(el), old, text });
       const res = await fetch(API, { method: "PUT", body }).catch(() => null);
       if (!res) return fail(el, "dev server unreachable");
       if (!res.ok) return fail(el, (await res.text()) || `error ${res.status}`);
@@ -440,7 +451,7 @@ function DevEdit() {
         return;
       }
       if (!saved.has(el)) return;
-      if (e.key === "Enter" && e.shiftKey && !sections.has(el)) {
+      if (e.key === "Enter" && e.shiftKey && !sections.has(el) && !props.has(el)) {
         e.preventDefault();
         split(el);
       } else if (e.key === "Enter") {
@@ -454,7 +465,7 @@ function DevEdit() {
     };
     const onPoint = (e: Event) => {
       const el = (e.target as Element).closest<HTMLElement>("[data-editable], [data-picture]");
-      if (el && (saved.has(el) || pictures.has(el))) setTarget({ el, kind: kind(el), side: sideOf(el), ...beside(el) });
+      if (el && !props.has(el) && (saved.has(el) || pictures.has(el))) setTarget({ el, kind: kind(el), side: sideOf(el), ...beside(el) });
     };
 
     // Dragging a margin image: it follows the pointer up and down, and is saved where it's let go.
