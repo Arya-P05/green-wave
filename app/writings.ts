@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 /** Every post in this repo, in the order the index lists them. The index page lists these. */
 /** `released: false` shows on the index blurred and unclickable: people see more is coming. */
 export type Writing = { slug: string; title: string; line: string; released: boolean };
@@ -28,3 +30,8 @@ export const WRITINGS: Writing[] = [
     released: false,
   },
 ];
+
+/** Call at the top of a piece's page: an unreleased piece is a 404 in production (it still opens in `next dev`). */
+export function requireReleased(slug: string) {
+  if (process.env.NODE_ENV === "production" && !WRITINGS.find((w) => w.slug === slug)?.released) notFound();
+}

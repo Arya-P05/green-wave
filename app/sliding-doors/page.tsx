@@ -6,6 +6,7 @@ import Rewind from "@/components/pickleball/Rewind";
 import Nerds from "@/components/shared/Nerds";
 import { Meta, order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
+import { requireReleased } from "../writings";
 import type { Entry } from "@/components/shared/Toc";
 import { PARAMS } from "@/lib/pickleball/params";
 import { baseline, cal, fam, gameGain, n, pct, pct1, policy, pts, results, signed, storyPoint } from "./numbers";
@@ -51,6 +52,7 @@ const META: [string, React.ReactNode][] = [
 ];
 
 export default function SlidingDoors() {
+  requireReleased("sliding-doors");
   const story = storyPoint();
   const kitchen = fam("kitchen");
   const third = fam("third");

@@ -9,6 +9,7 @@ import PhotoSlot from "@/components/iphone-photos/PhotoSlot";
 import Nerds from "@/components/shared/Nerds";
 import { Meta, order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
+import { requireReleased } from "../writings";
 import type { Entry } from "@/components/shared/Toc";
 
 export const metadata: Metadata = {
@@ -57,6 +58,7 @@ const META: [string, React.ReactNode][] = [
 ];
 
 export default function IphonePhotos() {
+  requireReleased("iphone-photos");
   return (
     <main className="grid gap-x-4 px-1 py-4 sm:px-4 md:grid-cols-[18ch_minmax(0,1fr)]">
       <nav aria-label="contents" className="hidden md:block">

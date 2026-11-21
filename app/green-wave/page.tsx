@@ -8,6 +8,7 @@ import PhantomJam from "@/components/green-wave/PhantomJam";
 import { DayResults, MinGreenTable, SideResults } from "@/components/green-wave/results/Results";
 import { Meta, order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
+import { requireReleased } from "../writings";
 import type { Entry } from "@/components/shared/Toc";
 import TimeSpace from "@/components/green-wave/wave/TimeSpace";
 import Tuner from "@/components/green-wave/wave/Tuner";
@@ -57,6 +58,7 @@ const LEDGER: [Kind, string][] = [
 ];
 
 export default function Home() {
+  requireReleased("green-wave");
   const [pLo, pHi] = platoonRange("max-pressure");
   return (
     <main className="grid gap-x-4 px-1 py-4 sm:px-4 md:grid-cols-[18ch_minmax(0,1fr)]">
