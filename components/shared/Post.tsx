@@ -35,12 +35,11 @@ export function Meta({ rows }: { rows: [string, React.ReactNode][] }) {
   );
 }
 
-/** Arya's signature and "remember life", as on arya-site. */
+/** Arya's signature. */
 export function SignOff() {
   return (
     <footer className="mt-2 flex items-end gap-[2ch]">
       <Signature />
-      <p className="text-muted italic">remember life</p>
     </footer>
   );
 }
