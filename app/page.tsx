@@ -6,7 +6,9 @@ import { WRITINGS } from "./writings";
 export default function Writing() {
   return (
     <main className="px-1 py-4 sm:px-4">
-      <ol className="max-w-[68ch] space-y-1">
+      <h1>writing</h1>
+
+      <ol className="mt-2 max-w-[68ch] space-y-1">
         {WRITINGS.map(({ slug, title, line, date }, i) => (
           <li key={slug} className="grid grid-cols-[4ch_1fr]">
             <span aria-hidden className="text-muted tabular-nums">
