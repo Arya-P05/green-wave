@@ -117,8 +117,10 @@ nav a {
 }
 
 /* From arya-site: the signature draws itself once, when it scrolls into view. */
+/* The gap (2) is longer than the path (1), so an undrawn stroke is all gap: with the dash ending exactly at the start,
+   round caps still paint a dot there, and the short period showed first. */
 .signature path {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
 }
 
