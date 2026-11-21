@@ -68,8 +68,8 @@ export default function SlidingDoors() {
       <article className="max-w-[96ch]">
         <header className="grid gap-y-1">
           <div>
-            <Link href="/" className="arrive" style={order(0)}>
-              Arya Patel
+            <Link href="/" aria-label="back to writing" className="arrive text-muted" style={order(0)}>
+              ←
             </Link>
             <h1 className="arrive mt-1" style={order(1)}>
               sliding doors
