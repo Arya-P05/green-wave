@@ -2,7 +2,7 @@
 
 /* static: canvas figures read these tokens at runtime, so emit all of them. */
 @theme static {
-  --color-canvas: #faf8f3;
+  --color-canvas: #f5ecdc;
   --color-ink: #1f1d1a;
   --color-muted: #6e6a63;
   --color-faint: #d9d4ca;
