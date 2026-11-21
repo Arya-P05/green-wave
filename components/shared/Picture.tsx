@@ -24,7 +24,7 @@ export default function Picture({
   width: number;
   height: number;
   caption?: string;
-  /** A smaller, muted line under the caption. */
+  /** Shown first, as the main (muted) line; the caption sits below it, smaller. */
   note?: string;
   /** In the right margin on screens 1280px and wider. */
   side?: "right";
@@ -46,11 +46,13 @@ export default function Picture({
         sizes={side ? "(max-width: 1280px) 100vw, 340px" : "(max-width: 768px) 100vw, 700px"}
         className="w-full"
       />
-      {(caption || note) && (
+      {note ? (
         <figcaption className="text-muted">
-          {caption}
-          {note && <small className={`block text-[0.85em] opacity-80 ${caption ? "mt-1" : ""}`}>{note}</small>}
+          <small className="block text-[0.85em] opacity-80">{note}</small>
+          {caption && <small className="mt-1 block text-[0.7em] opacity-80">{caption}</small>}
         </figcaption>
+      ) : (
+        caption && <figcaption className="text-muted">{caption}</figcaption>
       )}
     </figure>
   );
