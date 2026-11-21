@@ -1,6 +1,6 @@
 "use client";
 
-// Dev-only inline editing: toggle "edit", then click a paragraph or heading and change its words in place. On blur
+// Dev-only inline editing: toggle "edit" (or press E), then click a paragraph or heading and change its words in place. On blur
 // (or enter) the new words go to app/api/edit, which writes them into the post's page.tsx; hot reload does the rest.
 // Hovering or focusing a block shows "× delete", which (after a confirm) removes the whole block from page.tsx.
 // Section headings come from <Section title="…">: editing one rewrites that title (and its contents-list entry), and
@@ -116,6 +116,19 @@ function DevEdit() {
   const [target, setTarget] = useState<Target | null>(null);
   const [slot, setSlot] = useState<Slot | null>(null);
   const actions = useRef<Actions | null>(null);
+
+  // E (no modifiers) turns edit mode on and off, except while typing in a field or an editable block.
+  useEffect(() => {
+    const onE = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "e" || e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement;
+      if (el.isContentEditable || el.closest("input, textarea, select, [contenteditable]")) return;
+      e.preventDefault();
+      setOn((v) => !v);
+    };
+    document.addEventListener("keydown", onE);
+    return () => document.removeEventListener("keydown", onE);
+  }, []);
 
   useEffect(() => {
     if (!on) return;

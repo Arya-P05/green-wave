@@ -51,7 +51,8 @@ production builds have neither the route nor the tool.
 
 ### Inline edits (dev only)
 
-Under `npm run dev`, hit **edit** (next to comments), click a dotted-underlined
+Under `npm run dev`, hit **edit** (next to comments) or press **E** (again to
+finish; ignored while typing), click a dotted-underlined
 paragraph or heading, change the words, then click away or press enter (esc
 undoes). `app/api/edit/route.dev.ts` writes the new words into that post's
 `app/<post>/page.tsx` and hot reload shows them. Only blocks that are plain
