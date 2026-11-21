@@ -14,6 +14,7 @@ export default function Picture({
   width,
   height,
   caption,
+  note,
   side,
   offset = 0,
 }: {
@@ -23,6 +24,8 @@ export default function Picture({
   width: number;
   height: number;
   caption?: string;
+  /** A smaller, muted line under the caption. */
+  note?: string;
   /** In the right margin on screens 1280px and wider. */
   side?: "right";
   /** With side: px from the top of the block above to the image's top. */
@@ -43,7 +46,12 @@ export default function Picture({
         sizes={side ? "(max-width: 1280px) 100vw, 340px" : "(max-width: 768px) 100vw, 700px"}
         className="w-full"
       />
-      {caption && <figcaption className="text-muted">{caption}</figcaption>}
+      {(caption || note) && (
+        <figcaption className="text-muted">
+          {caption}
+          {note && <small className={`block text-[0.85em] opacity-80 ${caption ? "mt-1" : ""}`}>{note}</small>}
+        </figcaption>
+      )}
     </figure>
   );
 }
