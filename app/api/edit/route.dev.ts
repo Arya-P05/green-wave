@@ -156,15 +156,54 @@ function pictureImport(code: string): string {
   return code.slice(0, at) + PICTURE_IMPORT + "\n" + code.slice(at);
 }
 
-/** Full width (no prop) or side="right" (in the right margin) on the one Picture with this src. */
+/**
+ * Full width (no props) or side="right" (in the right margin) on the one Picture with this src. Going to the margin
+ * starts it level with the top of the block above it (no offset); going full width drops the offset with the side.
+ */
 function setSide(code: string, src: string, side: unknown): string | Response {
   if (side !== "full" && side !== "right") return new Response("side is full or right", { status: 400 });
   const found = pictures(code, src);
   if (found.length !== 1) return notOnce(found.length, "that image");
   const [m] = found;
-  const bare = m[0].replace(/\s+side="[^"]*"/, "");
+  const bare = m[0].replace(/\s+side="[^"]*"/, "").replace(/\s+offset=\{-?\d+\}/, "");
   const tag = side === "full" ? bare : bare.replace(/\s*\/>$/, ` side="${side}" />`);
   return code.slice(0, m.index) + tag + code.slice(m.index + m[0].length);
+}
+
+const MARGIN_TAG = /^\s*<Picture\s[^>]*?side="right"/;
+
+/**
+ * Why a margin image can't go after this block, or null: one per block, and never after another margin image (the
+ * grid would give either a row of its own, adding a gap to the text).
+ */
+function marginRefusal(code: string, anchor: Anchor, at: number): Response | null {
+  if (typeof anchor.picture === "string" && pictures(code, anchor.picture).some((m) => MARGIN_TAG.test(m[0]))) {
+    return new Response("a margin image goes beside a paragraph, heading or full-width image, not another margin image", { status: 409 });
+  }
+  if (MARGIN_TAG.test(code.slice(at))) return new Response("that block already has a margin image beside it", { status: 409 });
+  return null;
+}
+
+const isOffset = (n: unknown): n is number => Number.isInteger(n) && Math.abs(n as number) <= 100_000;
+
+/**
+ * Moves the one margin Picture with this src to sit after `anchor`, `offset` px below that block's top (negative is
+ * above). Same block: only the offset changes. Another block: the tag moves to just after it, unchanged otherwise.
+ */
+function moveMargin(code: string, src: string, anchor: Anchor, offset: unknown): string | Response {
+  if (!isOffset(offset)) return new Response("offset is a whole number of pixels", { status: 400 });
+  const found = pictures(code, src);
+  if (found.length !== 1) return notOnce(found.length, "that image");
+  const [m] = found;
+  const bare = m[0].replace(/\s+side="[^"]*"/, "").replace(/\s+offset=\{-?\d+\}/, "");
+  const tag = bare.replace(/\s*\/>$/, offset ? ` side="right" offset={${offset}} />` : ` side="right" />`);
+  const [from, to] = withLine(code, m.index, m.index + m[0].length);
+  const rest = code.slice(0, from) + code.slice(to);
+  const spot = after(rest, anchor);
+  if (spot instanceof Response) return spot;
+  const refused = marginRefusal(rest, anchor, spot.at);
+  if (refused) return refused;
+  return rest.slice(0, spot.at) + `\n${spot.indent}${tag}` + rest.slice(spot.at);
 }
 
 function removePicture(code: string, src: string): string | Response {
@@ -215,7 +254,10 @@ async function freeName(dir: string, original: string): Promise<string> {
   }
 }
 
-/** Multipart { path, after, file, alt, caption, width, height } → copies the file into public/<post>/ and adds it. */
+/**
+ * Multipart { path, after, file, alt, caption, width, height, side?, offset? } → copies the file into public/<post>/
+ * and adds it after the block: full width, or with side "right" in the margin, offset px below that block's top.
+ */
 async function addImage(request: Request): Promise<Response> {
   const form = await request.formData();
   const pathname = form.get("path");
@@ -240,6 +282,11 @@ async function addImage(request: Request): Promise<Response> {
   }
   const spot = after(code, anchor ?? {});
   if (spot instanceof Response) return spot;
+  const margin = form.get("side") === "right";
+  const offset = Number(form.get("offset") ?? 0);
+  if (margin && !isOffset(offset)) return new Response("offset is a whole number of pixels", { status: 400 });
+  const refused = margin ? marginRefusal(code, anchor ?? {}, spot.at) : null;
+  if (refused) return refused;
   const post = pathname === "/" ? "index" : pathname.slice(1);
   const dir = path.join(process.cwd(), "public", post);
   await mkdir(dir, { recursive: true });
@@ -247,6 +294,8 @@ async function addImage(request: Request): Promise<Response> {
   const src = `/${post}/${name}`;
   const props = [`src="${src}"`, `alt="${encodeProp(alt)}"`, `width={${width}}`, `height={${height}}`];
   if (caption) props.push(`caption="${encodeProp(caption)}"`);
+  if (margin) props.push('side="right"');
+  if (margin && offset) props.push(`offset={${offset}}`);
   const tag = `\n${spot.indent}<Picture ${props.join(" ")} />`;
   await writeFile(path.join(dir, name), Buffer.from(await image.arrayBuffer()));
   try {
@@ -293,20 +342,21 @@ const notOnce = (n: number, what = "the original words") =>
 
 /**
  * { path, old, text } → replaces the one place `old` is found with `text`, or says why it can't.
- * With `picture` (a src), sets that image's `side` instead: full or right.
+ * With `picture` (a src), sets that image's `side` instead: full or right; or, with `after` (a block) and `offset`,
+ * moves it in the right margin (see moveMargin).
  * With `section`, `old` is that section's title and only the title (and its contents-list entry) changes.
  */
 export async function PUT(request: Request) {
   if (!dev) return notFound();
-  const { path: pathname, section, old, text, picture, side } = await request.json();
+  const { path: pathname, section, old, text, picture, side, after: anchor, offset } = await request.json();
   const file = sourceFor(pathname);
   const code = file && (await read(file));
   if (!file || !code) return notFound();
   if (typeof picture === "string") {
-    const out = setSide(code, picture, side);
+    const out = anchor ? moveMargin(code, picture, anchor, offset) : setSide(code, picture, side);
     if (out instanceof Response) return out;
     await writeFile(file, out);
-    return Response.json({ side });
+    return Response.json({ side: anchor ? "right" : side });
   }
   if (typeof old !== "string" || typeof text !== "string") return new Response("old and text are required", { status: 400 });
   const next = text.trim().replace(/\s+/g, " ");
