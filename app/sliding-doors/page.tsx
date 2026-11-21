@@ -91,10 +91,6 @@ export default function SlidingDoors() {
           </p>
         </header>
 
-        <nav aria-label="contents" className="mt-2 md:hidden">
-          <Toc entries={SECTIONS} />
-        </nav>
-
         <Section id="point" title="the point">
           {/* <!-- ARYA-TWEAK --> */}
           <p>

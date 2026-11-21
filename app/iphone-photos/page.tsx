@@ -91,10 +91,6 @@ export default function IphonePhotos() {
           </p>
         </header>
 
-        <nav aria-label="contents" className="mt-2 md:hidden">
-          <Toc entries={SECTIONS} />
-        </nav>
-
         <Section id="photo" title="the photo">
           <PhotoSlot
             name="milan-duomo.jpg"

@@ -94,10 +94,6 @@ export default function Home() {
           </p>
         </header>
 
-        <nav aria-label="contents" className="mt-2 md:hidden">
-          <Toc entries={SECTIONS} />
-        </nav>
-
         <Section id="question" title="the question">
           {/* <!-- ARYA-TWEAK --> */}
           <p>

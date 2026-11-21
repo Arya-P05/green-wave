@@ -51,10 +51,6 @@ export default function LittlePerson() {
           </p>
         </header>
 
-        <nav aria-label="contents" className="mt-2 md:hidden">
-          <Toc entries={SECTIONS} />
-        </nav>
-
         <Section id="3-am" title="3 am">
           <Picture src="/greatness/ceiling-3am.png" alt="A top-down sketch: a bed with two pillows, one stick figure lying on it with his head between the pillows, and a sofa pushed against its foot with two more stick figures, heads at the bottom, legs reaching up onto the bed." width={1000} height={972} side="right" offset={26} />
           <p>
