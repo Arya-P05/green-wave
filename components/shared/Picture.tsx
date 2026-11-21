@@ -1,9 +1,12 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 /**
- * An image in a post, full width, or with side="right" centred beside the block just above it, out in the right margin so the
- * text column keeps its width (on screens too narrow for that, it sits below the block at text width). Written as one self-closing tag with plain
- * props so the dev edit mode (app/api/edit) can add, move and delete it.
+ * An image in a post, full width, or with side="right" out in the right margin so the text column keeps its width.
+ * A margin image's place is the block just above it in the source plus `offset`: its top sits that many px below
+ * the top of that block (negative is above). On screens too narrow for a margin (under 1280px) it sits right after
+ * that block at text width and the offset is ignored. Written as one self-closing tag with plain props so the dev
+ * edit mode (app/api/edit) can add, drag and delete it.
  */
 export default function Picture({
   src,
@@ -12,6 +15,7 @@ export default function Picture({
   height,
   caption,
   side,
+  offset = 0,
 }: {
   /** Path under public/, e.g. "/little-person/sketch.png". */
   src: string;
@@ -19,11 +23,18 @@ export default function Picture({
   width: number;
   height: number;
   caption?: string;
-  /** In the right margin, centred on the block above, on screens 1280px and wider. */
+  /** In the right margin on screens 1280px and wider. */
   side?: "right";
+  /** With side: px from the top of the block above to the image's top. */
+  offset?: number;
 }) {
   return (
-    <figure data-src={src} data-side={side} className={`my-2 grid gap-y-1 ${side ? "max-w-[64ch]" : "max-w-[72ch]"}`}>
+    <figure
+      data-src={src}
+      data-side={side}
+      style={side ? ({ "--offset": `${offset}px` } as CSSProperties) : undefined}
+      className={`my-2 grid gap-y-1 ${side ? "max-w-[64ch]" : "max-w-[72ch]"}`}
+    >
       <Image
         src={src}
         alt={alt}
