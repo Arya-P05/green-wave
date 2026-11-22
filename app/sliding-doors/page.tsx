@@ -462,7 +462,7 @@ export default function SlidingDoors() {
             the same, tuned to published 3.5–5.0 stats. Decision costs: {n(results.sample.rallies)} rallies, every option at
             every decision replayed {results.sample.replays} times with shared seeds, best option picked on half the replays
             and scored on the other half. Habits: {n(results.policyRallies)} rallies each, turned into games with side-out
-            scoring to 11. Baseline game win: {pct(baseline.game)}. The two line sketches are AI-generated. Code and data: <a href={CODE}>github.com/Arya-P05/green-wave</a>.
+            scoring to 11. Baseline game win: {pct(baseline.game)}. Code and data: <a href={CODE}>github.com/Arya-P05/green-wave</a>.
           </p>
           <ol className="grid gap-y-1 text-muted">
             <li>
