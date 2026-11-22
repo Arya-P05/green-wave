@@ -538,7 +538,8 @@ export default function Home() {
             every change, one lane per direction, no turns. Fixed-time uses Webster’s cycle for the busiest
             light at every light; the green wave adds offsets for northbound at free speed; the sensor light
             holds 6–40 s and ends on a gap at a 37.5 m detector. Results are means over 8 seeds, 15 minutes of
-            warm-up and 60 measured; the figures you can play with are single seeded runs. Code and data:{" "}
+            warm-up and 60 measured; the figures you can play with are single seeded runs. The two line sketches are
+            AI-generated; Morgan’s patent drawing is public domain, via Wikimedia Commons. Code and data:{" "}
             <a href={CODE}>github.com/Arya-P05/green-wave</a>.
           </p>
           <p className="text-muted">
