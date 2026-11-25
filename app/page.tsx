@@ -16,18 +16,21 @@ export default function Writing() {
       <h1 className="mt-1">writing</h1>
 
       <ol className="mt-2 max-w-[68ch] space-y-1">
-        {WRITINGS.map(({ slug, title, line, released }, i) => (
-          <li key={slug} className="grid grid-cols-[4ch_1fr]">
-            <span aria-hidden className="text-muted tabular-nums">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <div className={released ? undefined : "cursor-default select-none blur-[5px]"}>
-              <h2>{released ? <Link href={`/${slug}`}>{title}</Link> : title}</h2>
-              <p className="text-muted">{line}</p>
-              {!released && <span className="sr-only">coming soon</span>}
-            </div>
-          </li>
-        ))}
+        {WRITINGS.map(({ slug, title, line, released }, i) => {
+          const visible = released || process.env.NODE_ENV !== "production";
+          return (
+            <li key={slug} className="grid grid-cols-[4ch_1fr]">
+              <span aria-hidden className="text-muted tabular-nums">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className={visible ? undefined : "cursor-default select-none blur-[5px]"}>
+                <h2>{visible ? <Link href={`/${slug}`}>{title}</Link> : title}</h2>
+                <p className="text-muted">{line}</p>
+                {!visible && <span className="sr-only">coming soon</span>}
+              </div>
+            </li>
+          );
+        })}
       </ol>
 
       <footer className="mt-4">
