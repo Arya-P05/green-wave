@@ -15,19 +15,19 @@ export const WRITINGS: Writing[] = [
     slug: "green-wave",
     title: "green wave",
     line: "Can traffic lights find the green wave on their own?",
-    released: true,
+    released: false,
   },
   {
     slug: "iphone-photos",
     title: "almost good",
     line: "How do you take really good iPhone photos?",
-    released: true,
+    released: false,
   },
   {
     slug: "sliding-doors",
     title: "sliding doors",
     line: "How do pickleball rallies really get won?",
-    released: true,
+    released: false,
   },
 ];
 

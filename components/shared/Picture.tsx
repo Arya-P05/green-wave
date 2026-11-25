@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { assetPath } from "@/lib/shared/basePath";
 
 /**
  * An image in a post, full width, or with side="right" out in the right margin so the text column keeps its width.
@@ -17,6 +18,7 @@ export default function Picture({
   note,
   side,
   offset = 0,
+  small,
   priority,
 }: {
   /** Path under public/, e.g. "/little-person/sketch.png". */
@@ -31,6 +33,8 @@ export default function Picture({
   side?: "right";
   /** With side: px from the top of the block above to the image's top. */
   offset?: number;
+  /** At most 180px wide, for a small portrait. */
+  small?: boolean;
   /** Load right away (for an image in the first screen) instead of lazily as it nears the viewport. */
   priority?: boolean;
 }) {
@@ -39,10 +43,10 @@ export default function Picture({
       data-src={src}
       data-side={side}
       style={side ? ({ "--offset": `${offset}px` } as CSSProperties) : undefined}
-      className={`my-2 grid gap-y-1 ${side ? "max-w-[64ch]" : "max-w-[72ch]"}`}
+      className={`my-2 grid gap-y-1 ${small ? "max-w-[180px]" : side ? "max-w-[64ch]" : "max-w-[72ch]"}`}
     >
       <Image
-        src={src}
+        src={assetPath(src)}
         alt={alt}
         width={width}
         height={height}

@@ -152,6 +152,29 @@ nav a {
   }
 }
 
+/* When arriving via a Cross-Document View Transition, ride the transition cleanly with zero double-fade. */
+html[data-vt-arrived="1"] .arrive {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+/* Context-aware back arrow at top-left of the prose column. */
+.back-arrow {
+  display: inline-block;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition:
+    color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.back-arrow:hover,
+html[data-vt-arrived="1"] .back-arrow:hover {
+  color: var(--color-ink);
+  transform: translateX(-3px);
+}
+
 /* "If you want more detail": an aside that opens in place. */
 details > summary {
   list-style: none;
@@ -200,16 +223,16 @@ details > summary:hover {
  * the text below doesn't move. Narrower than 1280px there's no margin to use, so it stays below the block.
  */
 @media (min-width: 80rem) {
-  section:has(> figure[data-side]) {
+  :is(section, header):has(> figure[data-side]) {
     grid-template-columns: 64ch minmax(0, 1fr);
     column-gap: var(--spacing);
   }
 
-  section:has(> figure[data-side]) > * {
+  :is(section, header):has(> figure[data-side]) > * {
     grid-column: 1 / -1;
   }
 
-  section:has(> figure[data-side]) > :has(+ figure[data-side]) {
+  :is(section, header):has(> figure[data-side]) > :has(+ figure[data-side]) {
     grid-column: 1;
   }
 
@@ -218,7 +241,7 @@ details > summary:hover {
    * downward without taking space. It's a little wider than the margin column, reaching into the page's right
    * padding, never into the text.
    */
-  section > figure[data-side] {
+  :is(section, header) > figure[data-side] {
     grid-column: 2;
     align-self: start;
     position: relative;
@@ -240,5 +263,272 @@ details > summary:hover {
   [data-picture][data-side] {
     cursor: grab;
     touch-action: none;
+  }
+}
+
+/* Cross-Document View Transitions between aryap.me/ (Home) and aryap.me/writing/* */
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-day-fwd-old {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes vt-day-fwd-new {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vt-day-fwd-new-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vt-night-fwd-old {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.35;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes vt-night-fwd-rise {
+  from {
+    transform: translateY(28px);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -24px 64px rgba(0, 0, 0, 0.35);
+  }
+  to {
+    transform: translateY(0);
+    border-radius: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes vt-night-fwd-rise-mobile {
+  from {
+    transform: translateY(20px);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -24px 64px rgba(0, 0, 0, 0.35);
+  }
+  to {
+    transform: translateY(0);
+    border-radius: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes vt-day-back-old {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes vt-day-back-new {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vt-night-back-old {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    border-radius: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(24px);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -20px 48px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes vt-night-back-old-mobile {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    border-radius: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -20px 48px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes vt-night-back-new {
+  from {
+    opacity: 0.4;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Day Forward (300ms): Home (day) -> Writing */
+html:active-view-transition-type(to-writing):active-view-transition-type(from-day)::view-transition-old(root) {
+  z-index: 1;
+  mix-blend-mode: normal;
+  animation: vt-day-fwd-old 160ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+html:active-view-transition-type(to-writing):active-view-transition-type(from-day)::view-transition-new(root) {
+  z-index: 2;
+  mix-blend-mode: normal;
+  animation: vt-day-fwd-new 280ms cubic-bezier(0.23, 1, 0.32, 1) 20ms both;
+}
+
+/* Night Forward (360ms): Home (night) -> Writing */
+html:active-view-transition-type(to-writing):active-view-transition-type(from-night)::view-transition-old(root) {
+  z-index: 1;
+  mix-blend-mode: normal;
+  transform-origin: 50% 45%;
+  animation: vt-night-fwd-old 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+html:active-view-transition-type(to-writing):active-view-transition-type(from-night)::view-transition-new(root) {
+  z-index: 2;
+  mix-blend-mode: normal;
+  overflow: clip;
+  animation:
+    vt-fade-in 160ms cubic-bezier(0.23, 1, 0.32, 1) both,
+    vt-night-fwd-rise 360ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Day Back (240ms): Writing -> Home (day) */
+html:active-view-transition-type(from-writing):active-view-transition-type(to-day)::view-transition-old(root) {
+  z-index: 2;
+  mix-blend-mode: normal;
+  animation: vt-day-back-old 160ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+html:active-view-transition-type(from-writing):active-view-transition-type(to-day)::view-transition-new(root) {
+  z-index: 1;
+  mix-blend-mode: normal;
+  animation: vt-day-back-new 220ms cubic-bezier(0.23, 1, 0.32, 1) 20ms both;
+}
+
+/* Night Back (300ms): Writing -> Home (night) */
+html:active-view-transition-type(from-writing):active-view-transition-type(to-night)::view-transition-old(root) {
+  z-index: 2;
+  mix-blend-mode: normal;
+  overflow: clip;
+  animation: vt-night-back-old 240ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+html:active-view-transition-type(from-writing):active-view-transition-type(to-night)::view-transition-new(root) {
+  z-index: 1;
+  mix-blend-mode: normal;
+  transform-origin: 50% 45%;
+  animation: vt-night-back-new 260ms cubic-bezier(0.23, 1, 0.32, 1) 40ms both;
+}
+
+/* Phone tuning */
+@media (max-width: 767px) {
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-day)::view-transition-new(root) {
+    animation: vt-day-fwd-new-mobile 240ms cubic-bezier(0.23, 1, 0.32, 1) 20ms both;
+  }
+
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-night)::view-transition-new(root) {
+    animation:
+      vt-fade-in 160ms cubic-bezier(0.23, 1, 0.32, 1) both,
+      vt-night-fwd-rise-mobile 320ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  html:active-view-transition-type(from-writing):active-view-transition-type(to-night)::view-transition-old(root) {
+    animation: vt-night-back-old-mobile 240ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+}
+
+/* Reduced motion: 150ms opacity fade only, no .arrive movement */
+@media (prefers-reduced-motion: reduce) {
+  .arrive {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .back-arrow:hover,
+  html[data-vt-arrived="1"] .back-arrow:hover {
+    transform: none;
+  }
+
+  html::view-transition-old(root),
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-day)::view-transition-old(root),
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-night)::view-transition-old(root),
+  html:active-view-transition-type(from-writing):active-view-transition-type(to-day)::view-transition-old(root),
+  html:active-view-transition-type(from-writing):active-view-transition-type(to-night)::view-transition-old(root) {
+    animation: vt-fade-out 150ms ease both;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  html::view-transition-new(root),
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-day)::view-transition-new(root),
+  html:active-view-transition-type(to-writing):active-view-transition-type(from-night)::view-transition-new(root),
+  html:active-view-transition-type(from-writing):active-view-transition-type(to-day)::view-transition-new(root),
+  html:active-view-transition-type(from-writing):active-view-transition-type(to-night)::view-transition-new(root) {
+    animation: vt-fade-in 150ms ease both;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 }

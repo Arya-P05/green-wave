@@ -12,6 +12,7 @@
 // any editable block (the file is copied into public/<post>/), set full width or in the right margin, and deleted.
 import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { stripBasePath } from "@/lib/shared/basePath";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +22,10 @@ const notFound = () => new Response(null, { status: 404 });
 /** "/" is app/page.tsx, "/little-person" is app/little-person/page.tsx. Anything else is refused. */
 function sourceFor(pathname: unknown): string | null {
   if (typeof pathname !== "string") return null;
-  if (pathname === "/") return path.join(process.cwd(), "app", "page.tsx");
-  if (!/^\/[a-z0-9-]+$/.test(pathname)) return null;
-  return path.join(process.cwd(), "app", pathname.slice(1), "page.tsx");
+  const clean = stripBasePath(pathname);
+  if (clean === "/") return path.join(process.cwd(), "app", "page.tsx");
+  if (!/^\/[a-z0-9-]+$/.test(clean)) return null;
+  return path.join(process.cwd(), "app", clean.slice(1), "page.tsx");
 }
 
 const ENTITIES: Record<string, string> = {
@@ -293,7 +295,8 @@ async function addImage(request: Request): Promise<Response> {
   if (margin && !isOffset(offset)) return new Response("offset is a whole number of pixels", { status: 400 });
   const refused = margin ? marginRefusal(code, anchor ?? {}, spot.at) : null;
   if (refused) return refused;
-  const post = pathname === "/" ? "index" : pathname.slice(1);
+  const clean = stripBasePath(pathname);
+  const post = clean === "/" ? "index" : clean.slice(1);
   const dir = path.join(process.cwd(), "public", post);
   await mkdir(dir, { recursive: true });
   const name = await freeName(dir, image.name);

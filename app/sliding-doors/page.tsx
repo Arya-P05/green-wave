@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import BackArrow from "@/components/shared/BackArrow";
 import { Habits, Where } from "@/components/pickleball/Ledger";
 import NoMansLand from "@/components/pickleball/NoMansLand";
 import Rewind from "@/components/pickleball/Rewind";
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "sliding doors",
   description:
     "how do pickleball rallies really get won? a small doubles simulation, tuned to real stats, that replays a point with one decision changed.",
+  alternates: { canonical: "/writing/sliding-doors" },
 };
 
 const CODE = "https://github.com/Arya-P05/green-wave";
@@ -70,9 +71,7 @@ export default function SlidingDoors() {
       <article className="max-w-[96ch]">
         <header className="grid gap-y-1">
           <div>
-            <Link href="/" aria-label="back to writing" className="arrive text-muted" style={{ ...order(0), textDecoration: "none" }}>
-              ←
-            </Link>
+            <BackArrow mode="essay" className="arrive" style={order(0)} />
             <h1 className="arrive mt-1" style={order(1)}>
               sliding doors
             </h1>

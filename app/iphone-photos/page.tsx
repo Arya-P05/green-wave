@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import BackArrow from "@/components/shared/BackArrow";
 import Blur from "@/components/iphone-photos/Blur";
 import Distance from "@/components/iphone-photos/Distance";
 import Exposure from "@/components/iphone-photos/Exposure";
@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "almost good",
   description:
     "how do you take really good iphone photos? the usual tips, checked against the research, with five small drawings to play with.",
+  alternates: { canonical: "/writing/iphone-photos" },
 };
 
 const CODE = "https://github.com/Arya-P05/green-wave";
@@ -70,9 +71,7 @@ export default function IphonePhotos() {
       <article className="max-w-[96ch]">
         <header className="grid gap-y-1">
           <div>
-            <Link href="/" aria-label="back to writing" className="arrive text-muted" style={{ ...order(0), textDecoration: "none" }}>
-              ←
-            </Link>
+            <BackArrow mode="essay" className="arrive" style={order(0)} />
             <h1 className="arrive mt-1" style={order(1)}>
               almost good
             </h1>

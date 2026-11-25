@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import BackArrow from "@/components/shared/BackArrow";
 import BeTheLight from "@/components/green-wave/cliff/BeTheLight";
 import Cliff from "@/components/green-wave/cliff/Cliff";
 import Demand from "@/components/green-wave/Demand";
@@ -15,12 +15,13 @@ import TimeSpace from "@/components/green-wave/wave/TimeSpace";
 import Tuner from "@/components/green-wave/wave/Tuner";
 import { LABELS } from "@/lib/green-wave/sim/scenario";
 import type { Kind } from "@/lib/green-wave/sim/scenario";
-import { cliffDelay, delay, f1, hourCount, hoursBetter, platoon, platoonRange, s0, side, stops } from "./numbers";
+import { cliffDelay, delay, f1, platoon, platoonRange, s0, stops } from "./numbers";
 
 export const metadata: Metadata = {
   title: "green wave",
   description:
     "can traffic lights find the green wave on their own? max-pressure on eight real toronto lights, and a fix.",
+  alternates: { canonical: "/writing/green-wave" },
 };
 
 const CODE = "https://github.com/Arya-P05/green-wave";
@@ -71,9 +72,7 @@ export default function Home() {
       <article className="max-w-[96ch]">
         <header className="grid gap-y-1">
           <div>
-            <Link href="/" aria-label="back to writing" className="arrive text-muted" style={{ ...order(0), textDecoration: "none" }}>
-              ←
-            </Link>
+            <BackArrow mode="essay" className="arrive" style={order(0)} />
             <h1 className="arrive mt-1" style={order(1)}>
               green wave
             </h1>
@@ -83,47 +82,46 @@ export default function Home() {
           </div>
           {/* <!-- ARYA-TWEAK --> */}
           <p className="arrive" style={order(3)}>
-            i grew up around toronto, and spadina was how we got downtown. i remember sitting in the back seat
-            counting red lights from the lake up to college, half convinced the city had timed them just to
-            catch us.
+            i grew up around toronto and a road called spadina was how we got downtown. i remember sitting in the back seat counting all the red lights we would face.
           </p>
           {/* <!-- /ARYA-TWEAK --> */}
           <p className="arrive" style={order(4)}>
-            lately i’ve been going down a rabbit hole on how traffic lights actually decide when to change
-            (it’s way more interesting than it sounds, i promise), and it turned into me building a fake
-            spadina: eight real traffic lights, a few thousand simulated cars, and the city’s actual traffic
-            counts. then i gave the lights different brains and counted one thing: how many times you have to
-            stop on a drive up the street.
-          </p>
-          <p className="arrive" style={order(5)}>
-            one of those brains is a famous algorithm from research papers that comes with a mathematical proof.
-            i went in assuming it would win. it came dead last, and figuring out why is most of this post. along
-            the way you get to drive the street, time the lights, and try being a light yourself.
-          </p>
-        </header>
-
-        <Section id="question" title="the back seat">
-          <Picture src="/green-wave/back-seat.png" alt="A line sketch: a small car driving right along a road, a grown-up driving and a kid in the back window, and ahead of them a row of four traffic lights getting smaller into the distance, every one of them red." width={1048} height={395} priority />
-          <p>
             what i wanted, back then, was the opposite: a <span className="text-ink">green wave</span>. that’s
             when the lights are timed so that once you catch one green, the next one turns green right as you
             get there, and the next, all the way up the street. you basically get to surf.
           </p>
+        </header>
+
+        <Section id="question" title="the back seat">
+          <Picture src="/green-wave/morgan-1923.png" alt="A 1923 patent drawing of a traffic signal: a tall post with STOP and GO arms, a bell-shaped cap, and a small crank handle partway down the post, plus three close-up views of the arms." width={900} height={1131} caption="G. A. Morgan, Traffic Signal, US patent 1,475,024, 1923" note="Running traffic by hand is an old tradition. This is Garrett Morgan’s 1923 patent for a traffic signal: an attendant turned the crank on the post to flip the arms between stop and go. (The very first traffic signal, outside the Houses of Parliament in London in 1868, was worked by a police officer. It exploded a few weeks later.)" side="right" offset={15} />
           <p>
-            turns out green waves are real! what surprised me is how they get made: mostly by hand. a traffic
-            engineer sits down with a spreadsheet, works out the timings light by light, and that’s the plan
-            until someone redoes it. by hand! in this day and age!
+            now lately i started going down a rabbit hole on how traffic lights actually decide when to change.
           </p>
-          <Picture src="/green-wave/morgan-1923.png" alt="A 1923 patent drawing of a traffic signal: a tall post with STOP and GO arms, a bell-shaped cap, and a small crank handle partway down the post, plus three close-up views of the arms." width={900} height={1131} side="right" offset={-4} caption="G. A. Morgan, Traffic Signal, US patent 1,475,024, 1923" note="Running traffic by hand is an old tradition. This is Garrett Morgan’s 1923 patent for a traffic signal: an attendant turned the crank on the post to flip the arms between stop and go. (The very first traffic signal, outside the Houses of Parliament in London in 1868, was worked by a police officer. It exploded a few weeks later.)" />
           <p>
-            and then i found out researchers have a light that needs no spreadsheet at all. it’s called{" "}
-            <span className="text-ink">max-pressure</span> (varaiya, 2013). each light just looks at the cars
-            around it and decides who goes next, and there’s a theorem saying it will keep up with any traffic
-            that any timing plan could.
+            turns out green waves actually are real! and the most surprising part is that if you currently get one, it&apos;s because it was made by hand. a traffic engineer literally sits down with a spreadsheet, works out the timings light by light, and that’s the plan until someone redoes it every few years.
           </p>
+          <p>
+            doesn&apos;t that sound crazy, even in 2026 the most efficient way we decide on when traffic lights change to create green waves is by hand, a human counting and setting it themselves.
+          </p>
+          <p>
+            and then i found out researchers have a light that needs no spreadsheet at all. it&apos;s called &quot;max-pressure&quot;, and it&apos;s famous in traffic research (the idea originally came from routing data through networks). it&apos;s based on a mathematical proof by pravin varaiya (2013). each light just looks at the cars around it and decides who goes next, and the proof says it will keep up with any traffic that any timing plan could.
+          </p>
+          <Picture src="/green-wave/varaiya-bw.png" alt="A portrait of Pravin Varaiya: an older man with grey hair, in a white collared shirt and a grey sweater, against a light grey background." width={400} height={602} caption="Pravin Varaiya" small side="right" offset={384} />
           <p>
             so my question was simple: if every light on spadina ran max-pressure, would green waves show up
             all on their own?
+          </p>
+          <p>
+            so with the built up childhood anger and this new interest, i made my own simulation of spadina. to test the lights with different famous traffic light algorithms from around.
+          </p>
+          <p>
+            i thought max-pressure would win, but, it performed the worst. which confused me.
+          </p>
+          <p>
+            so that&apos;s what this is about, figuring out why the mathematically best approach doesn&apos;t work and what actually does.
+          </p>
+          <p>
+            as you read, you&apos;ll also get to play with the simulations i made and see if you can beat the algorithms yourself too :)
           </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>
@@ -369,13 +367,9 @@ export default function Home() {
             i wanted a number for “do cars arrive on green?”, and traffic engineers have one: the{" "}
             <span className="text-ink">platoon ratio</span>, from the highway capacity manual. (a platoon is just
             a bunch of cars travelling together, like the group that leaves a light when it turns green.) you take
-            the share of cars that reach a light on green, and divide by the share of the time it’s green.
+            the share of cars that reach a light on green, and divide by the share of the time it’s green: 1 means
+            luck, above 1 is a wave, and below 1 means you hit reds more often than luck.
           </p>
-          <ul className="grid gap-y-1">
-            <li>1 means the lights ignore each other: you hit greens exactly as often as luck would say.</li>
-            <li>above 1 is a wave: you hit greens more often than luck.</li>
-            <li>below 1, you hit reds more often than luck.</li>
-          </ul>
           <p>
             max-pressure is below 1 in both directions in every hour of the day ({pLo.toFixed(2)} to{" "}
             {pHi.toFixed(2)}). so it isn’t just ignoring the traffic. it’s working against it.
@@ -387,12 +381,6 @@ export default function Home() {
             the light turns green just after you stop. by design!
           </p>
           <Picture src="/green-wave/what-it-sees.png" alt="A line sketch: on the right a red traffic light, three cars stopped in front of it inside a dashed box, and further back three more cars rolling toward it with speed lines, outside the box." width={1048} height={247} note="What max-pressure sees: only the cars in the box. The bunch rolling in from the last light doesn’t exist to it until they’ve stopped too." />
-          <p>
-            and spadina makes it worse. max-pressure subtracts the cars backed up ahead, and spadina’s lights back
-            up into each other, so the main road’s pile partly cancels itself out. side streets drain off the edge
-            of the map and never cancel. so on a quiet afternoon, one car stopped on a side street can outweigh
-            the whole main road.
-          </p>
           <Nerds title="the platoon ratio">
             <p>
               R_p = P · C / g, where P is the share of arrivals on green and g / C the green share. I measure it
@@ -406,6 +394,12 @@ export default function Home() {
                 .join(", ")}
               .
             </p>
+            <p>
+              Spadina also makes it worse: max-pressure subtracts the cars backed up ahead, and Spadina’s lights
+              back up into each other, so the main road’s pile partly cancels itself out. Side streets drain off
+              the edge of the map and never cancel, so on a quiet afternoon one car stopped on a side street can
+              outweigh the whole main road.
+            </p>
           </Nerds>
         </Section>
 
@@ -418,8 +412,7 @@ export default function Home() {
             <li>
               <span className="text-ink">count the cars that are coming.</span> count every car on the road toward
               the light, moving or not, instead of only the stopped ones. that’s actually what varaiya’s own model
-              counts; many implementations, my first one included, count only the queue. position-weighted
-              backpressure (li &amp; jabari, 2019) goes further and weighs where along the road each car is.
+              counts; many implementations, my first one included, count only the queue.
             </li>
             <li>
               <span className="text-ink">pay for the swap.</span> keep each green at least 10 seconds, so the
@@ -441,20 +434,15 @@ export default function Home() {
             about 0.8 to about 0.9.
           </p>
           <p>
-            is it just the longer minimum green doing the work? nope. longer minimums on the textbook rule make it
-            worse (there’s a table for that at the end of the next section). what matters is what it counts.
-          </p>
-          <p>
-            it isn’t free, though. side streets wait longer ({f1(side("max-pressure"))}s →{" "}
-            {f1(side("max-pressure-plus"))}s), so the total waiting per car ends up a little worse than the
-            textbook rule ({f1(delay("max-pressure"))}s → {f1(delay("max-pressure-plus"))}s); max-pressure+ wins on
-            that in only {hoursBetter("max-pressure-plus", "max-pressure")} of {hourCount} hours. it moves the
-            waiting off spadina and onto the cross streets. and the sensor still beats both.
+            longer minimum greens on the textbook rule actually make it worse (details in the scoreboard below), so
+            what matters is what it counts. it isn’t free, though: side streets wait longer, and the sensor still
+            beats both.
           </p>
           <Nerds title="max-pressure+">
             <p>
               P_k = Σ (n_l − q_next(l)), where n counts every car on link l and q counts stopped cars. Minimum
-              green 10 s. Everything else as before.
+              green 10 s. Everything else as before. Position-weighted backpressure (Li &amp; Jabari, 2019) goes
+              further and weighs where along the road each car is.
             </p>
             <p>
               Tried and dropped in early, smaller tests: no downstream term at all (fewer stops, but then it
@@ -479,21 +467,23 @@ export default function Home() {
               ))}
             </tbody>
           </table>
-          <p>
-            and for the curious (hi, fellow nerds), here’s everything else at once. every point is the average of
-            8 runs with different random traffic, each an hour long after a 15-minute warm-up.
-          </p>
-          <p>across the day:</p>
-          <DayResults />
-          <p>
-            what if the side streets got busier? here’s 9 a.m. with every side street’s traffic scaled from a
-            quarter to double:
-          </p>
-          <SideResults />
-          <p>
-            and textbook max-pressure’s one knob, the minimum green, at 9 a.m. longer greens don’t save it:
-          </p>
-          <MinGreenTable />
+          <Nerds title="the full results">
+            <p>
+              every point is the average of 8 runs with different random traffic, each an hour long after a
+              15-minute warm-up.
+            </p>
+            <p>across the day:</p>
+            <DayResults />
+            <p>
+              what if the side streets got busier? here’s 9 a.m. with every side street’s traffic scaled from a
+              quarter to double:
+            </p>
+            <SideResults />
+            <p>
+              and textbook max-pressure’s one knob, the minimum green, at 9 a.m. longer greens don’t save it:
+            </p>
+            <MinGreenTable />
+          </Nerds>
         </Section>
 
         <Section id="meaning" title="what i learned">
@@ -507,15 +497,13 @@ export default function Home() {
             bad at stops, because stops aren’t anywhere in its rule.
           </p>
           <p>
-            <span className="text-ink">seeing early beats thinking hard.</span> the sensor wins overall (
-            {f1(delay("actuated"))}s per car, {f1(stops("actuated"))} stops north) just because its detector sees
-            a car about 2.5 seconds before the stop line. max-pressure+ gets most of its gain the same way. so did
-            you, if you beat the light.
+            <span className="text-ink">seeing early beats thinking hard.</span> the sensor wins overall just
+            because its detector sees cars before they reach the stop line. max-pressure+ gets most of its gain the
+            same way. so did you, if you beat the light.
           </p>
           <p>
             <span className="text-ink">a green wave is a choice.</span> the hand-timed wave is the best drive north
-            by far ({f1(stops("green-wave"))} stops) and one of the worst south (
-            {f1(stops("green-wave", "southbound"))}). somebody has to pick a direction.
+            by far and one of the worst south. somebody has to pick a direction.
           </p>
           {/* <!-- ARYA-TWEAK --> */}
           <p>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import BackArrow from "@/components/shared/BackArrow";
 import { order, Section, SignOff } from "@/components/shared/Post";
 import Toc from "@/components/shared/Toc";
 import type { Entry } from "@/components/shared/Toc";
@@ -8,6 +8,7 @@ import Picture from "@/components/shared/Picture";
 export const metadata: Metadata = {
   title: "the little person",
   description: "why is it so embarrassing to say i want to be great?",
+  alternates: { canonical: "/writing/little-person" },
 };
 
 const SECTIONS: Entry[] = [
@@ -35,9 +36,7 @@ export default function LittlePerson() {
       <article className="max-w-[96ch]">
         <header className="grid gap-y-1">
           <div>
-            <Link href="/" aria-label="back to writing" className="arrive text-muted" style={{ ...order(0), textDecoration: "none" }}>
-              ←
-            </Link>
+            <BackArrow mode="essay" className="arrive" style={order(0)} />
             <h1 className="arrive mt-1" style={order(1)}>
               the little person
             </h1>

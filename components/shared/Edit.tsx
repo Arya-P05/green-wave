@@ -17,8 +17,9 @@
 // the words stay as typed, the block turns red, and the reason shows right under it; esc puts the saved words back.
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { assetPath, stripBasePath } from "@/lib/shared/basePath";
 
-const API = "/api/edit";
+const API = assetPath("/api/edit");
 const WIDTH = 320;
 /** Image captions and notes: the text of a Picture prop, not of a JSX child. */
 const PROP = "main figure[data-src] [data-prop]";
@@ -176,7 +177,7 @@ function DevEdit() {
     // Set when hot reload has just rewritten the page: blocks then hold the new source's words, not ours to put back.
     let reloaded = false;
     const kind = (el: HTMLElement): Kind => (pictures.has(el) ? "picture" : sections.has(el) ? "heading" : "text");
-    const path = location.pathname;
+    const path = stripBasePath(location.pathname);
 
     /** Shows why something failed right under the block; nothing was changed. */
     async function refuse(el: HTMLElement, what: string, res: Response | null) {
@@ -220,7 +221,7 @@ function DevEdit() {
         }),
       }).catch(() => null);
       if (cancelled) return;
-      if (!res?.ok) return setStatus(res ? `can't edit this page (no app${location.pathname}/page.tsx)` : "dev server unreachable");
+      if (!res?.ok) return setStatus(res ? `can't edit this page (no app${path === "/" ? "" : path}/page.tsx)` : "dev server unreachable");
       const counts: { texts: number[]; props: number[]; titles: number[]; pictures: number[] } = await res.json();
       const editable = (el: HTMLElement) => {
         saved.set(el, words(el));

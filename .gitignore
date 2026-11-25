@@ -9,3 +9,4 @@ next-env.d.ts
 # Dev-only review comments (app/api/review); never committed.
 /review
 
+.vercel

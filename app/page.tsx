@@ -1,12 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import BackArrow from "@/components/shared/BackArrow";
 import Signature from "@/components/shared/Signature";
 import { WRITINGS } from "./writings";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/writing" },
+};
 
 /** The index: every writing, one line each, in the style of arya-site's sidequests. */
 export default function Writing() {
   return (
     <main className="px-1 py-4 sm:px-4">
-      <h1>writing</h1>
+      <BackArrow mode="index" />
+      <h1 className="mt-1">writing</h1>
 
       <ol className="mt-2 max-w-[68ch] space-y-1">
         {WRITINGS.map(({ slug, title, line, released }, i) => (
